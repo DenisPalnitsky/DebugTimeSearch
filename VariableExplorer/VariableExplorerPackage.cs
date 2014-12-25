@@ -1,0 +1,209 @@
+﻿using System;
+using System.Diagnostics;
+using System.Globalization;
+using System.Runtime.InteropServices;
+using System.ComponentModel.Design;
+using Microsoft.Win32;
+using Microsoft.VisualStudio;
+using Microsoft.VisualStudio.Shell.Interop;
+using Microsoft.VisualStudio.OLE.Interop;
+using Microsoft.VisualStudio.Shell;
+
+using Microsoft.VisualStudio;
+//using Microsoft.VisualStudio.ComponentModelHost;
+//using Microsoft.VisualStudio.Editor;
+using Microsoft.VisualStudio.OLE.Interop;
+using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.Shell.Interop;
+using Microsoft.VisualStudio.TextManager.Interop;
+using Microsoft.VisualStudio.Debugger.Interop;
+using EnvDTE;
+
+namespace MyCompany.VariableExplorer
+{
+    /// <summary>
+    /// This is the class that implements the package exposed by this assembly.
+    ///
+    /// The minimum requirement for a class to be considered a valid package for Visual Studio
+    /// is to implement the IVsPackage interface and register itself with the shell.
+    /// This package uses the helper classes defined inside the Managed Package Framework (MPF)
+    /// to do it: it derives from the Package class that provides the implementation of the 
+    /// IVsPackage interface and uses the registration attributes defined in the framework to 
+    /// register itself and its components with the shell.
+    /// </summary>
+    // This attribute tells the PkgDef creation utility (CreatePkgDef.exe) that this class is
+    // a package.
+    [PackageRegistration(UseManagedResourcesOnly = true)]
+    // This attribute is used to register the information needed to show this package
+    // in the Help/About dialog of Visual Studio.
+    [InstalledProductRegistration("#110", "#112", "1.0", IconResourceID = 400)]
+    // This attribute is needed to let the shell know that this package exposes some menus.
+    [ProvideMenuResource("Menus.ctmenu", 1)]
+    // This attribute registers a tool window exposed by this package.
+    [ProvideToolWindow(typeof(MyToolWindow))]
+    [Guid(GuidList.guidVariableExplorerPkgString)]
+    [ProvideAutoLoad("{ADFC4E64-0397-11D1-9F4E-00A0C911004F}")]
+    public sealed class VariableExplorerPackage : Package
+    {
+
+        public static readonly VsCommandIdentifier CmdQuickWatch = new VsCommandIdentifier("{5EFC7975-14BC-11CF-9B2B-00AA00573819}", 254);
+        
+
+        /// <summary>
+        /// Default constructor of the package.
+        /// Inside this method you can place any initialization code that does not require 
+        /// any Visual Studio service because at this point the package object is created but 
+        /// not sited yet inside Visual Studio environment. The place to do all the other 
+        /// initialization is the Initialize method.
+        /// </summary>
+        public VariableExplorerPackage()
+        {
+            Debug.WriteLine(string.Format(CultureInfo.CurrentCulture, "Entering constructor for: {0}", this.ToString()));
+        }
+
+        /// <summary>
+        /// This function is called when the user clicks the menu item that shows the 
+        /// tool window. See the Initialize method to see how the menu item is associated to 
+        /// this function using the OleMenuCommandService service and the MenuCommand class.
+        /// </summary>
+        private void ShowToolWindow(object sender, EventArgs e)
+        {
+            // Get the instance number 0 of this tool window. This window is single instance so this instance
+            // is actually the only one.
+            // The last flag is set to true so that if the tool window does not exists it will be created.
+            ToolWindowPane window = this.FindToolWindow(typeof(MyToolWindow), 0, true);
+            if ((null == window) || (null == window.Frame))
+            {
+                throw new NotSupportedException(Resources.CanNotCreateWindow);
+            }
+
+            var ad = VisualStudioServices.Dte.ActiveDocument.Selection;
+            IVsWindowFrame windowFrame = (IVsWindowFrame)window.Frame;
+            Microsoft.VisualStudio.ErrorHandler.ThrowOnFailure(windowFrame.Show());
+        }
+
+
+        /////////////////////////////////////////////////////////////////////////////
+        // Overridden Package Implementation
+        #region Package Members
+
+        /// <summary>
+        /// Initialization of the package; this method is called right after the package is sited, so this is the place
+        /// where you can put all the initialization code that rely on services provided by VisualStudio.
+        /// </summary>
+        protected override void Initialize()
+        {
+            Debug.WriteLine (string.Format(CultureInfo.CurrentCulture, "Entering Initialize() of: {0}", this.ToString()));
+            base.Initialize();
+
+            VisualStudioServices.Initialize(this);
+            
+            uint _debugEventsCookie = VSConstants.VSCOOKIE_NIL;
+            IVsDebugger _debugger = VisualStudioServices.VsDebugger;
+
+            var debuggerSink  = new VsDebuggerEventsSink();
+            debuggerSink.OnEnterBreakMode += debuggerSink_OnEnterBreakMode;
+            ErrorHandler.ThrowOnFailure(_debugger.AdviseDebuggerEvents(debuggerSink, out _debugEventsCookie));
+            
+            
+
+            SomeMenuCode();
+        }
+
+        void debuggerSink_OnEnterBreakMode(object sender, EventArgs e)
+        {
+            var stackFrame = VisualStudioServices.Dte.Debugger.CurrentStackFrame;            
+            
+            IDebugExpressionContext2 expressionContext;
+            GetLocalVariable (stackFrame);
+            //int returnCode = stackFrame.GetExpressionContext(out expressionContext);                        
+            //IDebugExpression2 expr;
+            //string error;
+            //uint errorFlag;
+            //expressionContext.ParseText("x", enum_PARSEFLAGS.PARSE_EXPRESSION, 10, out expr, out error, out errorFlag);
+            
+            //IDebugProperty2 prop;
+            //returnCode = expr.EvaluateSync(enum_EVALFLAGS.EVAL_ALLOWBPS, 60000, null, out prop);
+            //IDebugReference2[] references;
+            
+        }
+
+        private void GetLocalVariable(EnvDTE.StackFrame stackFrame)
+        {
+            
+             //IDebugProperty2 prop;
+             foreach (Expression local in stackFrame.Locals)
+             {
+                 System.Diagnostics.Debug.WriteLine("{0} = {1}", local.Name, local.Value);                 
+             }
+
+             var activePoint = ((TextSelection)VisualStudioServices.Dte.ActiveDocument.Selection).ActivePoint;
+            
+            string elems = "";
+            vsCMElement scopes = 0;
+
+            foreach (vsCMElement scope in Enum.GetValues(scopes.GetType()))
+            {
+                CodeElement elem = activePoint.get_CodeElement(scope);
+
+                if (elem != null)
+                {
+                    elems += elem.Name +
+                        " (" + scope.ToString() + ")\n";
+                }
+            }
+
+            System.Diagnostics.Debug.WriteLine(elems);
+            
+            // IDebugReference2[] references = new IDebugReference2[1];
+            //DEBUG_PROPERTY_INFO[] propertyInfo = new DEBUG_PROPERTY_INFO[1];            
+            //prop.GetPropertyInfo(enum_DEBUGPROP_INFO_FLAGS.DEBUGPROP_INFO_ALL, 10, 300000, references, 1, propertyInfo);            
+        }
+        
+    
+
+        private void SomeMenuCode()
+        {
+            // Add our command handlers for menu (commands must exist in the .vsct file)
+            OleMenuCommandService mcs = GetService(typeof(IMenuCommandService)) as OleMenuCommandService;
+            if (null != mcs)
+            {
+                // Create the command for the menu item.
+                CommandID menuCommandID = new CommandID(GuidList.guidVariableExplorerCmdSet, (int)PkgCmdIDList.cmdidMyCommand);
+                MenuCommand menuItem = new MenuCommand(MenuItemCallback, menuCommandID);
+                mcs.AddCommand(menuItem);
+                // Create the command for the tool window
+                CommandID toolwndCommandID = new CommandID(GuidList.guidVariableExplorerCmdSet, (int)PkgCmdIDList.cmdidMyTool);
+                MenuCommand menuToolWin = new MenuCommand(ShowToolWindow, toolwndCommandID);
+                mcs.AddCommand(menuToolWin);
+            }
+        }
+        #endregion
+
+        /// <summary>
+        /// This function is the callback used to execute a command when the a menu item is clicked.
+        /// See the Initialize method to see how the menu item is associated to this function using
+        /// the OleMenuCommandService service and the MenuCommand class.
+        /// </summary>
+        private void MenuItemCallback(object sender, EventArgs e)
+        {
+            // Show a Message Box to prove we were here
+            IVsUIShell uiShell = (IVsUIShell)GetService(typeof(SVsUIShell));
+            Guid clsid = Guid.Empty;
+            int result;
+            Microsoft.VisualStudio.ErrorHandler.ThrowOnFailure(uiShell.ShowMessageBox(
+                       0,
+                       ref clsid,
+                       "VariableExplorer",
+                       string.Format(CultureInfo.CurrentCulture, "Inside {0}.MenuItemCallback()", this.ToString()),
+                       string.Empty,
+                       0,
+                       OLEMSGBUTTON.OLEMSGBUTTON_OK,
+                       OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST,
+                       OLEMSGICON.OLEMSGICON_INFO,
+                       0,        // false
+                       out result));
+        }
+
+    }
+}
