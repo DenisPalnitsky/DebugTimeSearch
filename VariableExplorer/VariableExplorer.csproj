@@ -130,7 +130,9 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="dbgGuids.cs" />
     <Compile Include="DebuggerEvents.cs" />
+    <Compile Include="ErrorCheckForVsCalls.cs" />
     <Compile Include="ExpressionEvaluator.cs" />
     <Compile Include="IDebuggerInternalAdapter.cs" />
     <Compile Include="MyControl.xaml.cs">
