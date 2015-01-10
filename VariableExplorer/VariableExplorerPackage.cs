@@ -76,8 +76,7 @@ namespace MyCompany.VariableExplorer
             {
                 throw new NotSupportedException(Resources.CanNotCreateWindow);
             }
-
-            var ad = VisualStudioServices.Dte.ActiveDocument.Selection;
+                        
             IVsWindowFrame windowFrame = (IVsWindowFrame)window.Frame;
             Microsoft.VisualStudio.ErrorHandler.ThrowOnFailure(windowFrame.Show());
         }
@@ -101,67 +100,54 @@ namespace MyCompany.VariableExplorer
             uint _debugEventsCookie = VSConstants.VSCOOKIE_NIL;
             IVsDebugger _debugger = VisualStudioServices.VsDebugger;
 
-            var debuggerSink  = new VsDebuggerEventsSink();
+
+            var debuggerSink = new DebuggerEvents(_debugger);
             debuggerSink.OnEnterBreakMode += debuggerSink_OnEnterBreakMode;
-            ErrorHandler.ThrowOnFailure(_debugger.AdviseDebuggerEvents(debuggerSink, out _debugEventsCookie));
-            
-            
+            debuggerSink.OnEnterDesignMode += debuggerSink_OnEnterDesignMode;
+            ErrorHandler.ThrowOnFailure(_debugger.AdviseDebuggerEvents(debuggerSink, out _debugEventsCookie));            
 
             SomeMenuCode();
         }
 
-        void debuggerSink_OnEnterBreakMode(object sender, EventArgs e)
+        void debuggerSink_OnEnterDesignMode(object sender, EventArgs e)
         {
-            var stackFrame = VisualStudioServices.Dte.Debugger.CurrentStackFrame;            
-            
-            IDebugExpressionContext2 expressionContext;
-            GetLocalVariable (stackFrame);
-            //int returnCode = stackFrame.GetExpressionContext(out expressionContext);                        
-            //IDebugExpression2 expr;
-            //string error;
-            //uint errorFlag;
-            //expressionContext.ParseText("x", enum_PARSEFLAGS.PARSE_EXPRESSION, 10, out expr, out error, out errorFlag);
-            
-            //IDebugProperty2 prop;
-            //returnCode = expr.EvaluateSync(enum_EVALFLAGS.EVAL_ALLOWBPS, 60000, null, out prop);
-            //IDebugReference2[] references;
-            
+            if (ExpressionEvaluator != null)
+                ExpressionEvaluator.Dispose();
         }
 
-        private void GetLocalVariable(EnvDTE.StackFrame stackFrame)
+        internal static ExpressionEvaluator ExpressionEvaluator;
+        void debuggerSink_OnEnterBreakMode(object sender, IDebugThread2 debugThread)
         {
-            
-             //IDebugProperty2 prop;
-             foreach (Expression local in stackFrame.Locals)
-             {
-                 System.Diagnostics.Debug.WriteLine("{0} = {1}", local.Name, local.Value);                 
-             }
+            //IDebugExpressionContext2 expressionContext;
+            var stackFrame = GetCurrentStackFrame(debugThread);            
+            //stackFrame.GetExpressionContext(out expressionContext);
+            ExpressionEvaluator = new ExpressionEvaluator(stackFrame);
+        }
 
-             var activePoint = ((TextSelection)VisualStudioServices.Dte.ActiveDocument.Selection).ActivePoint;
+        private IDebugStackFrame2 GetCurrentStackFrame(IDebugThread2 thread)
+        { 
+            IEnumDebugFrameInfo2 enumDebugFrameInfo2;
+            thread.EnumFrameInfo(enum_FRAMEINFO_FLAGS.FIF_FRAME, 10, out enumDebugFrameInfo2);
             
-            string elems = "";
-            vsCMElement scopes = 0;
+            uint pCeltFetched = 0;
 
-            foreach (vsCMElement scope in Enum.GetValues(scopes.GetType()))
+            IDebugStackFrame2 stackFrame = null;
+         
+            uint count;
+            enumDebugFrameInfo2.GetCount(out count);
+            FRAMEINFO[] frameinfo = new FRAMEINFO[1];
+            if (count > 0 && enumDebugFrameInfo2.Next(1, frameinfo, ref pCeltFetched) == VSConstants.S_OK)
             {
-                CodeElement elem = activePoint.get_CodeElement(scope);
-
-                if (elem != null)
-                {
-                    elems += elem.Name +
-                        " (" + scope.ToString() + ")\n";
-                }
+                stackFrame = frameinfo[0].m_pFrame;
+            }
+            else
+            {
+                throw new InvalidOperationException("IDebugStackFrame2 is not available");
             }
 
-            System.Diagnostics.Debug.WriteLine(elems);
-            
-            // IDebugReference2[] references = new IDebugReference2[1];
-            //DEBUG_PROPERTY_INFO[] propertyInfo = new DEBUG_PROPERTY_INFO[1];            
-            //prop.GetPropertyInfo(enum_DEBUGPROP_INFO_FLAGS.DEBUGPROP_INFO_ALL, 10, 300000, references, 1, propertyInfo);            
+            return stackFrame;
         }
-        
-    
-
+                    
         private void SomeMenuCode()
         {
             // Add our command handlers for menu (commands must exist in the .vsct file)
@@ -191,11 +177,16 @@ namespace MyCompany.VariableExplorer
             IVsUIShell uiShell = (IVsUIShell)GetService(typeof(SVsUIShell));
             Guid clsid = Guid.Empty;
             int result;
+
+            if (ExpressionEvaluator != null)
+                ExpressionEvaluator.EvaluateExpression(ObjectDump.GetCurrentText());
+            
             Microsoft.VisualStudio.ErrorHandler.ThrowOnFailure(uiShell.ShowMessageBox(
                        0,
                        ref clsid,
                        "VariableExplorer",
                        string.Format(CultureInfo.CurrentCulture, "Inside {0}.MenuItemCallback()", this.ToString()),
+                       //objectDump,
                        string.Empty,
                        0,
                        OLEMSGBUTTON.OLEMSGBUTTON_OK,

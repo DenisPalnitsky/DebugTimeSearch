@@ -9,9 +9,25 @@
              d:DesignHeight="300" d:DesignWidth="300"
              Name="MyToolWindow">
     <Grid>
-        <StackPanel Orientation="Vertical">
-            <TextBlock Margin="10" HorizontalAlignment="Center">My Tool Window</TextBlock>
-            <Button Content="_Click Me!" Click="button1_Click" Width="120" Height="80" Name="button1"/>
-        </StackPanel>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="40" />
+            </Grid.ColumnDefinitions>
+                        
+            <TextBox Grid.Column="0" Name="ExpressionTextBox" MouseDoubleClick="ExpressionTextBox_MouseDoubleClick" />
+            <Button Grid.Column="1"  Content="->" Click="button1_Click" x:Name="button1"  />
+        </Grid>
+        
+        <TextBox Grid.Row="1" IsReadOnly="True" TextWrapping="Wrap" AcceptsReturn="True"
+                   Name="TextBlock" >            
+            "TExtBlock @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ shgdgfh dhj dhj dhj "
+        </TextBox>
+        
     </Grid>
 </UserControl>

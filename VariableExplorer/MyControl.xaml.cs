@@ -19,6 +19,7 @@ namespace MyCompany.VariableExplorer
     /// </summary>
     public partial class MyControl : UserControl
     {
+        
         public MyControl()
         {
             InitializeComponent();
@@ -27,9 +28,19 @@ namespace MyCompany.VariableExplorer
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1300:SpecifyMessageBoxOptions")]
         private void button1_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show(string.Format(System.Globalization.CultureInfo.CurrentUICulture, "We are inside {0}.button1_Click()", this.ToString()),
-                            "My Tool Window");
+            //MessageBox.Show(string.Format(System.Globalization.CultureInfo.CurrentUICulture, "We are inside {0}.button1_Click()", this.ToString()),
+            //                "My Tool Window");
 
+            if (VariableExplorerPackage.ExpressionEvaluator != null)
+                this.TextBlock.Text = VariableExplorerPackage.ExpressionEvaluator.EvaluateExpression(ObjectDump.GetCurrentText());
+            else
+                this.TextBlock.Text = "ExpressionEvaluator is not initialized";
+            
+        }
+
+        private void ExpressionTextBox_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            ExpressionTextBox.Text = ObjectDump.GetCurrentText();
         }
     }
 }
