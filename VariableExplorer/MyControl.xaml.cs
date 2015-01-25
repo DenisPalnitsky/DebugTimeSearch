@@ -28,11 +28,11 @@ namespace MyCompany.VariableExplorer
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1300:SpecifyMessageBoxOptions")]
         private void button1_Click(object sender, RoutedEventArgs e)
         {
-            //MessageBox.Show(string.Format(System.Globalization.CultureInfo.CurrentUICulture, "We are inside {0}.button1_Click()", this.ToString()),
-            //                "My Tool Window");
-
             if (VariableExplorerPackage.ExpressionEvaluator != null)
-                this.TextBlock.Text = VariableExplorerPackage.ExpressionEvaluator.EvaluateExpression(ObjectDump.GetCurrentText());
+            {                
+                var propertyInfo = VariableExplorerPackage.ExpressionEvaluator.EvaluateExpression(this.ExpressionTextBox.Text);
+                this.TextBlock.Text = Newtonsoft.Json.JsonConvert.SerializeObject(propertyInfo);
+            }
             else
                 this.TextBlock.Text = "ExpressionEvaluator is not initialized";
             

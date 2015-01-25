@@ -39,6 +39,12 @@
     <RunCodeAnalysis>true</RunCodeAnalysis>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Castle.Core">
+      <HintPath>..\packages\Castle.Core.3.3.0\lib\net45\Castle.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Castle.Windsor">
+      <HintPath>..\packages\Castle.Windsor.3.3.0\lib\net45\Castle.Windsor.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.VisualStudio.Debugger.InteropA, Version=9.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
     <Reference Include="Microsoft.VisualStudio.OLE.Interop" />
@@ -130,6 +136,11 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Model\CastleWindsorBootstrap.cs" />
+    <Compile Include="Model\Configuration.cs" />
+    <Compile Include="Model\DebugProperty.cs" />
+    <Compile Include="Model\DebugPropertyInfo.cs" />
+    <Compile Include="Model\IConfiguration.cs" />
     <Compile Include="dbgGuids.cs" />
     <Compile Include="DebuggerEvents.cs" />
     <Compile Include="ErrorCheckForVsCalls.cs" />
