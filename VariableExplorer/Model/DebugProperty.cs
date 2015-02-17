@@ -1,14 +1,10 @@
-﻿using Microsoft.VisualStudio;
-using Microsoft.VisualStudio.Debugger.Interop;
-using System;
+﻿using Microsoft.VisualStudio.Debugger.Interop;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MyCompany.VariableExplorer.Model
 {    
-    class DebugProperty
+    class DebugProperty : MyCompany.VariableExplorer.Model.IDebugProperty
     {        
         DebugPropertyInfo _debugPropertyInfo;
         IConfiguration _configuration = IocContainer.Resolve<IConfiguration>();

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace MyCompany.VariableExplorer.Model
 {
-    class DebugPropertyInfo
+    class DebugPropertyInfo : MyCompany.VariableExplorer.Model.IDebugPropertyInfo
     {
         DEBUG_PROPERTY_INFO _propertyInfo;
 

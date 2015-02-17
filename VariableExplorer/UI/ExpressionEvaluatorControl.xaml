@@ -1,0 +1,48 @@
+﻿<UserControl x:Class="MyCompany.VariableExplorer.UI.MyControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             Background="{DynamicResource VsBrush.Window}"
+             Foreground="{DynamicResource VsBrush.WindowText}"
+             mc:Ignorable="d"
+             d:DesignHeight="300" d:DesignWidth="300"
+             Name="MyToolWindow">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30" />
+            <RowDefinition Height="2*" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0" x:Name="ExpressionGrid" >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="60" />
+            </Grid.ColumnDefinitions>
+
+            <TextBox Grid.Column="0" 
+                     Name="ExpressionTextBox" 
+                     MouseDoubleClick="ExpressionTextBox_MouseDoubleClick" 
+                     Text ="{Binding ExpressionText}" />
+            
+            <Button Grid.Column="1"  
+                    Content="Evaluate" 
+                    Command="{Binding EvaluateExpressionCommand}" 
+                    x:Name="EvaluateButton" 
+                    Padding="5" />
+        </Grid>
+
+        <!--<DataGrid Name="VariableContent" Grid.Row="1" ItemsSource="{Binding Children}" AutoGenerateColumns="False" >
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Name"  Binding="{Binding Name}" Width="2*" />
+                <DataGridTextColumn Header="Value" Binding="{Binding Value}" Width="*" />
+                <DataGridHyperlinkColumn Header="ValueType" Binding="{Binding ValueType}" Width="2*" />
+                <DataGridCheckBoxColumn Header="IsValueEvaluated" Binding="{Binding IsValueEvaluated}" Width="20" />                
+            </DataGrid.Columns>
+        </DataGrid>-->
+
+        <TextBox Name="TextBlock" Grid.Row="2" IsReadOnly="True" TextWrapping="Wrap" AcceptsReturn="True" Text="{Binding LogText}"  />      
+             
+    </Grid>
+</UserControl>

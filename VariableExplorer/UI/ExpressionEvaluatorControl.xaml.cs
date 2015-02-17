@@ -12,7 +12,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace MyCompany.VariableExplorer
+namespace MyCompany.VariableExplorer.UI
 {
     /// <summary>
     /// Interaction logic for MyControl.xaml
@@ -23,20 +23,7 @@ namespace MyCompany.VariableExplorer
         public MyControl()
         {
             InitializeComponent();
-        }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1300:SpecifyMessageBoxOptions")]
-        private void button1_Click(object sender, RoutedEventArgs e)
-        {
-            if (VariableExplorerPackage.ExpressionEvaluator != null)
-            {                
-                var propertyInfo = VariableExplorerPackage.ExpressionEvaluator.EvaluateExpression(this.ExpressionTextBox.Text);
-                this.TextBlock.Text = Newtonsoft.Json.JsonConvert.SerializeObject(propertyInfo);
-            }
-            else
-                this.TextBlock.Text = "ExpressionEvaluator is not initialized";
-            
-        }
+        }        
 
         private void ExpressionTextBox_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {

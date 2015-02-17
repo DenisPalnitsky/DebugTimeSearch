@@ -8,13 +8,13 @@ using System.Threading.Tasks;
 
 namespace MyCompany.VariableExplorer
 {
-    class ExpressionEvaluator : IDisposable
+    class ExpressionEvaluator : IExpressionEvaluator
     {        
         public ExpressionEvaluator(IDebugStackFrame2 stackFrame )
         {
             _stackFrame = stackFrame;
         }
-        
+
         public IDebugStackFrame2 _stackFrame { get; private set; }
 
         public DebugProperty EvaluateExpression(string expression)
@@ -48,10 +48,6 @@ namespace MyCompany.VariableExplorer
                         
             return Model.DebugProperty.Create (debugProperty);                                             
         }
-
-        public void Dispose()
-        {
-            
-        }
+        
     }
 }

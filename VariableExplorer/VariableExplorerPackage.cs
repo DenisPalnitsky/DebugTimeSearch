@@ -18,6 +18,7 @@ using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.TextManager.Interop;
 using Microsoft.VisualStudio.Debugger.Interop;
 using EnvDTE;
+using MyCompany.VariableExplorer.Model;
 
 namespace MyCompany.VariableExplorer
 {
@@ -86,6 +87,8 @@ namespace MyCompany.VariableExplorer
         // Overridden Package Implementation
         #region Package Members
 
+        ExpressionEvaluatorDispatcher _dispatcher;
+
         /// <summary>
         /// Initialization of the package; this method is called right after the package is sited, so this is the place
         /// where you can put all the initialization code that rely on services provided by VisualStudio.
@@ -96,56 +99,18 @@ namespace MyCompany.VariableExplorer
             base.Initialize();
 
             VisualStudioServices.Initialize(this);
-            
-            uint _debugEventsCookie = VSConstants.VSCOOKIE_NIL;
+                        
             IVsDebugger _debugger = VisualStudioServices.VsDebugger;
+             _dispatcher =  ExpressionEvaluatorDispatcher.Create(VisualStudioServices.VsDebugger);            
 
-
-            var debuggerSink = new DebuggerEvents(_debugger);
-            debuggerSink.OnEnterBreakMode += debuggerSink_OnEnterBreakMode;
-            debuggerSink.OnEnterDesignMode += debuggerSink_OnEnterDesignMode;
-            ErrorHandler.ThrowOnFailure(_debugger.AdviseDebuggerEvents(debuggerSink, out _debugEventsCookie));            
 
             SomeMenuCode();
         }
 
-        void debuggerSink_OnEnterDesignMode(object sender, EventArgs e)
+        protected override void Dispose(bool disposing)
         {
-            if (ExpressionEvaluator != null)
-                ExpressionEvaluator.Dispose();
-        }
-
-        internal static ExpressionEvaluator ExpressionEvaluator;
-        void debuggerSink_OnEnterBreakMode(object sender, IDebugThread2 debugThread)
-        {
-            //IDebugExpressionContext2 expressionContext;
-            var stackFrame = GetCurrentStackFrame(debugThread);            
-            //stackFrame.GetExpressionContext(out expressionContext);
-            ExpressionEvaluator = new ExpressionEvaluator(stackFrame);
-        }
-
-        private IDebugStackFrame2 GetCurrentStackFrame(IDebugThread2 thread)
-        { 
-            IEnumDebugFrameInfo2 enumDebugFrameInfo2;
-            thread.EnumFrameInfo(enum_FRAMEINFO_FLAGS.FIF_FRAME, 10, out enumDebugFrameInfo2);
-            
-            uint pCeltFetched = 0;
-
-            IDebugStackFrame2 stackFrame = null;
-         
-            uint count;
-            enumDebugFrameInfo2.GetCount(out count);
-            FRAMEINFO[] frameinfo = new FRAMEINFO[1];
-            if (count > 0 && enumDebugFrameInfo2.Next(1, frameinfo, ref pCeltFetched) == VSConstants.S_OK)
-            {
-                stackFrame = frameinfo[0].m_pFrame;
-            }
-            else
-            {
-                throw new InvalidOperationException("IDebugStackFrame2 is not available");
-            }
-
-            return stackFrame;
+            _dispatcher.Dispose();
+            base.Dispose(disposing);
         }
                     
         private void SomeMenuCode()
@@ -176,10 +141,7 @@ namespace MyCompany.VariableExplorer
             // Show a Message Box to prove we were here
             IVsUIShell uiShell = (IVsUIShell)GetService(typeof(SVsUIShell));
             Guid clsid = Guid.Empty;
-            int result;
-
-            if (ExpressionEvaluator != null)
-                ExpressionEvaluator.EvaluateExpression(ObjectDump.GetCurrentText());
+            int result;         
             
             Microsoft.VisualStudio.ErrorHandler.ThrowOnFailure(uiShell.ShowMessageBox(
                        0,

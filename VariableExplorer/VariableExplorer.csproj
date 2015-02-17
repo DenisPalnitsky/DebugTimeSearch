@@ -136,6 +136,10 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Model\ExpressionEvaluatorDispatcher.cs" />
+    <Compile Include="Model\IDebugProperty.cs" />
+    <Compile Include="Model\IDebugPropertyInfo.cs" />
+    <Compile Include="Model\IExpressionEvaluator.cs" />
     <Compile Include="Model\CastleWindsorBootstrap.cs" />
     <Compile Include="Model\Configuration.cs" />
     <Compile Include="Model\DebugProperty.cs" />
@@ -145,9 +149,9 @@
     <Compile Include="DebuggerEvents.cs" />
     <Compile Include="ErrorCheckForVsCalls.cs" />
     <Compile Include="ExpressionEvaluator.cs" />
-    <Compile Include="IDebuggerInternalAdapter.cs" />
-    <Compile Include="MyControl.xaml.cs">
-      <DependentUpon>MyControl.xaml</DependentUpon>
+    <Compile Include="UI\DelegateCommand.cs" />
+    <Compile Include="UI\ExpressionEvaluatorControl.xaml.cs">
+      <DependentUpon>ExpressionEvaluatorControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="MyToolWindow.cs" />
     <Compile Include="Guids.cs" />
@@ -158,6 +162,8 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="UI\ExpressionEvaluatorViewModel.cs" />
+    <Compile Include="UI\ObservableObject.cs" />
     <Compile Include="VariableExplorerPackage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PkgCmdID.cs" />
@@ -197,10 +203,13 @@
     <Content Include="Resources\Package.ico" />
   </ItemGroup>
   <ItemGroup>
-    <Page Include="MyControl.xaml">
+    <Page Include="UI\ExpressionEvaluatorControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="VS\" />
   </ItemGroup>
   <PropertyGroup>
     <UseCodebase>true</UseCodebase>

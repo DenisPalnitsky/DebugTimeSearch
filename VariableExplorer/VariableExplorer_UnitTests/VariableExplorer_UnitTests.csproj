@@ -51,6 +51,9 @@
     <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework" />
     <Reference Include="Microsoft.VSSDK.UnitTestLibrary" />
     <Reference Include="Microsoft.VSSDK.TestHostFramework" />
+    <Reference Include="nunit.framework">
+      <HintPath>..\..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Design" />
@@ -58,6 +61,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ExpressionEvaluatorViewModelTest.cs" />
     <Compile Include="PackageTest.cs" />
     <!---->
     <Compile Include="MenuItemTests\MenuItemCallback.cs" />
@@ -68,11 +72,13 @@
     <Compile Include="MyToolWindowTest\ShowToolWindow.cs" />
     <Compile Include="MyToolWindowTest\WindowFrameMock.cs" />
     <Compile Include="MyToolWindowTest\UIShellServiceMock.cs" />
+    <Compile Include="TestObservableObject.cs" />
     <!---->
     <!---->
   </ItemGroup>
   <ItemGroup>
     <None Include="Key.snk" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\VariableExplorer.csproj">
