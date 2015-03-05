@@ -11,8 +11,17 @@ namespace MyCompany.VariableExplorer.Model
     class ExpressionEvaluatorDispatcher : IDisposable
     {        
         DebuggerEvents debuggerEvents;
+        IExpressionEvaluatorContainer _container;
+
+        ExpressionEvaluatorDispatcher() 
+        {
+            var expressionEvaluatorProviderprovider = new ExpressionEvaluatorProvider();
+            IocContainer.RegisterInstance<IExpressionEvaluatorContainer>(expressionEvaluatorProviderprovider);
+            IocContainer.RegisterInstance<IExpressionEvaluatorProvider>(expressionEvaluatorProviderprovider);
+            _container = expressionEvaluatorProviderprovider;
+        }
         
-        public IExpressionEvaluator GetExpressionEvaluator(IDebugThread2 debugThread)
+        private  IExpressionEvaluator GetExpressionEvaluator(IDebugThread2 debugThread)
         {
             var stackFrame = GetCurrentStackFrame(debugThread);
             //stackFrame.GetExpressionContext(out expressionContext);
@@ -56,27 +65,18 @@ namespace MyCompany.VariableExplorer.Model
 
         void debuggerSink_OnEnterDesignMode(object sender, EventArgs e)
         {
-            UnregisterExpressionEvaluator();
+            _container.UnRegister();
         }
-
-        private static void UnregisterExpressionEvaluator()
-        {
-            if (IocContainer.Resolve<IExpressionEvaluator>() != null)
-            {
-                IocContainer.UnRegisterInstance<IExpressionEvaluator>();
-            }
-        }
-
+      
         void debuggerSink_OnEnterBreakMode(object sender, IDebugThread2 debugThread)
         {
-            ExpressionEvaluatorDispatcher provider = new ExpressionEvaluatorDispatcher();
-            IocContainer.RegisterInstance<IExpressionEvaluator>(provider.GetExpressionEvaluator(debugThread));
+            _container.Register(GetExpressionEvaluator(debugThread));
         }
 
 
         public void Dispose()
         {
-            UnregisterExpressionEvaluator();
+            _container.UnRegister();
             debuggerEvents.OnEnterBreakMode -= debuggerSink_OnEnterBreakMode;
             debuggerEvents.OnEnterDesignMode += debuggerSink_OnEnterDesignMode;
         }

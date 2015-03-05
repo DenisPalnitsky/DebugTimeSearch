@@ -6,14 +6,16 @@ using System.Text;
 using System.Threading.Tasks;
 using MyCompany.VariableExplorer.Model;
 using System.Windows.Input;
+using System.Collections.ObjectModel;
 
 namespace MyCompany.VariableExplorer.UI
 {
     class ExpressionEvaluatorViewModel : ObservableObject
     {
-        DebugProperty _property;
+        IDebugProperty _property;
         string _expressionText;
         string _logText;
+      
 
         public string ExpressionText
         {
@@ -43,16 +45,31 @@ namespace MyCompany.VariableExplorer.UI
 
         private void EvaluateExpression()
         {
-            var expressionEvaluator = IocContainer.Resolve<IExpressionEvaluator>();
+            var expressionEvaluatorProvider = IocContainer.Resolve<IExpressionEvaluatorProvider>();
 
-            if (expressionEvaluator != null)
+            if (expressionEvaluatorProvider.IsEvaluatorAvailable )
             {
-                _property = expressionEvaluator.EvaluateExpression(ExpressionText);
+                _property = expressionEvaluatorProvider.ExpressionEvaluator.EvaluateExpression(ExpressionText);                                
+                OnPropertyChanged(()=> Properties);
                 LogText = Newtonsoft.Json.JsonConvert.SerializeObject(_property);
             }
             else
                 LogText = "ExpressionEvaluator is not initialized";
         }
-        
+
+        public IEnumerable<DebugPropertyViewModel> Properties  
+        { 
+            get 
+            {
+                var result = new List<DebugPropertyViewModel>();
+                if (_property != null)
+                {
+                    result.Add(DebugPropertyViewModel.From(_property.PropertyInfo));
+                    result.AddRange(_property.Children.Select( c=> DebugPropertyViewModel.From(c)));
+                }
+                return result;
+            } 
+        } 
+
     }
 }

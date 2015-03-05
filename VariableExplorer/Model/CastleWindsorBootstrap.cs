@@ -1,6 +1,4 @@
-﻿using Castle.MicroKernel.Registration;
-using Castle.Windsor;
-using Castle.Windsor.Installer;
+﻿using Microsoft.Practices.Unity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,11 +9,10 @@ namespace MyCompany.VariableExplorer.Model
 {
     class IocContainer
     {
-        static WindsorContainer _container = new WindsorContainer();
-
+        static IUnityContainer _container = new UnityContainer();
+        
         static IocContainer()
-        {
-            _container = new WindsorContainer();
+        {            
             DefaultRegistration();
         }
 
@@ -23,25 +20,9 @@ namespace MyCompany.VariableExplorer.Model
             where TInterface : class
             where TImplementer : TInterface 
         {
-            _container.Register(Component.For<TInterface>().ImplementedBy<TImplementer>().IsDefault());
+            _container.RegisterType<TInterface, TImplementer>();
         }
-
-        public static void RegisterInstance<TInterface>(TInterface implementation)
-            where TInterface : class            
-        {
-            _container.Register(Component.For<TInterface>().Instance(implementation).IsDefault());
-        }
-
-        public static void UnRegisterInstance<TInterface>()
-            where TInterface : class
-        {
-            var implementer = _container.Resolve<TInterface>();            
-            if (implementer is IDisposable)
-                ((IDisposable)implementer).Dispose();
-            
-            _container.Release(implementer);
-        }
-
+      
 
         public static void DefaultRegistration ()
         {
@@ -52,7 +33,12 @@ namespace MyCompany.VariableExplorer.Model
         public static T Resolve<T> ()
         {
             return _container.Resolve<T>();
-        }        
+        }
 
+
+        internal static void RegisterInstance<T>(T instance)
+        {
+            _container.RegisterInstance<T>(instance);            
+        }
     }
 }

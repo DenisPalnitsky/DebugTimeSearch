@@ -6,23 +6,23 @@ namespace MyCompany.VariableExplorer.Model
 {    
     class DebugProperty : MyCompany.VariableExplorer.Model.IDebugProperty
     {        
-        DebugPropertyInfo _debugPropertyInfo;
+        IDebugPropertyInfo _debugPropertyInfo;
         IConfiguration _configuration = IocContainer.Resolve<IConfiguration>();
-        IEnumerable<DebugPropertyInfo> _children;
+        IEnumerable<IDebugPropertyInfo> _children;
         
         private DebugProperty (IDebugProperty2 debugProperty)
         {            
         }
 
-        public static DebugProperty Create(IDebugProperty2 debugProperty)
+        public static IDebugProperty Create(IDebugProperty2 debugProperty)
         {
             var result =  new DebugProperty(debugProperty);
-            result._children = GetChildren(debugProperty );
+            result._children = GetChildren(debugProperty);
             result._debugPropertyInfo = GetPropertyInfo(debugProperty);
             return result;
         }
 
-        public IEnumerable<DebugPropertyInfo> Children 
+        public IEnumerable<IDebugPropertyInfo> Children 
         { 
             get 
             {
@@ -30,7 +30,7 @@ namespace MyCompany.VariableExplorer.Model
             } 
         }
 
-        public DebugPropertyInfo PropertyInfo
+        public IDebugPropertyInfo PropertyInfo
         {
             get
             {                
@@ -38,7 +38,7 @@ namespace MyCompany.VariableExplorer.Model
             }
         }
 
-        private static DebugPropertyInfo GetPropertyInfo(IDebugProperty2 debugProperty)
+        private static IDebugPropertyInfo GetPropertyInfo(IDebugProperty2 debugProperty)
         {
             IDebugReference2[] reference = new IDebugReference2[1];
             DEBUG_PROPERTY_INFO[] propertyInfo = new DEBUG_PROPERTY_INFO[1];
@@ -53,7 +53,7 @@ namespace MyCompany.VariableExplorer.Model
             return new DebugPropertyInfo(propertyInfo[0], true);
         }
 
-        private static List<DebugPropertyInfo> GetChildren(IDebugProperty2 debugProperty)
+        private static List<IDebugPropertyInfo> GetChildren(IDebugProperty2 debugProperty)
         {
             IEnumDebugPropertyInfo2 debugPropertyEnum;
 
@@ -72,7 +72,7 @@ namespace MyCompany.VariableExplorer.Model
             uint fetched;
             debugPropertyEnum.Next(count, debugPropInfos, out fetched).ThrowOnFailure();
             
-            return  debugPropInfos.Select(d => new DebugPropertyInfo(d, false)).ToList();            
+            return  debugPropInfos.Select(d => new DebugPropertyInfo(d, false)).Cast<IDebugPropertyInfo>().ToList();            
         }
     }
 }

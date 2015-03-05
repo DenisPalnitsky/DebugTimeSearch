@@ -1,4 +1,6 @@
-﻿using MyCompany.VariableExplorer.UI;
+﻿using Moq;
+using MyCompany.VariableExplorer.Model;
+using MyCompany.VariableExplorer.UI;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -13,10 +15,28 @@ namespace VariableExplorer_UnitTests
     {
         [Test]
         public void EvaluateExpressionCommand_sets_property()
-        {
+        {            
+            var expressionEvaluatorMock = new Mock<IExpressionEvaluator>();            
+            var debugPropertMock = new Mock<IDebugProperty>();            
+            debugPropertMock.Setup(s=>s.Children).Returns(
+                () => new [] { Mock.Of<IDebugPropertyInfo>() } );
+
             
+            debugPropertMock.Setup(s => s.PropertyInfo).Returns(Mock.Of<IDebugPropertyInfo>());
+            
+            expressionEvaluatorMock.Setup(s=>s.EvaluateExpression("a")).Returns( debugPropertMock.Object);            
+            var expressionEvaluatorProviderMock  = new Mock<IExpressionEvaluatorProvider>();
+            expressionEvaluatorProviderMock.Setup(e => e.ExpressionEvaluator).Returns(expressionEvaluatorMock.Object);
+            expressionEvaluatorProviderMock.Setup(e => e.IsEvaluatorAvailable).Returns(true);
+
+            IocContainer.RegisterInstance<IExpressionEvaluatorProvider>(expressionEvaluatorProviderMock.Object);
 
             ExpressionEvaluatorViewModel objectUnderTest = new ExpressionEvaluatorViewModel();
+            objectUnderTest.ExpressionText = "a";
+            objectUnderTest.EvaluateExpressionCommand.Execute(null);
+            Assert.AreEqual(2, objectUnderTest.Properties.Count());
+         
+            //objectUnderTest.Properties
 
         }
     }

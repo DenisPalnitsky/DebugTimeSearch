@@ -17,7 +17,7 @@ namespace MyCompany.VariableExplorer
 
         public IDebugStackFrame2 _stackFrame { get; private set; }
 
-        public DebugProperty EvaluateExpression(string expression)
+        public IDebugProperty EvaluateExpression(string expression)
         {           
             StringBuilder sb = new StringBuilder();                        
 
