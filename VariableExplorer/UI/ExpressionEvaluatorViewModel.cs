@@ -64,8 +64,9 @@ namespace MyCompany.VariableExplorer.UI
                 var result = new List<DebugPropertyViewModel>();
                 if (_property != null)
                 {
-                    result.Add(DebugPropertyViewModel.From(_property.PropertyInfo));
+                    result.Add(DebugPropertyViewModel.From(_property.PropertyInfo ));                    
                     result.AddRange(_property.Children.Select( c=> DebugPropertyViewModel.From(c)));
+                    
                 }
                 return result;
             } 

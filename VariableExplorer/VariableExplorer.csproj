@@ -139,22 +139,26 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Model\PropertyInfoFactory.cs" />
+    <Compile Include="Model\ExpandablePropertyInfo.cs" />
     <Compile Include="Model\ExpressionEvaluatorProvider.cs" />
+    <Compile Include="Model\IExpandablePropertyInfo.cs" />
     <Compile Include="Model\IExpressionEvaluatorContainer.cs" />
     <Compile Include="Model\IExpressionEvaluatorProvider.cs" />
     <Compile Include="Model\ExpressionEvaluatorDispatcher.cs" />
     <Compile Include="Model\IDebugProperty.cs" />
-    <Compile Include="Model\IDebugPropertyInfo.cs" />
+    <Compile Include="Model\IPropertyInfo.cs" />
+    <Compile Include="Model\IValuePropertyInfo.cs" />
     <Compile Include="Model\IExpressionEvaluator.cs" />
     <Compile Include="Model\CastleWindsorBootstrap.cs" />
     <Compile Include="Model\Configuration.cs" />
     <Compile Include="Model\DebugProperty.cs" />
-    <Compile Include="Model\DebugPropertyInfo.cs" />
+    <Compile Include="Model\ValuePropertyInfo.cs" />
     <Compile Include="Model\IConfiguration.cs" />
     <Compile Include="dbgGuids.cs" />
     <Compile Include="DebuggerEvents.cs" />
     <Compile Include="ErrorCheckForVsCalls.cs" />
-    <Compile Include="ExpressionEvaluator.cs" />
+    <Compile Include="Model\ExpressionEvaluator.cs" />
     <Compile Include="UI\DebugPropertyViewModel.cs" />
     <Compile Include="UI\DelegateCommand.cs" />
     <Compile Include="UI\ExpressionEvaluatorControl.xaml.cs">

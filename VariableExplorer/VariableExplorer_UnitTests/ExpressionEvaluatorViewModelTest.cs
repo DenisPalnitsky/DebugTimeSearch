@@ -19,10 +19,10 @@ namespace VariableExplorer_UnitTests
             var expressionEvaluatorMock = new Mock<IExpressionEvaluator>();            
             var debugPropertMock = new Mock<IDebugProperty>();            
             debugPropertMock.Setup(s=>s.Children).Returns(
-                () => new [] { Mock.Of<IDebugPropertyInfo>() } );
+                () => new [] { Mock.Of<IPropertyInfo>() } );
 
             
-            debugPropertMock.Setup(s => s.PropertyInfo).Returns(Mock.Of<IDebugPropertyInfo>());
+            debugPropertMock.Setup(s => s.PropertyInfo).Returns(Mock.Of<IPropertyInfo>());
             
             expressionEvaluatorMock.Setup(s=>s.EvaluateExpression("a")).Returns( debugPropertMock.Object);            
             var expressionEvaluatorProviderMock  = new Mock<IExpressionEvaluatorProvider>();

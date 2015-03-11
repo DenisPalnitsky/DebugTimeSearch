@@ -13,12 +13,35 @@ namespace MyCompany.VariableExplorer.UI
 
         private DebugPropertyViewModel() { }
 
-        internal static DebugPropertyViewModel From(Model.IDebugPropertyInfo debugPropertyInfo)
+        public static DebugPropertyViewModel From(Model.IPropertyInfo debugPropertyInfo)
+        {
+            if (debugPropertyInfo is Model.IExpandablePropertyInfo)
+                return From((Model.IExpandablePropertyInfo)debugPropertyInfo);
+
+            if (debugPropertyInfo is Model.IValuePropertyInfo)
+                return From((Model.IValuePropertyInfo)debugPropertyInfo);
+
+            throw new NotSupportedException();
+        }
+
+        static DebugPropertyViewModel From(Model.IValuePropertyInfo debugPropertyInfo)
         {
             DebugPropertyViewModel vm = new DebugPropertyViewModel()
             {
                 Name = debugPropertyInfo.Name,
                 Value = debugPropertyInfo.Value,
+                ValueType = debugPropertyInfo.ValueType
+            };
+
+            return vm;
+        }
+
+        static DebugPropertyViewModel From(Model.IExpandablePropertyInfo debugPropertyInfo)
+        {
+            DebugPropertyViewModel vm = new DebugPropertyViewModel()
+            {
+                Name = debugPropertyInfo.Name,
+                Value = "Expandable",
                 ValueType = debugPropertyInfo.ValueType
             };
 

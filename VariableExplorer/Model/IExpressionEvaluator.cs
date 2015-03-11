@@ -3,6 +3,6 @@ namespace MyCompany.VariableExplorer.Model
 {
     interface IExpressionEvaluator 
     {
-        IDebugProperty EvaluateExpression(string expression);
+        IDebugProperty EvaluateExpression(string expression);        
     }
 }
