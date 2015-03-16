@@ -139,6 +139,7 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Model\Services\ILogger.cs" />
     <Compile Include="Model\PropertyInfoFactory.cs" />
     <Compile Include="Model\ExpandablePropertyInfo.cs" />
     <Compile Include="Model\ExpressionEvaluatorProvider.cs" />
@@ -150,11 +151,12 @@
     <Compile Include="Model\IPropertyInfo.cs" />
     <Compile Include="Model\IValuePropertyInfo.cs" />
     <Compile Include="Model\IExpressionEvaluator.cs" />
-    <Compile Include="Model\CastleWindsorBootstrap.cs" />
-    <Compile Include="Model\Configuration.cs" />
+    <Compile Include="Model\Services\CastleWindsorBootstrap.cs" />
+    <Compile Include="Model\Services\Configuration.cs" />
     <Compile Include="Model\DebugProperty.cs" />
+    <Compile Include="Model\Services\OutputWindowLogger.cs" />
     <Compile Include="Model\ValuePropertyInfo.cs" />
-    <Compile Include="Model\IConfiguration.cs" />
+    <Compile Include="Model\Services\IConfiguration.cs" />
     <Compile Include="dbgGuids.cs" />
     <Compile Include="DebuggerEvents.cs" />
     <Compile Include="ErrorCheckForVsCalls.cs" />
@@ -175,6 +177,7 @@
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="UI\ExpressionEvaluatorViewModel.cs" />
     <Compile Include="UI\ObservableObject.cs" />
+    <Compile Include="UI\RedirectLogger.cs" />
     <Compile Include="VariableExplorerPackage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PkgCmdID.cs" />

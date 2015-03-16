@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.Debugger.Interop;
 using MyCompany.VariableExplorer.Model;
+using MyCompany.VariableExplorer.Model.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,19 +10,23 @@ using System.Threading.Tasks;
 namespace MyCompany.VariableExplorer.Model
 {
     class ExpressionEvaluator : IExpressionEvaluator
-    {        
+    {       
+        ILogger _log = IocContainer.Resolve<ILogger>();
+
         public ExpressionEvaluator(IDebugStackFrame2 stackFrame )
         {
             _stackFrame = stackFrame;
         }
 
-        public IDebugStackFrame2 _stackFrame { get; private set; }
+        IDebugStackFrame2 _stackFrame;
 
         public IDebugProperty EvaluateExpression(string expression)
         {
+            _log.Info("Evaluating expression {0}. CurrentTime {1:H:mm:ss.ffff}", expression, DateTime.Now);
             IDebugProperty2 debugProperty = GetVsDebugProperty(expression);
-                        
-            return Model.DebugProperty.Create (debugProperty);                                             
+            _log.Info("Done evaluating expression {0}. CurrentTime {1:H:mm:ss.ffff}", expression, DateTime.Now);
+            
+            return Model.DebugProperty.Create (debugProperty);            
         }
 
         private IDebugProperty2 GetVsDebugProperty(string expression)

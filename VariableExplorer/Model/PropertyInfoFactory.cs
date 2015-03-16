@@ -1,4 +1,5 @@
 ﻿using Microsoft.VisualStudio.Debugger.Interop;
+using MyCompany.VariableExplorer.Model.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;

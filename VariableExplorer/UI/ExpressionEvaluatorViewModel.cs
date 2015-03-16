@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using MyCompany.VariableExplorer.Model;
 using System.Windows.Input;
 using System.Collections.ObjectModel;
+using MyCompany.VariableExplorer.Model.Services;
 
 namespace MyCompany.VariableExplorer.UI
 {
@@ -15,7 +16,11 @@ namespace MyCompany.VariableExplorer.UI
         IDebugProperty _property;
         string _expressionText;
         string _logText;
-      
+
+        public ExpressionEvaluatorViewModel()
+        {
+            IocContainer.RegisterInstance<ILogger>(new  RedirectLogger( m => { LogText += m; } ));
+        }
 
         public string ExpressionText
         {
@@ -50,8 +55,7 @@ namespace MyCompany.VariableExplorer.UI
             if (expressionEvaluatorProvider.IsEvaluatorAvailable )
             {
                 _property = expressionEvaluatorProvider.ExpressionEvaluator.EvaluateExpression(ExpressionText);                                
-                OnPropertyChanged(()=> Properties);
-                LogText = Newtonsoft.Json.JsonConvert.SerializeObject(_property);
+                OnPropertyChanged(()=> Properties);                
             }
             else
                 LogText = "ExpressionEvaluator is not initialized";
@@ -69,8 +73,8 @@ namespace MyCompany.VariableExplorer.UI
                     
                 }
                 return result;
-            } 
-        } 
+            }
+        }
 
     }
 }

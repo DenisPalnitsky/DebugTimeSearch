@@ -4,8 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MyCompany.VariableExplorer.Model.Services;
 
-namespace MyCompany.VariableExplorer.Model
+namespace MyCompany.VariableExplorer.Model.Services
 {
     class IocContainer
     {
@@ -27,6 +28,7 @@ namespace MyCompany.VariableExplorer.Model
         public static void DefaultRegistration ()
         {
             Register<IConfiguration, Configuration>();
+            Register<ILogger, OutputWindowLogger>();
         }
 
         

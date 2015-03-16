@@ -1,5 +1,6 @@
 ﻿using Moq;
 using MyCompany.VariableExplorer.Model;
+using MyCompany.VariableExplorer.Model.Services;
 using MyCompany.VariableExplorer.UI;
 using NUnit.Framework;
 using System;
