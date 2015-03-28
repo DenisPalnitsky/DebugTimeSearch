@@ -139,6 +139,7 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Model\PropertyInfoEnumerator.cs" />
     <Compile Include="Model\Services\ILogger.cs" />
     <Compile Include="Model\PropertyInfoFactory.cs" />
     <Compile Include="Model\ExpandablePropertyInfo.cs" />

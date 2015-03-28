@@ -17,7 +17,8 @@ namespace MyCompany.VariableExplorer.UI
 
         public void Info(string message, params object[] parameters)
         {
-            _logAction(String.Format(message, parameters) + Environment.NewLine);
+            _logAction(String.Format("{0:H:mm:ss.ffff}\t", DateTime.Now ) +  
+                String.Format(message, parameters) + Environment.NewLine);
         }
     }
     

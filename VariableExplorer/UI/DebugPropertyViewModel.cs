@@ -28,7 +28,7 @@ namespace MyCompany.VariableExplorer.UI
         {
             DebugPropertyViewModel vm = new DebugPropertyViewModel()
             {
-                Name = debugPropertyInfo.Name,
+                Name = debugPropertyInfo.FullName,
                 Value = debugPropertyInfo.Value,
                 ValueType = debugPropertyInfo.ValueType
             };
@@ -40,7 +40,7 @@ namespace MyCompany.VariableExplorer.UI
         {
             DebugPropertyViewModel vm = new DebugPropertyViewModel()
             {
-                Name = debugPropertyInfo.Name,
+                Name = debugPropertyInfo.FullName,
                 Value = "Expandable",
                 ValueType = debugPropertyInfo.ValueType
             };

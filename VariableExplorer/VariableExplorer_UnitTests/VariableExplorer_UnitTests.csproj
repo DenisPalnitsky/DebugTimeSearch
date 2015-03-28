@@ -93,6 +93,7 @@
     <Compile Include="MyToolWindowTest\ShowToolWindow.cs" />
     <Compile Include="MyToolWindowTest\WindowFrameMock.cs" />
     <Compile Include="MyToolWindowTest\UIShellServiceMock.cs" />
+    <Compile Include="PropertyInfoEnumeratorTest.cs" />
     <Compile Include="TestObservableObject.cs" />
     <!---->
     <!---->

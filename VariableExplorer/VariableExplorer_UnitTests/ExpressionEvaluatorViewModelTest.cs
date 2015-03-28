@@ -17,6 +17,7 @@ namespace VariableExplorer_UnitTests
         [Test]
         public void EvaluateExpressionCommand_sets_property()
         {            
+            // Arrange
             var expressionEvaluatorMock = new Mock<IExpressionEvaluator>();            
             var debugPropertMock = new Mock<IDebugProperty>();            
             debugPropertMock.Setup(s=>s.Children).Returns(
@@ -34,7 +35,10 @@ namespace VariableExplorer_UnitTests
 
             ExpressionEvaluatorViewModel objectUnderTest = new ExpressionEvaluatorViewModel();
             objectUnderTest.ExpressionText = "a";
+            // Act
             objectUnderTest.EvaluateExpressionCommand.Execute(null);
+
+            // Assert
             Assert.AreEqual(2, objectUnderTest.Properties.Count());
          
             //objectUnderTest.Properties

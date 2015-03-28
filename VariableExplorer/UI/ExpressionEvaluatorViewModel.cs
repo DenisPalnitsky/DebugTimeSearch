@@ -16,6 +16,7 @@ namespace MyCompany.VariableExplorer.UI
         IDebugProperty _property;
         string _expressionText;
         string _logText;
+        IEnumerable<DebugPropertyViewModel> _visibleProperties;
 
         public ExpressionEvaluatorViewModel()
         {
@@ -34,7 +35,10 @@ namespace MyCompany.VariableExplorer.UI
         
         public ICommand EvaluateExpressionCommand
         {
-            get { return new DelegateCommand( EvaluateExpression ); }
+            get 
+            {                
+                return new DelegateCommand( EvaluateExpression ); 
+            }
         }
 
         public string LogText
@@ -50,29 +54,45 @@ namespace MyCompany.VariableExplorer.UI
 
         private void EvaluateExpression()
         {
-            var expressionEvaluatorProvider = IocContainer.Resolve<IExpressionEvaluatorProvider>();
-
-            if (expressionEvaluatorProvider.IsEvaluatorAvailable )
+            try
             {
-                _property = expressionEvaluatorProvider.ExpressionEvaluator.EvaluateExpression(ExpressionText);                                
-                OnPropertyChanged(()=> Properties);                
+                var expressionEvaluatorProvider = IocContainer.Resolve<IExpressionEvaluatorProvider>();
+
+                if (expressionEvaluatorProvider.IsEvaluatorAvailable)
+                {
+                    _property = expressionEvaluatorProvider.ExpressionEvaluator.EvaluateExpression(ExpressionText);
+
+                    var result = new List<DebugPropertyViewModel>();
+
+                    if (_property != null)
+                    {
+                        //foreach (var childProperty in PropertyInfoEnumerator.Enumerate(_property.Children, expressionEvaluatorProvider))
+                        //    result.Add(DebugPropertyViewModel.From(childProperty));
+                        foreach (var childProperty in _property.Children)
+                            result.Add(DebugPropertyViewModel.From(childProperty));
+                    }
+                    Properties = result;
+                }
+                else
+                    LogText = "ExpressionEvaluator is not initialized";
             }
-            else
-                LogText = "ExpressionEvaluator is not initialized";
+            catch (Exception e)
+            {                
+                LogText = e.ToString();
+            }
         }
 
         public IEnumerable<DebugPropertyViewModel> Properties  
         { 
             get 
             {
-                var result = new List<DebugPropertyViewModel>();
-                if (_property != null)
-                {
-                    result.Add(DebugPropertyViewModel.From(_property.PropertyInfo ));                    
-                    result.AddRange(_property.Children.Select( c=> DebugPropertyViewModel.From(c)));
-                    
-                }
-                return result;
+                return _visibleProperties;              
+            }
+
+            set
+            {
+                _visibleProperties = value;
+                OnPropertyChanged(() => Properties);
             }
         }
 
