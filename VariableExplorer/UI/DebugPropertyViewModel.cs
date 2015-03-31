@@ -9,6 +9,7 @@ namespace MyCompany.VariableExplorer.UI
     {
         public string Name { get; private set; }
         public string Value { get; private set; }
+        public string FullName { get; private set; }
         public string ValueType { get; private set; }
 
         private DebugPropertyViewModel() { }
@@ -28,9 +29,11 @@ namespace MyCompany.VariableExplorer.UI
         {
             DebugPropertyViewModel vm = new DebugPropertyViewModel()
             {
-                Name = debugPropertyInfo.FullName,
+                Name = debugPropertyInfo.Name,
                 Value = debugPropertyInfo.Value,
-                ValueType = debugPropertyInfo.ValueType
+                ValueType = debugPropertyInfo.ValueType,
+                FullName = debugPropertyInfo.FullName
+
             };
 
             return vm;
@@ -40,9 +43,10 @@ namespace MyCompany.VariableExplorer.UI
         {
             DebugPropertyViewModel vm = new DebugPropertyViewModel()
             {
-                Name = debugPropertyInfo.FullName,
+                Name = debugPropertyInfo.Name,
                 Value = "Expandable",
-                ValueType = debugPropertyInfo.ValueType
+                ValueType = debugPropertyInfo.ValueType,
+                FullName = debugPropertyInfo.FullName
             };
 
             return vm;

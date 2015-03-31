@@ -66,10 +66,10 @@ namespace MyCompany.VariableExplorer.UI
 
                     if (_property != null)
                     {
-                        //foreach (var childProperty in PropertyInfoEnumerator.Enumerate(_property.Children, expressionEvaluatorProvider))
-                        //    result.Add(DebugPropertyViewModel.From(childProperty));
-                        foreach (var childProperty in _property.Children)
+                        foreach (var childProperty in PropertyInfoEnumerator.Enumerate(_property.Children, expressionEvaluatorProvider))
                             result.Add(DebugPropertyViewModel.From(childProperty));
+                        //foreach (var childProperty in _property.Children)
+                        //    result.Add(DebugPropertyViewModel.From(childProperty));
                     }
                     Properties = result;
                 }

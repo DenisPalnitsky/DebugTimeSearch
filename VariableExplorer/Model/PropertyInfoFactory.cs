@@ -10,7 +10,9 @@ namespace MyCompany.VariableExplorer.Model
 {
     class PropertyInfoFactory
     {
-        public static IPropertyInfo Create(DEBUG_PROPERTY_INFO propertyInfo ) 
+        Dictionary<string, IPropertyInfo> _evaluatedProperties = new Dictionary<string, IPropertyInfo>();
+
+        public IPropertyInfo Create(DEBUG_PROPERTY_INFO propertyInfo ) 
         {
             if (propertyInfo.dwAttrib.HasFlag(enum_DBG_ATTRIB_FLAGS.DBG_ATTRIB_OBJ_IS_EXPANDABLE))
             {
@@ -24,8 +26,13 @@ namespace MyCompany.VariableExplorer.Model
                     var expressionEvaluatorProvider = IocContainer.Resolve<IExpressionEvaluatorProvider>();
                     if (expressionEvaluatorProvider.IsEvaluatorAvailable)
                     {
-                        IDebugProperty property = expressionEvaluatorProvider.ExpressionEvaluator.EvaluateExpression(propertyInfo.bstrFullName);
-                        return property.PropertyInfo;                                                
+                        if (!_evaluatedProperties.ContainsKey(propertyInfo.bstrFullName))
+                        {
+                            IDebugProperty property = expressionEvaluatorProvider.ExpressionEvaluator.EvaluateExpression(propertyInfo.bstrFullName);
+                            return property.PropertyInfo;
+                        }
+                        else
+                            return _evaluatedProperties[propertyInfo.bstrFullName];
                     }
                     else
                     {

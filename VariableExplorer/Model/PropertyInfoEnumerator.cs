@@ -15,8 +15,6 @@ namespace MyCompany.VariableExplorer.Model
         internal static IEnumerable<IValuePropertyInfo> Enumerate(IEnumerable<IPropertyInfo> propertyInfo, 
                                                                IExpressionEvaluatorProvider exparessionEvaluatorProvider)
         {
-
-            // TODO: Fight recursion 
             foreach (var property in propertyInfo)
             {
                 var valueProperty  = property as IValuePropertyInfo;
@@ -24,7 +22,8 @@ namespace MyCompany.VariableExplorer.Model
                     yield return valueProperty;
                 else if (property is IExpandablePropertyInfo)
                 {
-                    if (exparessionEvaluatorProvider.IsEvaluatorAvailable)
+                    // property name in [] means that it's parent property and should not be evaluated
+                    if ((!property.Name.StartsWith("[") && !property.Name.EndsWith("]") && exparessionEvaluatorProvider.IsEvaluatorAvailable ))
                     {
                         foreach (var child in Enumerate(exparessionEvaluatorProvider.ExpressionEvaluator.EvaluateExpression(property.FullName).Children,
                                                     exparessionEvaluatorProvider))

@@ -14,16 +14,16 @@ namespace MyCompany.VariableExplorer.Model
         public ValuePropertyInfo(string fullName, string name, string valueType, string value)
             : this(fullName, name, valueType)
         {
-            _value = value;
-            IsValueEvaluated = true;
+            _value = value;            
         }
 
         public ValuePropertyInfo(string fullName, string name, string valueType) 
         {
+            if (String.IsNullOrEmpty(fullName) || String.IsNullOrEmpty(name) || String.IsNullOrEmpty(valueType))
+                throw new InvalidOperationException("Name and ValueType should not be null");
             Name = name;            
             ValueType = valueType;
-            FullName = fullName;            
-            IsValueEvaluated = false;
+            FullName = fullName;                        
         }
 
         public string ValueType
@@ -51,7 +51,6 @@ namespace MyCompany.VariableExplorer.Model
             get;
             private set;
         }
-
-        public bool IsValueEvaluated { get; private set; }
+      
     }
 }
