@@ -66,6 +66,11 @@ namespace MyCompany.VariableExplorer.UI
 
                     if (_property != null)
                     {
+                        if ( _property.PropertyInfo is ValuePropertyInfo )
+                        {
+                            result.Add(DebugPropertyViewModel.From(_property.PropertyInfo));
+                        }
+
                         foreach (var childProperty in PropertyInfoEnumerator.Enumerate(_property.Children, expressionEvaluatorProvider))
                             result.Add(DebugPropertyViewModel.From(childProperty));
                         //foreach (var childProperty in _property.Children)
