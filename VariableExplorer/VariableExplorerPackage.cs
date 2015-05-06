@@ -19,6 +19,9 @@ using Microsoft.VisualStudio.TextManager.Interop;
 using Microsoft.VisualStudio.Debugger.Interop;
 using EnvDTE;
 using MyCompany.VariableExplorer.Model;
+using Microsoft.VisualStudio.Text.Editor;
+using Microsoft.VisualStudio.Editor;
+using MyCompany.VariableExplorer.EditorHelper;
 
 namespace MyCompany.VariableExplorer
 {
@@ -123,10 +126,18 @@ namespace MyCompany.VariableExplorer
                 CommandID menuCommandID = new CommandID(GuidList.guidVariableExplorerCmdSet, (int)PkgCmdIDList.cmdidMyCommand);
                 MenuCommand menuItem = new MenuCommand(MenuItemCallback, menuCommandID);
                 mcs.AddCommand(menuItem);
+
                 // Create the command for the tool window
                 CommandID toolwndCommandID = new CommandID(GuidList.guidVariableExplorerCmdSet, (int)PkgCmdIDList.cmdidMyTool);
                 MenuCommand menuToolWin = new MenuCommand(ShowToolWindow, toolwndCommandID);
                 mcs.AddCommand(menuToolWin);
+
+                // Create the command for the context menu
+                //CommandID contextMenuCommandID = new CommandID(GuidList.guidVariableExplorerCmdSet, (int)PkgCmdIDList.cmdidBrowseVariable);
+                //MenuCommand contextMenuToolWin = new MenuCommand(ShowToolWindow, contextMenuCommandID);
+                //mcs.AddCommand(contextMenuToolWin);
+
+
             }
         }
         #endregion
@@ -141,13 +152,20 @@ namespace MyCompany.VariableExplorer
             // Show a Message Box to prove we were here
             IVsUIShell uiShell = (IVsUIShell)GetService(typeof(SVsUIShell));
             Guid clsid = Guid.Empty;
-            int result;         
+            int result;
+
+            IVsTextManager txtMgr = VisualStudioServices.GetService<SVsTextManager,IVsTextManager>();
+            int mustHaveFocus = 1;
+            IVsTextView vTextView = null;            
+            txtMgr.GetActiveView(mustHaveFocus, null, out vTextView);
+                        
             
+
             Microsoft.VisualStudio.ErrorHandler.ThrowOnFailure(uiShell.ShowMessageBox(
                        0,
                        ref clsid,
                        "VariableExplorer",
-                       string.Format(CultureInfo.CurrentCulture, "Inside {0}.MenuItemCallback()", this.ToString()),
+                       string.Format(CultureInfo.CurrentCulture, "Inside {0}.MenuItemCallback(). Text under cursor: '{1}'", this.ToString(), CodeUnderCursor.GetExpression(vTextView)),
                        //objectDump,
                        string.Empty,
                        0,
@@ -158,5 +176,29 @@ namespace MyCompany.VariableExplorer
                        out result));
         }
 
+
+        private IWpfTextView GetActiveTextView()
+        {
+            IWpfTextView view = null;
+            IVsTextView vTextView = null;
+
+            IVsTextManager txtMgr =
+                (IVsTextManager)GetService(typeof(SVsTextManager));
+            int mustHaveFocus = 1;
+            txtMgr.GetActiveView(mustHaveFocus, null, out vTextView);
+
+            IVsUserData userData = vTextView as IVsUserData;
+            if (null != userData)
+            {
+                IWpfTextViewHost viewHost;
+                object holder;
+                Guid guidViewHost = DefGuidList.guidIWpfTextViewHost;
+                userData.GetData(ref guidViewHost, out holder);
+                viewHost = (IWpfTextViewHost)holder;
+                view = viewHost.TextView;
+            }
+
+            return view;
+        }
     }
 }

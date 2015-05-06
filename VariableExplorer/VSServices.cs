@@ -208,7 +208,7 @@ namespace MyCompany.VariableExplorer
       {
         object service = VisualStudioServices._serviceProvider.GetService(index);
         if (service == null)
-          throw new ExternalException("");
+            throw new ExternalException("Can't get service " + index);
         VisualStudioServices._serviceCache[index] = service;
       }
       TReturnType returnType = VisualStudioServices._serviceCache[index] as TReturnType;

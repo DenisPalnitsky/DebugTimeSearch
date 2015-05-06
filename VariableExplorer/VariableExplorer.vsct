@@ -42,8 +42,12 @@
     <Groups>
 
       <Group guid="guidVariableExplorerCmdSet" id="MyMenuGroup" priority="0x0600">
-        <Parent guid="guidSHLMainMenu" id="IDM_VS_MENU_TOOLS"/>
+        <Parent guid="guidSHLMainMenu" id="IDM_VS_CTXT_CODEWIN"/>
       </Group>
+      
+      <!--<Group guid="guidVariableExplorerCmdSet" id="MyMenuGroup" priority="0x0600">
+        <Parent guid="guidSHLMainMenu" id="IDM_VS_CTXT_CODEWIN"/>
+      </Group>-->
       
 
 
@@ -65,7 +69,7 @@
         <Parent guid="guidVariableExplorerCmdSet" id="MyMenuGroup" />
         <Icon guid="guidImages" id="bmpPic1" />
         <Strings>
-          <ButtonText>My Command name</ButtonText>
+          <ButtonText>View Variable Explorer</ButtonText>
         </Strings>
       </Button>
 
@@ -77,8 +81,7 @@
           <ButtonText>My Tool Window</ButtonText>
         </Strings>
       </Button>
-
-
+            
     </Buttons>
    
     <!--The bitmaps section is used to define the bitmaps that are used for the commands.-->
@@ -108,6 +111,7 @@
       <IDSymbol name="MyMenuGroup" value="0x1020" />
       <IDSymbol name="cmdidMyCommand" value="0x0100" />
       <IDSymbol name="cmdidMyTool" value="0x0101" />
+      <IDSymbol name="cmdidBrowseVariable" value="0x1101" />
     </GuidSymbol>
     
     
