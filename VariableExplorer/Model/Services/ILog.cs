@@ -5,9 +5,9 @@ using System.Text;
 
 namespace MyCompany.VariableExplorer.Model.Services
 {
-    interface ILogger
+    interface ILog
     {
         void Info(string message, params object[] parameters);
-        
+        void Error(string message, params object[] parameters);        
     }
 }

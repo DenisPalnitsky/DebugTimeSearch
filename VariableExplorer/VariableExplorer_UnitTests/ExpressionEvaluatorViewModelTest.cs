@@ -33,7 +33,7 @@ namespace VariableExplorer_UnitTests
 
             IocContainer.RegisterInstance<IExpressionEvaluatorProvider>(expressionEvaluatorProviderMock.Object);
 
-            ExpressionEvaluatorViewModel objectUnderTest = new ExpressionEvaluatorViewModel();
+            ExpressionEvaluatorViewModel objectUnderTest = new ExpressionEvaluatorViewModel(Mock.Of<ILog>() );
             objectUnderTest.ExpressionText = "a";
             // Act
             objectUnderTest.EvaluateExpressionCommand.Execute(null);

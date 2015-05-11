@@ -11,16 +11,16 @@ using MyCompany.VariableExplorer.Model.Services;
 
 namespace MyCompany.VariableExplorer.UI
 {
-    class ExpressionEvaluatorViewModel : ObservableObject
+    class ExpressionEvaluatorViewModel : ObservableObject, MyCompany.VariableExplorer.UI.IExpressionEvaluatorViewModel
     {
         IDebugProperty _property;
         string _expressionText;
-        string _logText;
         IEnumerable<DebugPropertyViewModel> _visibleProperties;
+        ILog _logger;
 
-        public ExpressionEvaluatorViewModel()
+        public ExpressionEvaluatorViewModel(ILog logger)
         {
-            IocContainer.RegisterInstance<ILogger>(new  RedirectLogger( m => { LogText += m; } ));
+            _logger = logger;
         }
 
         public string ExpressionText
@@ -29,6 +29,7 @@ namespace MyCompany.VariableExplorer.UI
             set 
             { 
                 _expressionText = value;
+                EvaluateExpression();
                 OnPropertyChanged();
             }
         }
@@ -40,17 +41,7 @@ namespace MyCompany.VariableExplorer.UI
                 return new DelegateCommand( EvaluateExpression ); 
             }
         }
-
-        public string LogText
-        {
-            get { return _logText; }
-         
-            set
-            {
-                _logText = value;
-                OnPropertyChanged();
-            }
-        }
+        
 
         private void EvaluateExpression()
         {
@@ -66,7 +57,7 @@ namespace MyCompany.VariableExplorer.UI
 
                     if (_property != null)
                     {
-                        if ( _property.PropertyInfo is ValuePropertyInfo )
+                        if (_property.PropertyInfo is ValuePropertyInfo)
                         {
                             result.Add(DebugPropertyViewModel.From(_property.PropertyInfo));
                         }
@@ -79,11 +70,11 @@ namespace MyCompany.VariableExplorer.UI
                     Properties = result;
                 }
                 else
-                    LogText = "ExpressionEvaluator is not initialized";
+                    _logger.Info("ExpressionEvaluator is not initialized");
             }
             catch (Exception e)
-            {                
-                LogText = e.ToString();
+            {
+                _logger.Info("Exception during EvaluateExpression. {0} ",e.ToString());
             }
         }
 

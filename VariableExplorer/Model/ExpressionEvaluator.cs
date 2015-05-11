@@ -11,7 +11,7 @@ namespace MyCompany.VariableExplorer.Model
 {
     class ExpressionEvaluator : IExpressionEvaluator
     {       
-        ILogger _log = IocContainer.Resolve<ILogger>();
+        ILog _log = IocContainer.Resolve<ILog>();
 
         public ExpressionEvaluator(IDebugStackFrame2 stackFrame )
         {
@@ -22,6 +22,11 @@ namespace MyCompany.VariableExplorer.Model
 
         public IDebugProperty EvaluateExpression(string expression)
         {
+            if (string.IsNullOrEmpty(expression))
+            {
+                throw new ArgumentNullException("Expression is empty");
+            }
+
             _log.Info("Evaluating expression {0}. CurrentTime {1:H:mm:ss.ffff}", expression, DateTime.Now);
             IDebugProperty2 debugProperty = GetVsDebugProperty(expression);
             _log.Info("Done evaluating expression {0}. CurrentTime {1:H:mm:ss.ffff}", expression, DateTime.Now);

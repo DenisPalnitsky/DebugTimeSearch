@@ -145,7 +145,7 @@
   <ItemGroup>
     <Compile Include="EditorHelper\CodeUnderCursor.cs" />
     <Compile Include="Model\PropertyInfoEnumerator.cs" />
-    <Compile Include="Model\Services\ILogger.cs" />
+    <Compile Include="Model\Services\ILog.cs" />
     <Compile Include="Model\PropertyInfoFactory.cs" />
     <Compile Include="Model\ExpandablePropertyInfo.cs" />
     <Compile Include="Model\ExpressionEvaluatorProvider.cs" />
@@ -182,8 +182,8 @@
     </Compile>
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="UI\ExpressionEvaluatorViewModel.cs" />
+    <Compile Include="UI\IExpressionEvaluatorViewModel.cs" />
     <Compile Include="UI\ObservableObject.cs" />
-    <Compile Include="UI\RedirectLogger.cs" />
     <Compile Include="VariableExplorerPackage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PkgCmdID.cs" />

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MyCompany.VariableExplorer.Model.Services;
+using MyCompany.VariableExplorer.UI;
 
 namespace MyCompany.VariableExplorer.Model.Services
 {
@@ -28,7 +29,8 @@ namespace MyCompany.VariableExplorer.Model.Services
         public static void DefaultRegistration ()
         {
             Register<IConfiguration, Configuration>();
-            Register<ILogger, OutputWindowLogger>();
+            Register<ILog, OutputWindowLogger>();            
+            RegisterInstance<IExpressionEvaluatorViewModel>(new  ExpressionEvaluatorViewModel(Resolve<ILog>()));
         }
 
         

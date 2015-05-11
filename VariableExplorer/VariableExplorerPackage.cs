@@ -72,15 +72,20 @@ namespace MyCompany.VariableExplorer
         /// </summary>
         private void ShowToolWindow(object sender, EventArgs e)
         {
+            ShowToolWindow();
+        }
+
+        private void ShowToolWindow()
+        {
             // Get the instance number 0 of this tool window. This window is single instance so this instance
             // is actually the only one.
             // The last flag is set to true so that if the tool window does not exists it will be created.
-            ToolWindowPane window = this.FindToolWindow(typeof(MyToolWindow), 0, true);
+            MyToolWindow window = (MyToolWindow)this.FindToolWindow(typeof(MyToolWindow), 0, true);
             if ((null == window) || (null == window.Frame))
             {
                 throw new NotSupportedException(Resources.CanNotCreateWindow);
             }
-                        
+            
             IVsWindowFrame windowFrame = (IVsWindowFrame)window.Frame;
             Microsoft.VisualStudio.ErrorHandler.ThrowOnFailure(windowFrame.Show());
         }
@@ -158,22 +163,27 @@ namespace MyCompany.VariableExplorer
             int mustHaveFocus = 1;
             IVsTextView vTextView = null;            
             txtMgr.GetActiveView(mustHaveFocus, null, out vTextView);
-                        
-            
+                
+            string textUnderCursor =  CodeUnderCursor.GetExpression(vTextView);
+            var expressionEvaluatorViewModel = MyCompany.VariableExplorer.Model.Services.IocContainer.Resolve<MyCompany.VariableExplorer.UI.IExpressionEvaluatorViewModel>();
+            expressionEvaluatorViewModel.ExpressionText = textUnderCursor;
+            ShowToolWindow();
 
-            Microsoft.VisualStudio.ErrorHandler.ThrowOnFailure(uiShell.ShowMessageBox(
-                       0,
-                       ref clsid,
-                       "VariableExplorer",
-                       string.Format(CultureInfo.CurrentCulture, "Inside {0}.MenuItemCallback(). Text under cursor: '{1}'", this.ToString(), CodeUnderCursor.GetExpression(vTextView)),
-                       //objectDump,
-                       string.Empty,
-                       0,
-                       OLEMSGBUTTON.OLEMSGBUTTON_OK,
-                       OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST,
-                       OLEMSGICON.OLEMSGICON_INFO,
-                       0,        // false
-                       out result));
+                
+
+            //Microsoft.VisualStudio.ErrorHandler.ThrowOnFailure(uiShell.ShowMessageBox(
+            //           0,
+            //           ref clsid,
+            //           "VariableExplorer",
+            //           string.Format(CultureInfo.CurrentCulture, "Inside {0}.MenuItemCallback(). Text under cursor: '{1}'", this.ToString(), CodeUnderCursor.GetExpression(vTextView)),
+            //           //objectDump,
+            //           string.Empty,
+            //           0,
+            //           OLEMSGBUTTON.OLEMSGBUTTON_OK,
+            //           OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST,
+            //           OLEMSGICON.OLEMSGICON_INFO,
+            //           0,        // false
+            //           out result));
         }
 
 

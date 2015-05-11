@@ -11,7 +11,7 @@ namespace MyCompany.VariableExplorer.Model
         IConfiguration _configuration = IocContainer.Resolve<IConfiguration>();
         IEnumerable<IPropertyInfo> _children;
         IDebugProperty2 _vsDebugProperty;
-        ILogger _logger = IocContainer.Resolve<ILogger>();
+        ILog _logger = IocContainer.Resolve<ILog>();
         private const uint ITEMS_TO_FETCH = 10;
         PropertyInfoFactory _propertyInfoFactory = new PropertyInfoFactory();
 
@@ -70,7 +70,7 @@ namespace MyCompany.VariableExplorer.Model
 
         private IEnumerable<IPropertyInfo> GetChildren(IDebugProperty2 debugProperty)
         {
-            var logger = IocContainer.Resolve<ILogger>();
+            var logger = IocContainer.Resolve<ILog>();
             logger.Info("EnumChildren");
 
             IEnumDebugPropertyInfo2 debugPropertyEnum;
