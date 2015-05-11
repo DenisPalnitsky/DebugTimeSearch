@@ -7,15 +7,16 @@
              Foreground="{DynamicResource VsBrush.WindowText}"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300"
-             Name="MyToolWindow">
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="35" />
-            <RowDefinition Height="2*" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
+             Name="MyToolWindow"
+             xmlns:common ="clr-namespace:MyCompany.VariableExplorer.UI.Common">
 
-        <Grid Grid.Row="0" x:Name="ExpressionGrid" Margin="5" >
+    <UserControl.Resources>
+        <common:BoolToVisibilityConverter FalseValue="Collapsed" x:Key="btvc" />
+    </UserControl.Resources>
+
+    <DockPanel >
+
+        <Grid Grid.Row="0" x:Name="ExpressionGrid" Margin="5" DockPanel.Dock="Top" >
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="60" />
@@ -34,7 +35,9 @@
         </Grid>
 
         <DataGrid Name="VariableContent" Grid.Row="1" ItemsSource="{Binding Properties}" 
-                  AutoGenerateColumns="False" SelectionMode="Single" SelectionUnit="CellOrRowHeader"  >
+                  AutoGenerateColumns="False" SelectionMode="Single" SelectionUnit="CellOrRowHeader" 
+                  Visibility="{Binding Path=IsErrorMessageVisible,Converter={common:BoolToVisibilityConverter TrueValue=Collapsed, FalseValue=Visible}}"
+                  VerticalAlignment="Stretch">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Name"  Binding="{Binding Name, Mode=OneWay}" Width="2*" />
                 <DataGridTextColumn Header="Value" Binding="{Binding Value, Mode=OneWay}" Width="*" />
@@ -43,7 +46,9 @@
             </DataGrid.Columns>
         </DataGrid>
 
-        <TextBox Name="TextBlock" Grid.Row="2" IsReadOnly="True" TextWrapping="Wrap" AcceptsReturn="True" Text="{Binding LogText}"  />      
+        <TextBox Name="ErrorTextBlock" Grid.Row="2" IsReadOnly="True" TextWrapping="Wrap" AcceptsReturn="True" Text="{Binding ErrorMessage}"
+                 Visibility="{Binding Path=IsErrorMessageVisible,Converter={common:BoolToVisibilityConverter TrueValue=Visible, FalseValue=Collapsed}}" 
+                 VerticalAlignment="Stretch" />      
              
-    </Grid>
+    </DockPanel>
 </UserControl>

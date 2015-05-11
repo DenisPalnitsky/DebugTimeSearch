@@ -11,12 +11,14 @@ using MyCompany.VariableExplorer.Model.Services;
 
 namespace MyCompany.VariableExplorer.UI
 {
+
     class ExpressionEvaluatorViewModel : ObservableObject, MyCompany.VariableExplorer.UI.IExpressionEvaluatorViewModel
     {
         IDebugProperty _property;
         string _expressionText;
         IEnumerable<DebugPropertyViewModel> _visibleProperties;
         ILog _logger;
+        private string _errorMessage;
 
         public ExpressionEvaluatorViewModel(ILog logger)
         {
@@ -33,6 +35,26 @@ namespace MyCompany.VariableExplorer.UI
                 OnPropertyChanged();
             }
         }
+
+        public string ErrorMessage
+        {
+            get { return _errorMessage; }
+            
+            private set 
+            { 
+                _errorMessage = value;
+                OnPropertyChanged();
+                OnPropertyChanged(()=>IsErrorMessageVisible);
+            }
+        }
+
+        public bool IsErrorMessageVisible
+        {
+            get {  return !String.IsNullOrEmpty(ErrorMessage); }
+        }
+
+
+
         
         public ICommand EvaluateExpressionCommand
         {
@@ -45,6 +67,8 @@ namespace MyCompany.VariableExplorer.UI
 
         private void EvaluateExpression()
         {
+            ErrorMessage = null;
+
             try
             {
                 var expressionEvaluatorProvider = IocContainer.Resolve<IExpressionEvaluatorProvider>();
@@ -70,11 +94,17 @@ namespace MyCompany.VariableExplorer.UI
                     Properties = result;
                 }
                 else
+                {
                     _logger.Info("ExpressionEvaluator is not initialized");
+                    ErrorMessage = "ExpressionEvaluator is not initialized";
+                }
             }
             catch (Exception e)
             {
-                _logger.Info("Exception during EvaluateExpression. {0} ",e.ToString());
+                string errorMessage = String.Format("Exception during EvaluateExpression. {0} ", e.ToString());
+                _logger.Info(errorMessage);
+                ErrorMessage = errorMessage;
+                
             }
         }
 
