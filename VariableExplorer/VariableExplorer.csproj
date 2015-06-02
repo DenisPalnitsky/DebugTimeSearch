@@ -144,7 +144,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EditorHelper\CodeUnderCursor.cs" />
-    <Compile Include="Model\PropertyInfoEnumerator.cs" />
+    <Compile Include="Model\IPropertyVisitor.cs" />
+    <Compile Include="Model\PropertyIterator.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Model\Services\ILog.cs" />
     <Compile Include="Model\PropertyInfoFactory.cs" />
     <Compile Include="Model\ExpandablePropertyInfo.cs" />

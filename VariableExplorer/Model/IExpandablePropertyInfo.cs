@@ -8,5 +8,6 @@ namespace MyCompany.VariableExplorer.Model
 {
     interface IExpandablePropertyInfo : IPropertyInfo
     {
+        
     }
 }

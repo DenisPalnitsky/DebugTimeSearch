@@ -1,9 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 namespace MyCompany.VariableExplorer.Model
 {
     interface IDebugProperty
     {
-        System.Collections.Generic.IEnumerable<IPropertyInfo> Children { get; }
+        IEnumerable<IPropertyInfo> Children { get; }
         IPropertyInfo PropertyInfo { get; }
     }
 }

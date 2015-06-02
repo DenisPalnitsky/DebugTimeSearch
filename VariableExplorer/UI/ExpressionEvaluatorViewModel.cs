@@ -16,13 +16,19 @@ namespace MyCompany.VariableExplorer.UI
     {
         IDebugProperty _property;
         string _expressionText;
-        IEnumerable<DebugPropertyViewModel> _visibleProperties;
+        ObservableCollection<DebugPropertyViewModel> _visibleProperties = new ObservableCollection<DebugPropertyViewModel>();
         ILog _logger;
         private string _errorMessage;
 
         public ExpressionEvaluatorViewModel(ILog logger)
         {
             _logger = logger;
+            _visibleProperties.CollectionChanged += _visibleProperties_CollectionChanged;
+        }
+
+        void _visibleProperties_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            OnPropertyChanged(() => Properties);
         }
 
         public string ExpressionText
@@ -77,21 +83,17 @@ namespace MyCompany.VariableExplorer.UI
                 {
                     _property = expressionEvaluatorProvider.ExpressionEvaluator.EvaluateExpression(ExpressionText);
 
-                    var result = new List<DebugPropertyViewModel>();
+                    _visibleProperties.Clear();
 
                     if (_property != null)
                     {
-                        if (_property.PropertyInfo is ValuePropertyInfo)
-                        {
-                            result.Add(DebugPropertyViewModel.From(_property.PropertyInfo));
-                        }
-
-                        foreach (var childProperty in PropertyInfoEnumerator.Enumerate(_property.Children, expressionEvaluatorProvider))
-                            result.Add(DebugPropertyViewModel.From(childProperty));
-                        //foreach (var childProperty in _property.Children)
-                        //    result.Add(DebugPropertyViewModel.From(childProperty));
-                    }
-                    Properties = result;
+                        PropertyIterator propertyIterator = new PropertyIterator(
+                            expressionEvaluatorProvider,
+                            PropertyIterator.CreateActionBasedVisitor(
+                                    p => _visibleProperties.Add(DebugPropertyViewModel.From(p)) , 
+                                    v=> _visibleProperties.Add(DebugPropertyViewModel.From(v))));
+                        propertyIterator.TraversalOfPropertyTree(_property);                        
+                    }                    
                 }
                 else
                 {
@@ -113,13 +115,21 @@ namespace MyCompany.VariableExplorer.UI
             get 
             {
                 return _visibleProperties;              
-            }
+            }            
+        }
 
-            set
+        public string Json
+        {
+            get
             {
-                _visibleProperties = value;
-                OnPropertyChanged(() => Properties);
-            }
+                StringBuilder text = new StringBuilder();
+                foreach (DebugPropertyViewModel property in Properties)
+                {
+                    text.AppendFormat("{0} = {1}", property.Name, property.Value);
+                }
+
+                return text.ToString();
+            }            
         }
 
     }

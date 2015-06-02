@@ -7,50 +7,47 @@ using System.Threading.Tasks;
 namespace MyCompany.VariableExplorer.Model
 {
     /// <summary>
-    /// Get the flat list of value properties expanding expandable properties
+    /// This shitty class doesn' work
     /// </summary>
-    class PropertyInfoEnumerator 
+    class PropertyIterator 
     {        
         IExpressionEvaluatorProvider _exparessionEvaluatorProvider;
         IPropertyVisitor _propertyVisitor;
+        
 
-
-        public PropertyInfoEnumerator(IExpressionEvaluatorProvider exparessionEvaluatorProvider,
+        public PropertyIterator (IExpressionEvaluatorProvider exparessionEvaluatorProvider,
             IPropertyVisitor propertyVisitor)
         {
             this._exparessionEvaluatorProvider = exparessionEvaluatorProvider;
             _propertyVisitor = propertyVisitor;
         }
+  
 
-        internal IEnumerable<IValuePropertyInfo> Enumerate(IEnumerable<IPropertyInfo> propertyInfo)
+        internal void TraversalOfPropertyTree (
+            IDebugProperty debugProperty)
         {
-            foreach (var property in propertyInfo)
+            // visit root            
+            RiseAppropriateAction(debugProperty.PropertyInfo);
+            
+            // travers all children
+            foreach (var childProperty in debugProperty.Children)
             {
-                var valueProperty  = property as IValuePropertyInfo;
+                var valueProperty = childProperty as IValuePropertyInfo;
                 if (valueProperty != null)
-                {
-                    RiseAppropriateAction(valueProperty);
-                    yield return valueProperty;
-                }
-                else if (property is IExpandablePropertyInfo)
+                    RiseAppropriateAction(childProperty);
+                else if (childProperty is IExpandablePropertyInfo)
                 {
                     // property name in [] means that it's parent property and should not be evaluated
-                    if ((!property.Name.StartsWith("[") && !property.Name.EndsWith("]") && _exparessionEvaluatorProvider.IsEvaluatorAvailable))
+                    if ((!childProperty.Name.StartsWith("[") && !childProperty.Name.EndsWith("]") && _exparessionEvaluatorProvider.IsEvaluatorAvailable))
                     {
-                        foreach (var child in Enumerate(_exparessionEvaluatorProvider.ExpressionEvaluator.EvaluateExpression(property.FullName).Children))
-                        {
-                            RiseAppropriateAction(child);
-                            yield return child;
-                        }
+                        TraversalOfPropertyTree(_exparessionEvaluatorProvider.ExpressionEvaluator.EvaluateExpression(childProperty.FullName));                        
                     }
                 }
                 else
                     throw new NotSupportedException("This property info type is not supported. Contact developer.");
             }
-
         }
 
-        #region Visitor stuff
         private void RiseAppropriateAction(IPropertyInfo propertyInfo)
         {
             if (propertyInfo == null)
@@ -64,7 +61,7 @@ namespace MyCompany.VariableExplorer.Model
                 throw new NotSupportedException("This property info type is not supported. Contact developer.");
         }
 
-        public static IPropertyVisitor CreateActionBasedVisitor(Action<IExpandablePropertyInfo> expandablePropertyAttended,
+        public static IPropertyVisitor  CreateActionBasedVisitor(Action<IExpandablePropertyInfo> expandablePropertyAttended,
                 Action<IValuePropertyInfo> valuePropertyAttended)
         {
             return new ActionBasedPropertyVisitor(expandablePropertyAttended, valuePropertyAttended);
@@ -91,6 +88,5 @@ namespace MyCompany.VariableExplorer.Model
                 _valuePropertyAttended(valuePropertyInfo);
             }
         }    
-        #endregion
     }
 }
