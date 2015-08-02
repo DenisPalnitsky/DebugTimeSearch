@@ -14,8 +14,13 @@
         <common:BoolToVisibilityConverter FalseValue="Collapsed" x:Key="btvc" />
     </UserControl.Resources>
 
-    <DockPanel >
-        <Grid Grid.Row="0" x:Name="ExpressionGrid" Margin="5" DockPanel.Dock="Top" >
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid x:Name="ExpressionGrid" Margin="5" DockPanel.Dock="Top" >
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="60" />
@@ -33,12 +38,13 @@
                     Padding="0" Margin="0" />
         </Grid>
 
-        <TabControl Grid.Row="1" >
+        <TabControl Grid.Row="1">
             <TabItem Header="Grid">
-                <DataGrid Name="VariableContent" ItemsSource="{Binding Properties}" 
-                  AutoGenerateColumns="False" SelectionMode="Single" SelectionUnit="CellOrRowHeader" 
-                  Visibility="{Binding Path=IsErrorMessageVisible,Converter={common:BoolToVisibilityConverter TrueValue=Collapsed, FalseValue=Visible}}"
-                  VerticalAlignment="Stretch">
+                <DataGrid Name="VariableContent" 
+                          ItemsSource="{Binding Properties}" 
+                          AutoGenerateColumns="False" SelectionMode="Single" SelectionUnit="CellOrRowHeader" 
+                          Visibility="{Binding Path=IsErrorMessageVisible,Converter={common:BoolToVisibilityConverter TrueValue=Collapsed, FalseValue=Visible}}"
+                          VerticalAlignment="Stretch">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Name"  Binding="{Binding Name, Mode=OneWay}" Width="2*" />
                         <DataGridTextColumn Header="Value" Binding="{Binding Value, Mode=OneWay}" Width="*" />
@@ -46,16 +52,17 @@
                         <DataGridTextColumn Header="Full Name" Binding="{Binding FullName, Mode=OneWay}" Width="*" />
                     </DataGrid.Columns>
                 </DataGrid>
-            </TabItem>
-            <TabItem Header="Text">
-                <TextBox Text="{Binding Json, Mode=OneWay}"  IsReadOnly="true" ></TextBox>
-            </TabItem>
+            </TabItem>       
         </TabControl>
-      
 
-        <TextBox Name="ErrorTextBlock" Grid.Row="2" IsReadOnly="True" TextWrapping="Wrap" AcceptsReturn="True" Text="{Binding ErrorMessage}"
+        <TextBox Name="ErrorTextBlock" 
+                 IsReadOnly="True" 
+                 TextWrapping="Wrap" 
+                 AcceptsReturn="True" 
+                 Text="{Binding ErrorMessage}"
                  Visibility="{Binding Path=IsErrorMessageVisible,Converter={common:BoolToVisibilityConverter TrueValue=Visible, FalseValue=Collapsed}}" 
-                 VerticalAlignment="Stretch" />      
-             
-    </DockPanel>
+                 DockPanel.Dock="Bottom"
+                 Grid.Row="2" Height="200"/>
+
+    </Grid>
 </UserControl>

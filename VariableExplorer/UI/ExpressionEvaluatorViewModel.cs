@@ -8,6 +8,8 @@ using MyCompany.VariableExplorer.Model;
 using System.Windows.Input;
 using System.Collections.ObjectModel;
 using MyCompany.VariableExplorer.Model.Services;
+using System.Windows;
+using System.Windows.Threading;
 
 namespace MyCompany.VariableExplorer.UI
 {
@@ -17,6 +19,8 @@ namespace MyCompany.VariableExplorer.UI
         IDebugProperty _property;
         string _expressionText;
         ObservableCollection<DebugPropertyViewModel> _visibleProperties = new ObservableCollection<DebugPropertyViewModel>();
+        object _visiblePropertiesLock = new object();
+
         ILog _logger;
         private string _errorMessage;
 
@@ -24,6 +28,7 @@ namespace MyCompany.VariableExplorer.UI
         {
             _logger = logger;
             _visibleProperties.CollectionChanged += _visibleProperties_CollectionChanged;
+            System.Windows.Data.BindingOperations.EnableCollectionSynchronization(_visibleProperties, _visiblePropertiesLock);
         }
 
         void _visibleProperties_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -83,16 +88,31 @@ namespace MyCompany.VariableExplorer.UI
                 {
                     _property = expressionEvaluatorProvider.ExpressionEvaluator.EvaluateExpression(ExpressionText);
 
+                    
                     _visibleProperties.Clear();
+                    
 
+                    //throw new Exception("PUT FUCKING THREADING TOGEATHER");
+                    
+                                        
                     if (_property != null)
-                    {
+                    {                                                
+                        var eventSink = PropertyIterator.CreateThreadSafeActionBasedVisitor(
+                                    p => 
+                                        {
+                                            Application.Current.Dispatcher.Invoke(()=>_visibleProperties.Add(DebugPropertyViewModel.From(p)));
+                                        }, 
+                                    v=> {
+                                            Application.Current.Dispatcher.Invoke(() => _visibleProperties.Add(DebugPropertyViewModel.From(v)));
+                                        });
+
                         PropertyIterator propertyIterator = new PropertyIterator(
                             expressionEvaluatorProvider,
-                            PropertyIterator.CreateActionBasedVisitor(
-                                    p => _visibleProperties.Add(DebugPropertyViewModel.From(p)) , 
-                                    v=> _visibleProperties.Add(DebugPropertyViewModel.From(v))));
-                        propertyIterator.TraversalOfPropertyTree(_property);                        
+                            eventSink);
+
+                        propertyIterator.ParrallelTraversalOfPropertyTreeDeepFirst(_property);
+
+                    
                     }                    
                 }
                 else
@@ -117,20 +137,6 @@ namespace MyCompany.VariableExplorer.UI
                 return _visibleProperties;              
             }            
         }
-
-        public string Json
-        {
-            get
-            {
-                StringBuilder text = new StringBuilder();
-                foreach (DebugPropertyViewModel property in Properties)
-                {
-                    text.AppendFormat("{0} = {1}", property.Name, property.Value);
-                }
-
-                return text.ToString();
-            }            
-        }
-
+      
     }
 }

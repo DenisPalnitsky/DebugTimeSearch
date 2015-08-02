@@ -13,7 +13,7 @@ namespace MyCompany.VariableExplorer.Model
     {        
         IExpressionEvaluatorProvider _exparessionEvaluatorProvider;
         IPropertyVisitor _propertyVisitor;
-        
+        TaskFactory _taskFactory = new TaskFactory();
 
         public PropertyIterator (IExpressionEvaluatorProvider exparessionEvaluatorProvider,
             IPropertyVisitor propertyVisitor)
@@ -23,7 +23,7 @@ namespace MyCompany.VariableExplorer.Model
         }
   
 
-        internal void TraversalOfPropertyTree (
+        internal void TraversalOfPropertyTreeDeepFirst (
             IDebugProperty debugProperty)
         {
             // visit root            
@@ -34,18 +34,26 @@ namespace MyCompany.VariableExplorer.Model
             {
                 var valueProperty = childProperty as IValuePropertyInfo;
                 if (valueProperty != null)
+                {
                     RiseAppropriateAction(childProperty);
+                }
                 else if (childProperty is IExpandablePropertyInfo)
                 {
                     // property name in [] means that it's parent property and should not be evaluated
                     if ((!childProperty.Name.StartsWith("[") && !childProperty.Name.EndsWith("]") && _exparessionEvaluatorProvider.IsEvaluatorAvailable))
                     {
-                        TraversalOfPropertyTree(_exparessionEvaluatorProvider.ExpressionEvaluator.EvaluateExpression(childProperty.FullName));                        
+                        ParrallelTraversalOfPropertyTreeDeepFirst(_exparessionEvaluatorProvider.ExpressionEvaluator.EvaluateExpression(childProperty.FullName));
                     }
                 }
                 else
                     throw new NotSupportedException("This property info type is not supported. Contact developer.");
             }
+        }
+
+       internal Task ParrallelTraversalOfPropertyTreeDeepFirst(
+            IDebugProperty debugProperty)
+        {
+            return _taskFactory.StartNew(() => TraversalOfPropertyTreeDeepFirst(debugProperty));
         }
 
         private void RiseAppropriateAction(IPropertyInfo propertyInfo)
@@ -67,10 +75,19 @@ namespace MyCompany.VariableExplorer.Model
             return new ActionBasedPropertyVisitor(expandablePropertyAttended, valuePropertyAttended);
         }
 
+        public static IPropertyVisitor CreateThreadSafeActionBasedVisitor(Action<IExpandablePropertyInfo> expandablePropertyAttended,
+               Action<IValuePropertyInfo> valuePropertyAttended)
+        {
+            return new ThreadSafeActionBasedPropertyVisitor(expandablePropertyAttended, valuePropertyAttended);
+        }
+
+        #region InternalCalsses
+
         private class ActionBasedPropertyVisitor : IPropertyVisitor
         {
             private Action<IExpandablePropertyInfo> _expandablePropertyAttended;
             private Action<IValuePropertyInfo> _valuePropertyAttended;
+            
             public ActionBasedPropertyVisitor(Action<IExpandablePropertyInfo> expandablePropertyAttended,
                 Action<IValuePropertyInfo> valuePropertyAttended)
             {
@@ -78,15 +95,44 @@ namespace MyCompany.VariableExplorer.Model
                 _valuePropertyAttended = valuePropertyAttended;
             }
 
-            public void ParentPropertyAttended(IExpandablePropertyInfo expandablePropertyInfo)
+            public virtual  void ParentPropertyAttended(IExpandablePropertyInfo expandablePropertyInfo)
             {
                 _expandablePropertyAttended(expandablePropertyInfo);
             }
 
-            public void ValuePropertyAttended(IValuePropertyInfo valuePropertyInfo)
+            public virtual void ValuePropertyAttended(IValuePropertyInfo valuePropertyInfo)
             {
                 _valuePropertyAttended(valuePropertyInfo);
             }
-        }    
+        }
+
+        private class ThreadSafeActionBasedPropertyVisitor : ActionBasedPropertyVisitor
+        {
+            object lockObject = new object();
+
+            public ThreadSafeActionBasedPropertyVisitor(Action<IExpandablePropertyInfo> expandablePropertyAttended,
+                Action<IValuePropertyInfo> valuePropertyAttended)
+                : base(expandablePropertyAttended, valuePropertyAttended)
+            {                
+            }
+
+            public void ParentPropertyAttended(IExpandablePropertyInfo expandablePropertyInfo)
+            {
+                lock (lockObject)
+                {
+                    base.ParentPropertyAttended(expandablePropertyInfo);
+                }
+            }
+
+            public void ValuePropertyAttended(IValuePropertyInfo valuePropertyInfo)
+            {
+                lock (lockObject)
+                {
+                    base.ValuePropertyAttended(valuePropertyInfo);
+                }
+            }
+        }
+        
+        #endregion
     }
 }
