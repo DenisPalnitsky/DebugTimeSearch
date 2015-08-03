@@ -28,6 +28,12 @@ namespace MyCompany.VariableExplorer.Model
         internal void TraversalOfPropertyTreeDeepFirst (
             IDebugProperty debugProperty)
         {
+            _taskFactory.StartNew( ()=> RecursiveTraversalOfPropertyTreeDeepFirst(debugProperty) );
+        }
+
+        internal void RecursiveTraversalOfPropertyTreeDeepFirst (
+            IDebugProperty debugProperty)
+        {
             // visit root            
             RiseAppropriateAction(debugProperty.PropertyInfo);
             
@@ -44,7 +50,7 @@ namespace MyCompany.VariableExplorer.Model
                     // property name in [] means that it's parent property and should not be evaluated
                     if ((!childProperty.Name.StartsWith("[") && !childProperty.Name.EndsWith("]") && _exparessionEvaluatorProvider.IsEvaluatorAvailable))
                     {
-                        _taskFactory.StartNew(() => TraversalOfPropertyTreeDeepFirst(_exparessionEvaluatorProvider.ExpressionEvaluator.EvaluateExpression(childProperty.FullName)));                        
+                        _taskFactory.StartNew(() => RecursiveTraversalOfPropertyTreeDeepFirst(_exparessionEvaluatorProvider.ExpressionEvaluator.EvaluateExpression(childProperty.FullName)));                        
                     }
                 }
                 else

@@ -166,7 +166,6 @@
     <Compile Include="Model\Services\Configuration.cs" />
     <Compile Include="Model\DebugProperty.cs" />
     <Compile Include="Model\Services\OutputWindowLogger.cs" />
-    <Compile Include="Model\TaskFactory.cs" />
     <Compile Include="Model\ValuePropertyInfo.cs" />
     <Compile Include="Model\Services\IConfiguration.cs" />
     <Compile Include="dbgGuids.cs" />

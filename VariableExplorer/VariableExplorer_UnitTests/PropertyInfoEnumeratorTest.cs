@@ -15,10 +15,19 @@ namespace VariableExplorer_UnitTests
     {
         IUnityContainer _container = new Microsoft.Practices.Unity.UnityContainer();
 
+
+        private class SequentialTaskFactory : ITaskFactory
+        {
+            public void StartNew(Action action)
+            {
+                action();
+            }
+        }     
+
         [SetUp]
         public void SetupContainer()
         {
-            _container.RegisterInstance<ITaskFactory>( TaskFactory.CreateSequentialTaskFactory());
+            _container.RegisterInstance<ITaskFactory>( new SequentialTaskFactory());
             _container.RegisterInstance<IPropertyVisitor>(Mock.Of<IPropertyVisitor>());
 
             _container.RegisterInstance<IExpressionEvaluator>(Mock.Of<IExpressionEvaluator>());
@@ -86,7 +95,7 @@ namespace VariableExplorer_UnitTests
             // Act
             List<IValuePropertyInfo> results = new List<IValuePropertyInfo>();
             PropertyIterator propertIterator = new PropertyIterator(exparessionEvaluatorProviderMock.Object,
-                propertyVisitorMock.Object, TaskFactory.CreateSequentialTaskFactory()   );
+                propertyVisitorMock.Object, new SequentialTaskFactory()   );
 
             propertIterator.TraversalOfPropertyTreeDeepFirst(parentDebugPropertyMock.Object);
          
@@ -152,7 +161,7 @@ namespace VariableExplorer_UnitTests
             List<IValuePropertyInfo> results = new List<IValuePropertyInfo>();
             PropertyIterator propertIterator = new PropertyIterator(exparessionEvaluatorProviderMock.Object,
                 propertyVisitorMock.Object,
-                 TaskFactory.CreateSequentialTaskFactory());
+                 new SequentialTaskFactory());
 
             propertIterator.TraversalOfPropertyTreeDeepFirst(parentDebugPropertyMock.Object);
 
@@ -179,8 +188,8 @@ namespace VariableExplorer_UnitTests
                 exparessionEvaluatorProviderMock.Object, 
                 PropertyIterator.CreateActionBasedVisitor(
                  p=>results.Add(p), 
-                 v=>results.Add(v)), 
-                 TaskFactory.CreateSequentialTaskFactory() );
+                 v=>results.Add(v)),
+                 new SequentialTaskFactory() );
 
            propertyIterator.TraversalOfPropertyTreeDeepFirst( debugPropertyMock.Object);            
 

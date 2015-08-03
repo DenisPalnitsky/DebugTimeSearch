@@ -90,11 +90,7 @@ namespace MyCompany.VariableExplorer.UI
 
                     
                     _visibleProperties.Clear();
-                    
-
-                    //throw new Exception("PUT FUCKING THREADING TOGEATHER");
-                    
-                                        
+                                       
                     if (_property != null)
                     {                                                
                         var eventSink = PropertyIterator.CreateThreadSafeActionBasedVisitor(
@@ -109,7 +105,7 @@ namespace MyCompany.VariableExplorer.UI
                         PropertyIterator propertyIterator = new PropertyIterator(
                             expressionEvaluatorProvider,
                             eventSink, 
-                            MyCompany.VariableExplorer.Model.TaskFactory.CreateParalleTaskFactory());
+                            new ParallelTaskFactory());
 
                         propertyIterator.TraversalOfPropertyTreeDeepFirst(_property);
                     
