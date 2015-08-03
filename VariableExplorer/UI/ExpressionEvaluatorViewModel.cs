@@ -108,10 +108,10 @@ namespace MyCompany.VariableExplorer.UI
 
                         PropertyIterator propertyIterator = new PropertyIterator(
                             expressionEvaluatorProvider,
-                            eventSink);
+                            eventSink, 
+                            MyCompany.VariableExplorer.Model.TaskFactory.CreateParalleTaskFactory());
 
-                        propertyIterator.ParrallelTraversalOfPropertyTreeDeepFirst(_property);
-
+                        propertyIterator.TraversalOfPropertyTreeDeepFirst(_property);
                     
                     }                    
                 }

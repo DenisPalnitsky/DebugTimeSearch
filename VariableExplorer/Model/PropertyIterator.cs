@@ -9,17 +9,19 @@ namespace MyCompany.VariableExplorer.Model
     /// <summary>
     /// This shitty class doesn' work
     /// </summary>
-    class PropertyIterator 
+    class PropertyIterator
     {        
         IExpressionEvaluatorProvider _exparessionEvaluatorProvider;
         IPropertyVisitor _propertyVisitor;
-        TaskFactory _taskFactory = new TaskFactory();
+        ITaskFactory _taskFactory;        
 
         public PropertyIterator (IExpressionEvaluatorProvider exparessionEvaluatorProvider,
-            IPropertyVisitor propertyVisitor)
+            IPropertyVisitor propertyVisitor,
+            ITaskFactory taskFactory)
         {
             this._exparessionEvaluatorProvider = exparessionEvaluatorProvider;
             _propertyVisitor = propertyVisitor;
+            _taskFactory = taskFactory;
         }
   
 
@@ -42,19 +44,14 @@ namespace MyCompany.VariableExplorer.Model
                     // property name in [] means that it's parent property and should not be evaluated
                     if ((!childProperty.Name.StartsWith("[") && !childProperty.Name.EndsWith("]") && _exparessionEvaluatorProvider.IsEvaluatorAvailable))
                     {
-                        ParrallelTraversalOfPropertyTreeDeepFirst(_exparessionEvaluatorProvider.ExpressionEvaluator.EvaluateExpression(childProperty.FullName));
+                        _taskFactory.StartNew(() => TraversalOfPropertyTreeDeepFirst(_exparessionEvaluatorProvider.ExpressionEvaluator.EvaluateExpression(childProperty.FullName)));                        
                     }
                 }
                 else
                     throw new NotSupportedException("This property info type is not supported. Contact developer.");
             }
         }
-
-       internal Task ParrallelTraversalOfPropertyTreeDeepFirst(
-            IDebugProperty debugProperty)
-        {
-            return _taskFactory.StartNew(() => TraversalOfPropertyTreeDeepFirst(debugProperty));
-        }
+        
 
         private void RiseAppropriateAction(IPropertyInfo propertyInfo)
         {

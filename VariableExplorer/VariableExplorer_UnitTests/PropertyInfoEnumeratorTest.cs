@@ -6,13 +6,32 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using Microsoft.Practices.Unity;
 
 namespace VariableExplorer_UnitTests
 {
     [TestFixture]
     class PropertyInfoVisitorTest
     {
+        IUnityContainer _container = new Microsoft.Practices.Unity.UnityContainer();
+
+        [SetUp]
+        public void SetupContainer()
+        {
+            _container.RegisterInstance<ITaskFactory>( TaskFactory.CreateSequentialTaskFactory());
+            _container.RegisterInstance<IPropertyVisitor>(Mock.Of<IPropertyVisitor>());
+
+            _container.RegisterInstance<IExpressionEvaluator>(Mock.Of<IExpressionEvaluator>());
+
+            var exparessionEvaluatorProviderMock = new Mock<IExpressionEvaluatorProvider>();
+            exparessionEvaluatorProviderMock.Setup(p => p.IsEvaluatorAvailable).Returns(true).Verifiable();
+            exparessionEvaluatorProviderMock.Setup(p => p.ExpressionEvaluator).Returns( _container.Resolve<IExpressionEvaluator>()).Verifiable();
+            _container.RegisterInstance<IExpressionEvaluatorProvider>(exparessionEvaluatorProviderMock.Object);
+
+            _container.RegisterType<PropertyIterator>();
+            
+        }
+
         [Test]
         public void Enumerate_when_called_goes_through_all_child_properties_and_return_value_properties()
         {
@@ -67,7 +86,7 @@ namespace VariableExplorer_UnitTests
             // Act
             List<IValuePropertyInfo> results = new List<IValuePropertyInfo>();
             PropertyIterator propertIterator = new PropertyIterator(exparessionEvaluatorProviderMock.Object,
-                propertyVisitorMock.Object    );
+                propertyVisitorMock.Object, TaskFactory.CreateSequentialTaskFactory()   );
 
             propertIterator.TraversalOfPropertyTreeDeepFirst(parentDebugPropertyMock.Object);
          
@@ -132,7 +151,8 @@ namespace VariableExplorer_UnitTests
             // Act
             List<IValuePropertyInfo> results = new List<IValuePropertyInfo>();
             PropertyIterator propertIterator = new PropertyIterator(exparessionEvaluatorProviderMock.Object,
-                propertyVisitorMock.Object);
+                propertyVisitorMock.Object,
+                 TaskFactory.CreateSequentialTaskFactory());
 
             propertIterator.TraversalOfPropertyTreeDeepFirst(parentDebugPropertyMock.Object);
 
@@ -159,7 +179,8 @@ namespace VariableExplorer_UnitTests
                 exparessionEvaluatorProviderMock.Object, 
                 PropertyIterator.CreateActionBasedVisitor(
                  p=>results.Add(p), 
-                 v=>results.Add(v)));
+                 v=>results.Add(v)), 
+                 TaskFactory.CreateSequentialTaskFactory() );
 
            propertyIterator.TraversalOfPropertyTreeDeepFirst( debugPropertyMock.Object);            
 
@@ -175,34 +196,59 @@ namespace VariableExplorer_UnitTests
         [Test]
         public void Enumerate_when_called_do_not_evaluates_properties_in_brackets()
         {
+            // Arrange
             var expandablePropertyMock = new Mock<IExpandablePropertyInfo>();
 
             string expandablePropertyFullName = "ExpandableProperty";            
-            expandablePropertyMock.Setup(p => p.Name).Returns("[" + expandablePropertyFullName + "]").Verifiable();            
-
-            var exparessionEvaluatorProviderMock = new Mock<IExpressionEvaluatorProvider>( MockBehavior.Strict );
+            expandablePropertyMock.Setup(p => p.Name).Returns("[" + expandablePropertyFullName + "]" ).Verifiable();            
+            
             var expressionEvaluatorMock = new Mock<IExpressionEvaluator>(MockBehavior.Strict);
+            expressionEvaluatorMock.Setup(s=>s.EvaluateExpression(It.IsAny<string>()));
+
             var debugPropertyMock = new Mock<IDebugProperty>();
             debugPropertyMock.Setup(d => d.Children).Returns(new[] { expandablePropertyMock.Object});
 
             ObservableCollection<IPropertyInfo> result = new ObservableCollection<IPropertyInfo>();
           
             List<IPropertyInfo> results = new List<IPropertyInfo>();
-            PropertyIterator propertyIterator = new PropertyIterator(
-                exparessionEvaluatorProviderMock.Object,
-                PropertyIterator.CreateActionBasedVisitor(
-                 p => results.Add(p),
-                 v => results.Add(v)));
 
+            PropertyIterator propertyIterator = _container.Resolve<PropertyIterator>(
+                new DependencyOverride<IExpressionEvaluator>(expressionEvaluatorMock.Object));
+
+            // Act 
             propertyIterator.TraversalOfPropertyTreeDeepFirst(debugPropertyMock.Object);            
-
-            
-            Assert.AreEqual(0, result.Count());
-            exparessionEvaluatorProviderMock.VerifyAll();
-            expressionEvaluatorMock.VerifyAll();
-            debugPropertyMock.VerifyAll();
-            expandablePropertyMock.VerifyAll();            
+                        
+            // Assert
+            expressionEvaluatorMock.Verify(s=>s.EvaluateExpression(It.IsAny<string>()), Times.Never());
         }
+
+        //[Test]
+        //public void Enumerate_when_called_do_not_evaluates_with_same_names()
+        //{
+        //    var expandablePropertyMock = new Mock<IExpandablePropertyInfo>();
+
+        //    string expandablePropertyFullName = "ExpandableProperty";
+        //    expandablePropertyMock.Setup(p => p.FullName).Returns(expandablePropertyFullName ).Verifiable();
+        //    expandablePropertyMock.Setup(p => p.Name).Returns(expandablePropertyFullName).Verifiable();                   
+            
+        //    var debugPropertyMock = new Mock<IDebugProperty>();
+        //    debugPropertyMock.Setup(d => d.Children).Returns(new[] { expandablePropertyMock.Object });
+
+        //    // circular reference
+        //    var expressionEvaluatorMock = new Mock<IExpressionEvaluator>(MockBehavior.Strict);                                    
+        //    expressionEvaluatorMock.Setup(s => s.EvaluateExpression(expandablePropertyFullName)).Returns(debugPropertyMock.Object);
+            
+
+        //    ObservableCollection<IPropertyInfo> result = new ObservableCollection<IPropertyInfo>();
+
+        //    List<IPropertyInfo> results = new List<IPropertyInfo>();
+
+        //    PropertyIterator propertyIterator = _container.Resolve<PropertyIterator>(new DependencyOverride<IExpressionEvaluator>(expressionEvaluatorMock.Object));
+
+        //    propertyIterator.TraversalOfPropertyTreeDeepFirst(debugPropertyMock.Object);
+            
+        //    expressionEvaluatorMock.Verify(s => s.EvaluateExpression(expandablePropertyFullName), Times.Once);                        
+        //}
  
          
     }

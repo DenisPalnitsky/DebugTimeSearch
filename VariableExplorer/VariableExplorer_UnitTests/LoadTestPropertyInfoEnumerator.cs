@@ -58,10 +58,13 @@ namespace VariableExplorer_UnitTests
 
             var eventSink = PropertyIterator.CreateActionBasedVisitor(e => { }, v => { });
 
-            PropertyIterator propertyIterator = new PropertyIterator(evaluatorProvider.Object, eventSink);
+            var parallelTaskFactory = new ParallelTaskFactory();
+            PropertyIterator propertyIterator = new PropertyIterator(evaluatorProvider.Object, eventSink, parallelTaskFactory);
+
+            propertyIterator.TraversalOfPropertyTreeDeepFirst(propInfo);
             
             // Act
-            Task.WaitAll(propertyIterator.ParrallelTraversalOfPropertyTreeDeepFirst(propInfo));
+            Task.WaitAll(parallelTaskFactory.ParentTask);
 
             sw.Stop();
 
