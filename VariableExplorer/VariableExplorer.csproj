@@ -146,7 +146,6 @@
     <Compile Include="EditorHelper\CodeUnderCursor.cs" />
     <Compile Include="Model\IPropertyVisitor.cs" />
     <Compile Include="Model\ITaskFactory.cs" />
-    <Compile Include="Model\ParallelTaskFactory.cs" />
     <Compile Include="Model\PropertyIterator.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -174,6 +173,7 @@
     <Compile Include="Model\ExpressionEvaluator.cs" />
     <Compile Include="UI\Common\BoolToVisibilityConverter.cs" />
     <Compile Include="UI\DebugPropertyViewModel.cs" />
+    <Compile Include="UI\DebugPropertyViewModelCollection.cs" />
     <Compile Include="UI\DelegateCommand.cs" />
     <Compile Include="UI\ExpressionEvaluatorControl.xaml.cs">
       <DependentUpon>ExpressionEvaluatorControl.xaml</DependentUpon>

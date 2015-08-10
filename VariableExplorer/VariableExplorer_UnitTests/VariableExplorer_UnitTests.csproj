@@ -85,14 +85,10 @@
     <Compile Include="ExpressionEvaluatorViewModelTest.cs" />
     <Compile Include="IocContainerTest.cs" />
     <Compile Include="LoadTestPropertyInfoEnumerator.cs" />
-    <Compile Include="PackageTest.cs" />
     <!---->
-    <Compile Include="MenuItemTests\MenuItemCallback.cs" />
     <Compile Include="MenuItemTests\UIShellServiceMock.cs" />
     <!---->
     <!---->
-    <Compile Include="MyToolWindowTest\MyToolWindow.cs" />
-    <Compile Include="MyToolWindowTest\ShowToolWindow.cs" />
     <Compile Include="MyToolWindowTest\WindowFrameMock.cs" />
     <Compile Include="MyToolWindowTest\UIShellServiceMock.cs" />
     <Compile Include="PropertyInfoEnumeratorTest.cs" />

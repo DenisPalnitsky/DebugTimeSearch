@@ -18,7 +18,7 @@ namespace MyCompany.VariableExplorer.UI
     {
         IDebugProperty _property;
         string _expressionText;
-        ObservableCollection<DebugPropertyViewModel> _visibleProperties = new ObservableCollection<DebugPropertyViewModel>();
+        DebugPropertyViewModelCollection _visibleProperties = new DebugPropertyViewModelCollection();
         object _visiblePropertiesLock = new object();
 
         ILog _logger;
@@ -87,28 +87,33 @@ namespace MyCompany.VariableExplorer.UI
                 if (expressionEvaluatorProvider.IsEvaluatorAvailable)
                 {
                     _property = expressionEvaluatorProvider.ExpressionEvaluator.EvaluateExpression(ExpressionText);
-
                     
                     _visibleProperties.Clear();
                                        
                     if (_property != null)
-                    {                                                
+                    {
                         var eventSink = PropertyIterator.CreateThreadSafeActionBasedVisitor(
                                     p => 
                                         {
-                                            Application.Current.Dispatcher.Invoke(()=>_visibleProperties.Add(DebugPropertyViewModel.From(p)));
+                                            Application.Current.Dispatcher.Invoke(() =>
+                                            {
+                                                // TODO: Replace with DebugPropertyViewModelCollection when it's finished
+                                                
+                                                _visibleProperties.AddRange(p.Select(item=>DebugPropertyViewModel.From(item)) );
+                                            });
                                         }, 
                                     v=> {
-                                            Application.Current.Dispatcher.Invoke(() => _visibleProperties.Add(DebugPropertyViewModel.From(v)));
+                                                Application.Current.Dispatcher.Invoke(() =>
+                                                {
+                                                    _visibleProperties.AddRange(v.Select(item => DebugPropertyViewModel.From(item)));
+                                                });
                                         });
 
                         PropertyIterator propertyIterator = new PropertyIterator(
                             expressionEvaluatorProvider,
-                            eventSink, 
-                            new ParallelTaskFactory());
+                            eventSink);
 
-                        propertyIterator.TraversalOfPropertyTreeDeepFirst(_property);
-                    
+                        Task.Run(() => propertyIterator.TraversalOfPropertyTreeDeepFirst(_property));                        
                     }                    
                 }
                 else

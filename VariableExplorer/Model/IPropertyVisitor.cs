@@ -5,7 +5,7 @@ using System.Text;
 
 namespace MyCompany.VariableExplorer.Model
 {
-    interface IPropertyVisitor
+    interface IPropertyVisitor :IDisposable
     {
         void ParentPropertyAttended(IExpandablePropertyInfo expandablePropertyInfo);
         void ValuePropertyAttended(IValuePropertyInfo valuePropertyInfo);

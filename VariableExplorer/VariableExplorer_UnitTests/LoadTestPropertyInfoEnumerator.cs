@@ -56,23 +56,28 @@ namespace VariableExplorer_UnitTests
             evaluatorProvider.Setup(e => e.IsEvaluatorAvailable).Returns(true);
             evaluatorProvider.Setup(e => e.ExpressionEvaluator).Returns(evaluator.Object);
 
-            var eventSink = PropertyIterator.CreateActionBasedVisitor(e => { }, v => { });
+            var eventSink = PropertyIterator.CreateThreadSafeActionBasedVisitor (e => {
 
-            var parallelTaskFactory = new ParallelTaskFactory();
-            PropertyIterator propertyIterator = new PropertyIterator(evaluatorProvider.Object, eventSink, parallelTaskFactory);
+                System.Diagnostics.Debug.WriteLine( "ExpandableProps released:" + e.Count() ); 
+
+            }, v => {
+                System.Diagnostics.Debug.WriteLine("ValueProps released:" + v.Count()); 
+            });
+
+            PropertyIterator propertyIterator = new PropertyIterator(evaluatorProvider.Object, eventSink);
 
             propertyIterator.TraversalOfPropertyTreeDeepFirst(propInfo);
-            
-            // Act
-            Task.WaitAll(parallelTaskFactory.ParentTask);
-
+                        
             sw.Stop();
-
-            File.AppendAllText("LoadTestResults.txt", 
-                String.Format("Values:{0}, Types:{1}, Time {2} \n",
-                propInfo.valuePropertiesCount, 
+            var filename = "LoadTestResults.txt";
+            File.AppendAllText(filename,
+                String.Format("{3}: Values:{0}, Types:{1}, Time {2} " + Environment.NewLine,
+                propInfo.valuePropertiesCount,
                 propInfo.expandablePropertiesCount,
-                sw.ElapsedMilliseconds));
+                sw.ElapsedMilliseconds,
+                DateTime.Now.ToString("yyyy-MM-dd hh:mm")));
+
+            System.Diagnostics.Process.Start(filename);
         }
 
 

@@ -5,33 +5,28 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace MyCompany.VariableExplorer.Model
-{
-    /// <summary>
-    /// This shitty class doesn' work
-    /// </summary>
+{   
     class PropertyIterator
     {        
         IExpressionEvaluatorProvider _exparessionEvaluatorProvider;
-        IPropertyVisitor _propertyVisitor;
-        ITaskFactory _taskFactory;        
+        IPropertyVisitor _propertyVisitor;        
 
         public PropertyIterator (IExpressionEvaluatorProvider exparessionEvaluatorProvider,
-            IPropertyVisitor propertyVisitor,
-            ITaskFactory taskFactory)
+            IPropertyVisitor propertyVisitor)
         {
             this._exparessionEvaluatorProvider = exparessionEvaluatorProvider;
-            _propertyVisitor = propertyVisitor;
-            _taskFactory = taskFactory;
+            _propertyVisitor = propertyVisitor;            
         }
   
 
         internal void TraversalOfPropertyTreeDeepFirst (
             IDebugProperty debugProperty)
         {
-            _taskFactory.StartNew( ()=> RecursiveTraversalOfPropertyTreeDeepFirst(debugProperty) );
+            RecursiveTraversalOfPropertyTreeDeepFirst(debugProperty);
+            _propertyVisitor.Dispose();
         }
 
-        internal void RecursiveTraversalOfPropertyTreeDeepFirst (
+        private void RecursiveTraversalOfPropertyTreeDeepFirst (
             IDebugProperty debugProperty)
         {
             // visit root            
@@ -48,16 +43,24 @@ namespace MyCompany.VariableExplorer.Model
                 else if (childProperty is IExpandablePropertyInfo)
                 {
                     // property name in [] means that it's parent property and should not be evaluated
-                    if ((!childProperty.Name.StartsWith("[") && !childProperty.Name.EndsWith("]") && _exparessionEvaluatorProvider.IsEvaluatorAvailable))
+                    if ( !_processedExpressions.Contains(childProperty.FullName) &&
+                        (!childProperty.Name.StartsWith("[") && !childProperty.Name.EndsWith("]")
+                        && _exparessionEvaluatorProvider.IsEvaluatorAvailable))
                     {
-                        _taskFactory.StartNew(() => RecursiveTraversalOfPropertyTreeDeepFirst(_exparessionEvaluatorProvider.ExpressionEvaluator.EvaluateExpression(childProperty.FullName)));                        
+                          RecursiveTraversalOfPropertyTreeDeepFirst(EvaluateExpression(childProperty.FullName));                        
                     }
                 }
                 else
                     throw new NotSupportedException("This property info type is not supported. Contact developer.");
             }
         }
-        
+
+        HashSet<string> _processedExpressions = new HashSet<string>();
+        private IDebugProperty EvaluateExpression(string expression)
+        {
+            _processedExpressions.Add(expression);
+            return _exparessionEvaluatorProvider.ExpressionEvaluator.EvaluateExpression(expression);
+        }
 
         private void RiseAppropriateAction(IPropertyInfo propertyInfo)
         {
@@ -72,14 +75,16 @@ namespace MyCompany.VariableExplorer.Model
                 throw new NotSupportedException("This property info type is not supported. Contact developer.");
         }
 
-        public static IPropertyVisitor  CreateActionBasedVisitor(Action<IExpandablePropertyInfo> expandablePropertyAttended,
+        public static IPropertyVisitor CreateActionBasedVisitor(
+                Action<IExpandablePropertyInfo> expandablePropertyAttended,
                 Action<IValuePropertyInfo> valuePropertyAttended)
         {
             return new ActionBasedPropertyVisitor(expandablePropertyAttended, valuePropertyAttended);
         }
 
-        public static IPropertyVisitor CreateThreadSafeActionBasedVisitor(Action<IExpandablePropertyInfo> expandablePropertyAttended,
-               Action<IValuePropertyInfo> valuePropertyAttended)
+        public static IPropertyVisitor CreateThreadSafeActionBasedVisitor(
+                    Action<IEnumerable<IExpandablePropertyInfo>> expandablePropertyAttended,
+                Action<IEnumerable<IValuePropertyInfo>> valuePropertyAttended)
         {
             return new ThreadSafeActionBasedPropertyVisitor(expandablePropertyAttended, valuePropertyAttended);
         }
@@ -107,32 +112,59 @@ namespace MyCompany.VariableExplorer.Model
             {
                 _valuePropertyAttended(valuePropertyInfo);
             }
+
+            public void Dispose()
+            {
+                // no need to do anything
+            }
         }
 
-        private class ThreadSafeActionBasedPropertyVisitor : ActionBasedPropertyVisitor
+        private class ThreadSafeActionBasedPropertyVisitor : IPropertyVisitor
         {
-            object lockObject = new object();
+            List<IPropertyInfo> _propertyInfos = new List<IPropertyInfo>();
+            const int ITEMS_TO_RELEASE_PER_EVENT = 100;
 
-            public ThreadSafeActionBasedPropertyVisitor(Action<IExpandablePropertyInfo> expandablePropertyAttended,
-                Action<IValuePropertyInfo> valuePropertyAttended)
-                : base(expandablePropertyAttended, valuePropertyAttended)
-            {                
+            readonly Action<IEnumerable<IExpandablePropertyInfo>> _expandablePropertyAttended;
+            readonly Action<IEnumerable<IValuePropertyInfo>> _valuePropertyAttended;
+
+            public ThreadSafeActionBasedPropertyVisitor(Action<IEnumerable<IExpandablePropertyInfo>> expandablePropertyAttended,
+                Action<IEnumerable<IValuePropertyInfo>> valuePropertyAttended)
+                
+            {
+                _expandablePropertyAttended = expandablePropertyAttended;
+                _valuePropertyAttended = valuePropertyAttended;
             }
 
             public void ParentPropertyAttended(IExpandablePropertyInfo expandablePropertyInfo)
             {
-                lock (lockObject)
-                {
-                    base.ParentPropertyAttended(expandablePropertyInfo);
-                }
+                CheckAndReleaseProperiesInfoList();
+
+                _propertyInfos.Add(expandablePropertyInfo);
+            }
+
+            private void CheckAndReleaseProperiesInfoList()
+            {
+                if (_propertyInfos.Count == ITEMS_TO_RELEASE_PER_EVENT)
+                    ReleaseEventList();
             }
 
             public void ValuePropertyAttended(IValuePropertyInfo valuePropertyInfo)
             {
-                lock (lockObject)
-                {
-                    base.ValuePropertyAttended(valuePropertyInfo);
-                }
+                CheckAndReleaseProperiesInfoList();
+                _propertyInfos.Add(valuePropertyInfo);
+            }
+
+            public void Dispose()
+            {
+                if (_propertyInfos.Count > 0)
+                    ReleaseEventList();
+            }
+
+            private void ReleaseEventList()
+            {
+                _valuePropertyAttended(_propertyInfos.OfType<IValuePropertyInfo>());
+                _expandablePropertyAttended( _propertyInfos.OfType<IExpandablePropertyInfo>());
+                _propertyInfos = new List<IPropertyInfo>();
             }
         }
         

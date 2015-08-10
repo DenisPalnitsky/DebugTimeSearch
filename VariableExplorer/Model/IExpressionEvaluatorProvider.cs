@@ -7,7 +7,7 @@ using System.Text;
 namespace MyCompany.VariableExplorer.Model
 {
     /// <summary>
-    /// Main mechanism to retreive IExpressonEvaluator
+    /// Main mechanism to retreive IExpressionEvaluator
     /// </summary>
     interface IExpressionEvaluatorProvider
     {
