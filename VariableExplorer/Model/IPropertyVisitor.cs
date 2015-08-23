@@ -10,4 +10,9 @@ namespace MyCompany.VariableExplorer.Model
         void ParentPropertyAttended(IExpandablePropertyInfo expandablePropertyInfo);
         void ValuePropertyAttended(IValuePropertyInfo valuePropertyInfo);
     }
+
+  
+
+   
+
 }

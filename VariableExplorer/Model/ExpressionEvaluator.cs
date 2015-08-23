@@ -2,6 +2,7 @@
 using MyCompany.VariableExplorer.Model;
 using MyCompany.VariableExplorer.Model.Services;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,7 +13,7 @@ namespace MyCompany.VariableExplorer.Model
     class ExpressionEvaluator : IExpressionEvaluator
     {       
         ILog _log = IocContainer.Resolve<ILog>();
-
+        ConcurrentDictionary<string, IDebugProperty> _cache = new ConcurrentDictionary<string, IDebugProperty>(); 
         public ExpressionEvaluator(IDebugStackFrame2 stackFrame )
         {
             _stackFrame = stackFrame;
@@ -28,10 +29,15 @@ namespace MyCompany.VariableExplorer.Model
             }
 
             _log.Info("Evaluating expression {0}. CurrentTime {1:H:mm:ss.ffff}", expression, DateTime.Now);
+            if (_cache.ContainsKey(expression))
+                return _cache[expression];
+            
             IDebugProperty2 debugProperty = GetVsDebugProperty(expression);
             _log.Info("Done evaluating expression {0}. CurrentTime {1:H:mm:ss.ffff}", expression, DateTime.Now);
             
-            return Model.DebugProperty.Create (debugProperty);            
+            var resultDebugProperty = Model.DebugProperty.Create (debugProperty);            
+            _cache[expression] = resultDebugProperty;
+            return resultDebugProperty;
         }
 
         private IDebugProperty2 GetVsDebugProperty(string expression)

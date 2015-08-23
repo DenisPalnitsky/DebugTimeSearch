@@ -7,23 +7,30 @@ using System.Threading.Tasks;
 
 namespace MyCompany.VariableExplorer.Model
 {
-    class ValuePropertyInfo : MyCompany.VariableExplorer.Model.IValuePropertyInfo
+    class ValuePropertyInfo : IValuePropertyInfo
     {
         string _value;
 
         public ValuePropertyInfo(string fullName, string name, string valueType, string value)
-            : this(fullName, name, valueType)
-        {
-            _value = value;            
+            : this(fullName, name, valueType, value, true)
+        {            
         }
 
-        public ValuePropertyInfo(string fullName, string name, string valueType) 
+        public ValuePropertyInfo(string fullName, string name, string valueType)
+            : this(fullName, name, valueType, null, false)
+        {                        
+        }
+
+        private ValuePropertyInfo(string fullName, string name, string valueType, string value, bool isEvaluated)
         {
             if (String.IsNullOrEmpty(fullName) || String.IsNullOrEmpty(name) || String.IsNullOrEmpty(valueType))
                 throw new InvalidOperationException("Name and ValueType should not be null");
-            Name = name;            
+
+            Name = name;
             ValueType = valueType;
-            FullName = fullName;                        
+            FullName = fullName;
+            IsEvaluated = isEvaluated;
+            _value = value;
         }
 
         public string ValueType
@@ -35,7 +42,10 @@ namespace MyCompany.VariableExplorer.Model
         public string Value
         {
             get
-            {          
+            {
+                if (!IsEvaluated)
+                    return "[Not Evaluated]";
+
                 return _value;
             }
         }
@@ -51,6 +61,13 @@ namespace MyCompany.VariableExplorer.Model
             get;
             private set;
         }
-      
+
+
+        public bool IsEvaluated         
+        {            
+            get;            
+            private set;     
+        }
+
     }
 }

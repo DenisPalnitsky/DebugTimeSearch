@@ -33,7 +33,7 @@ namespace MyCompany.VariableExplorer.Model
             RiseAppropriateAction(debugProperty.PropertyInfo);
             
             // travers all children
-            foreach (var childProperty in debugProperty.Children)
+            foreach (IPropertyInfo childProperty in debugProperty.Children)
             {
                 var valueProperty = childProperty as IValuePropertyInfo;
                 if (valueProperty != null)
@@ -42,13 +42,11 @@ namespace MyCompany.VariableExplorer.Model
                 }
                 else if (childProperty is IExpandablePropertyInfo)
                 {
-                    // property name in [] means that it's parent property and should not be evaluated
-                    if ( !_processedExpressions.Contains(childProperty.FullName) &&
-                        (!childProperty.Name.StartsWith("[") && !childProperty.Name.EndsWith("]")
-                        && _exparessionEvaluatorProvider.IsEvaluatorAvailable))
-                    {
-                          RecursiveTraversalOfPropertyTreeDeepFirst(EvaluateExpression(childProperty.FullName));                        
-                    }
+                    IDebugProperty evaluated = null;
+                    evaluated = EvaluateExpression(childProperty);                         
+
+                    if (evaluated != null)
+                        RecursiveTraversalOfPropertyTreeDeepFirst(evaluated);
                 }
                 else
                     throw new NotSupportedException("This property info type is not supported. Contact developer.");
@@ -56,10 +54,18 @@ namespace MyCompany.VariableExplorer.Model
         }
 
         HashSet<string> _processedExpressions = new HashSet<string>();
-        private IDebugProperty EvaluateExpression(string expression)
+        private IDebugProperty EvaluateExpression(IPropertyInfo propertyToEvaluate)
         {
-            _processedExpressions.Add(expression);
-            return _exparessionEvaluatorProvider.ExpressionEvaluator.EvaluateExpression(expression);
+            // property name in [] means that it's parent property and should not be evaluated
+            if (!_processedExpressions.Contains(propertyToEvaluate.FullName) &&
+                (!propertyToEvaluate.Name.StartsWith("[") && !propertyToEvaluate.Name.EndsWith("]")
+                && _exparessionEvaluatorProvider.IsEvaluatorAvailable))
+            {
+
+                _processedExpressions.Add(propertyToEvaluate.FullName);
+                return _exparessionEvaluatorProvider.ExpressionEvaluator.EvaluateExpression(propertyToEvaluate.FullName);
+            }
+            return null;
         }
 
         private void RiseAppropriateAction(IPropertyInfo propertyInfo)
@@ -70,7 +76,20 @@ namespace MyCompany.VariableExplorer.Model
             if (propertyInfo is IExpandablePropertyInfo)
                 _propertyVisitor.ParentPropertyAttended((IExpandablePropertyInfo)propertyInfo);
             else if (propertyInfo is IValuePropertyInfo)
-                _propertyVisitor.ValuePropertyAttended((IValuePropertyInfo)propertyInfo);
+            {
+                var valuePropertyInfo =  (IValuePropertyInfo)propertyInfo;
+                
+                if (valuePropertyInfo.IsEvaluated)
+                    _propertyVisitor.ValuePropertyAttended(valuePropertyInfo);
+                else
+                {
+                    IDebugProperty eveluatedProperty = EvaluateExpression(valuePropertyInfo);
+                    if (eveluatedProperty != null && eveluatedProperty.PropertyInfo is IValuePropertyInfo)
+                        _propertyVisitor.ValuePropertyAttended((IValuePropertyInfo)eveluatedProperty.PropertyInfo);
+                }
+                
+
+            }
             else
                 throw new NotSupportedException("This property info type is not supported. Contact developer.");
         }
@@ -88,86 +107,6 @@ namespace MyCompany.VariableExplorer.Model
         {
             return new ThreadSafeActionBasedPropertyVisitor(expandablePropertyAttended, valuePropertyAttended);
         }
-
-        #region InternalCalsses
-
-        private class ActionBasedPropertyVisitor : IPropertyVisitor
-        {
-            private Action<IExpandablePropertyInfo> _expandablePropertyAttended;
-            private Action<IValuePropertyInfo> _valuePropertyAttended;
-            
-            public ActionBasedPropertyVisitor(Action<IExpandablePropertyInfo> expandablePropertyAttended,
-                Action<IValuePropertyInfo> valuePropertyAttended)
-            {
-                _expandablePropertyAttended = expandablePropertyAttended;
-                _valuePropertyAttended = valuePropertyAttended;
-            }
-
-            public virtual  void ParentPropertyAttended(IExpandablePropertyInfo expandablePropertyInfo)
-            {
-                _expandablePropertyAttended(expandablePropertyInfo);
-            }
-
-            public virtual void ValuePropertyAttended(IValuePropertyInfo valuePropertyInfo)
-            {
-                _valuePropertyAttended(valuePropertyInfo);
-            }
-
-            public void Dispose()
-            {
-                // no need to do anything
-            }
-        }
-
-        private class ThreadSafeActionBasedPropertyVisitor : IPropertyVisitor
-        {
-            List<IPropertyInfo> _propertyInfos = new List<IPropertyInfo>();
-            const int ITEMS_TO_RELEASE_PER_EVENT = 100;
-
-            readonly Action<IEnumerable<IExpandablePropertyInfo>> _expandablePropertyAttended;
-            readonly Action<IEnumerable<IValuePropertyInfo>> _valuePropertyAttended;
-
-            public ThreadSafeActionBasedPropertyVisitor(Action<IEnumerable<IExpandablePropertyInfo>> expandablePropertyAttended,
-                Action<IEnumerable<IValuePropertyInfo>> valuePropertyAttended)
-                
-            {
-                _expandablePropertyAttended = expandablePropertyAttended;
-                _valuePropertyAttended = valuePropertyAttended;
-            }
-
-            public void ParentPropertyAttended(IExpandablePropertyInfo expandablePropertyInfo)
-            {
-                CheckAndReleaseProperiesInfoList();
-
-                _propertyInfos.Add(expandablePropertyInfo);
-            }
-
-            private void CheckAndReleaseProperiesInfoList()
-            {
-                if (_propertyInfos.Count == ITEMS_TO_RELEASE_PER_EVENT)
-                    ReleaseEventList();
-            }
-
-            public void ValuePropertyAttended(IValuePropertyInfo valuePropertyInfo)
-            {
-                CheckAndReleaseProperiesInfoList();
-                _propertyInfos.Add(valuePropertyInfo);
-            }
-
-            public void Dispose()
-            {
-                if (_propertyInfos.Count > 0)
-                    ReleaseEventList();
-            }
-
-            private void ReleaseEventList()
-            {
-                _valuePropertyAttended(_propertyInfos.OfType<IValuePropertyInfo>());
-                _expandablePropertyAttended( _propertyInfos.OfType<IExpandablePropertyInfo>());
-                _propertyInfos = new List<IPropertyInfo>();
-            }
-        }
-        
-        #endregion
+       
     }
 }

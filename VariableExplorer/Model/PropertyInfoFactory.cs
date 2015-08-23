@@ -22,31 +22,17 @@ namespace MyCompany.VariableExplorer.Model
             {
                 if (propertyInfo.dwAttrib.HasFlag(enum_DBG_ATTRIB_FLAGS.DBG_ATTRIB_VALUE_ERROR))
                 {
-                    // evaluate fetched properties
-                    var expressionEvaluatorProvider = IocContainer.Resolve<IExpressionEvaluatorProvider>();
-                    if (expressionEvaluatorProvider.IsEvaluatorAvailable)
-                    {
-                        if (!_evaluatedProperties.ContainsKey(propertyInfo.bstrFullName))
-                        {
-                            IDebugProperty property = expressionEvaluatorProvider.ExpressionEvaluator.EvaluateExpression(propertyInfo.bstrFullName);
-                            return property.PropertyInfo;
-                        }
-                        else
-                            return _evaluatedProperties[propertyInfo.bstrFullName];
-                    }
-                    else
-                    {
-                        return new ValuePropertyInfo(propertyInfo.bstrFullName,
-                                                    propertyInfo.bstrName,
-                                                    propertyInfo.bstrType,
-                                                    "Expression evaluator is not available");
-                    }               
+                    // evaluate fetched properties                 
+                    return new BrokenValuePropertyInfo(propertyInfo.bstrFullName,
+                                                propertyInfo.bstrName,                                                
+                                                propertyInfo.bstrValue);
+                 
                 }
                 else
                     return new ValuePropertyInfo(propertyInfo.bstrFullName,
-                        propertyInfo.bstrName,
-                        propertyInfo.bstrType,
-                        propertyInfo.bstrValue);
+                                                propertyInfo.bstrName,
+                                                propertyInfo.bstrType,
+                                                propertyInfo.bstrValue);
             }
         }
     }

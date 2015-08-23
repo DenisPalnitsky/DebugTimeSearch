@@ -144,6 +144,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EditorHelper\CodeUnderCursor.cs" />
+    <Compile Include="Model\ActionBasedPropertyVisitor.cs" />
+    <Compile Include="Model\BrokenValuePropertyInfo.cs" />
     <Compile Include="Model\IPropertyVisitor.cs" />
     <Compile Include="Model\ITaskFactory.cs" />
     <Compile Include="Model\PropertyIterator.cs">
@@ -165,6 +167,7 @@
     <Compile Include="Model\Services\Configuration.cs" />
     <Compile Include="Model\DebugProperty.cs" />
     <Compile Include="Model\Services\OutputWindowLogger.cs" />
+    <Compile Include="Model\ThreadSafeActionBasedPropertyVisitor.cs" />
     <Compile Include="Model\ValuePropertyInfo.cs" />
     <Compile Include="Model\Services\IConfiguration.cs" />
     <Compile Include="dbgGuids.cs" />
