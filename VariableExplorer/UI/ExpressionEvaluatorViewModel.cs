@@ -46,8 +46,7 @@ namespace MyCompany.VariableExplorer.UI
             get { return _expressionText; }
             set 
             { 
-                _expressionText = value;
-                EvaluateExpression();
+                _expressionText = value;                
                 OnPropertyChanged();
             }
         }
