@@ -12,7 +12,7 @@ namespace MyCompany.VariableExplorer.Model
         IEnumerable<IPropertyInfo> _children;
         IDebugProperty2 _vsDebugProperty;
         ILog _logger = IocContainer.Resolve<ILog>();
-        private const uint ITEMS_TO_FETCH = 10;
+        private const uint ITEMS_TO_FETCH = 1000;
         PropertyInfoFactory _propertyInfoFactory = new PropertyInfoFactory();
 
         private DebugProperty() { }
