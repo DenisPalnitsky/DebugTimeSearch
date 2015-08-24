@@ -66,5 +66,11 @@
                  DockPanel.Dock="Bottom"
                  Grid.Row="2" Height="200"/>
 
+        <StatusBar  Grid.Row="3">
+            <StatusBarItem>
+                <TextBlock x:Name="StatusBarText" Text="{Binding StatusBarText}" />
+            </StatusBarItem>
+        </StatusBar>
+
     </Grid>
 </UserControl>

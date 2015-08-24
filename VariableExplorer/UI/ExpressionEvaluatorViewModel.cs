@@ -10,6 +10,7 @@ using System.Collections.ObjectModel;
 using MyCompany.VariableExplorer.Model.Services;
 using System.Windows;
 using System.Windows.Threading;
+using System.Diagnostics;
 
 namespace MyCompany.VariableExplorer.UI
 {
@@ -23,17 +24,21 @@ namespace MyCompany.VariableExplorer.UI
 
         ILog _logger;
         private string _errorMessage;
+        private string _statusBarText;
 
         public ExpressionEvaluatorViewModel(ILog logger)
         {
             _logger = logger;
-            _visibleProperties.CollectionChanged += _visibleProperties_CollectionChanged;
+            _visibleProperties.CollectionChanged += visibleProperties_CollectionChanged;
             System.Windows.Data.BindingOperations.EnableCollectionSynchronization(_visibleProperties, _visiblePropertiesLock);
         }
 
-        void _visibleProperties_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        public IEnumerable<DebugPropertyViewModel> Properties
         {
-            OnPropertyChanged(() => Properties);
+            get
+            {
+                return _visibleProperties;
+            }
         }
 
         public string ExpressionText
@@ -64,7 +69,15 @@ namespace MyCompany.VariableExplorer.UI
             get {  return !String.IsNullOrEmpty(ErrorMessage); }
         }
 
-
+        public string StatusBarText
+        {
+            get { return _statusBarText; }
+            private set 
+            {
+                _statusBarText = value;
+                OnPropertyChanged(() => StatusBarText);
+            }
+        }
 
         
         public ICommand EvaluateExpressionCommand
@@ -87,39 +100,48 @@ namespace MyCompany.VariableExplorer.UI
                 if (expressionEvaluatorProvider.IsEvaluatorAvailable)
                 {
                     _property = expressionEvaluatorProvider.ExpressionEvaluator.EvaluateExpression(ExpressionText);
-                    
+
                     _visibleProperties.Clear();
-                                       
+                    StatusBarText = "Searching...";
+                    Stopwatch stopwatch = new Stopwatch();
+                    stopwatch.Start();
+
                     if (_property != null)
                     {
                         var eventSink = PropertyIterator.CreateThreadSafeActionBasedVisitor(
-                                    p => 
+                                    p =>
+                                    {
+                                        Application.Current.Dispatcher.Invoke(() =>
                                         {
-                                            Application.Current.Dispatcher.Invoke(() =>
-                                            {
-                                                // TODO: Replace with DebugPropertyViewModelCollection when it's finished
-                                                
-                                                _visibleProperties.AddRange(p.Select(item=>DebugPropertyViewModel.From(item)) );
-                                            });
-                                        }, 
-                                    v=> {
-                                                Application.Current.Dispatcher.Invoke(() =>
-                                                {
-                                                    _visibleProperties.AddRange(v.Select(item => DebugPropertyViewModel.From(item)));
-                                                });
+                                            _visibleProperties.AddRange(p.Select(item => DebugPropertyViewModel.From(item)));
                                         });
+                                    },
+                                    v =>
+                                    {
+                                        Application.Current.Dispatcher.Invoke(() =>
+                                        {
+                                            _visibleProperties.AddRange(v.Select(item => DebugPropertyViewModel.From(item)));
+                                        });
+                                    });
 
                         PropertyIterator propertyIterator = new PropertyIterator(
                             expressionEvaluatorProvider,
                             eventSink);
 
-                        Task.Run(() => propertyIterator.TraversalOfPropertyTreeDeepFirst(_property));                        
-                    }                    
-                }
-                else
-                {
-                    _logger.Info("ExpressionEvaluator is not initialized");
-                    ErrorMessage = "ExpressionEvaluator is not initialized";
+                        Task.Run(
+                            () => propertyIterator.TraversalOfPropertyTreeDeepFirst(_property))
+                            .ContinueWith(t => 
+                                                { 
+                                                    stopwatch.Stop(); 
+                                                    PostSearchCompleteMessage(stopwatch.Elapsed); 
+                                                },
+                                        TaskScheduler.FromCurrentSynchronizationContext());
+                    }
+                    else
+                    {
+                        _logger.Info("ExpressionEvaluator is not initialized");
+                        ErrorMessage = "ExpressionEvaluator is not initialized";
+                    }
                 }
             }
             catch (Exception e)
@@ -127,17 +149,33 @@ namespace MyCompany.VariableExplorer.UI
                 string errorMessage = String.Format("Exception during EvaluateExpression. {0} ", e.ToString());
                 _logger.Info(errorMessage);
                 ErrorMessage = errorMessage;
-                
+
             }
         }
 
-        public IEnumerable<DebugPropertyViewModel> Properties  
-        { 
-            get 
-            {
-                return _visibleProperties;              
-            }            
+        void visibleProperties_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            OnPropertyChanged(() => Properties);
         }
+      
+        private void  PostSearchCompleteMessage(TimeSpan timeSpent)
+        {
+            string time = String.Format(@"{0:.000} seconds", timeSpent.TotalSeconds);
+            if (timeSpent.Days > 0)
+                time = "That took a while " + timeSpent.ToString("g");
+            
+            if (timeSpent.Hours > 0)
+                time = "Patience is a virtue. " + timeSpent.ToString("g");
+
+            if (timeSpent.Minutes > 0)
+                time = String.Format(@"{0:.00} minutes ", timeSpent.TotalMinutes);
+
+ 	        StatusBarText = String.Format("Search Complete. {0} item(s) found. Search time: {1}", 
+                _visibleProperties.Count, time);
+            System.Media.SystemSounds.Beep.Play();
+        } 
+        
+      
       
     }
 }
