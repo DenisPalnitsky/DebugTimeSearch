@@ -163,7 +163,7 @@
     <Compile Include="Model\IPropertyInfo.cs" />
     <Compile Include="Model\IValuePropertyInfo.cs" />
     <Compile Include="Model\IExpressionEvaluator.cs" />
-    <Compile Include="Model\Services\CastleWindsorBootstrap.cs" />
+    <Compile Include="Model\Services\IocContainer.cs" />
     <Compile Include="Model\Services\Configuration.cs" />
     <Compile Include="Model\DebugProperty.cs" />
     <Compile Include="Model\Services\OutputWindowLogger.cs" />
