@@ -18,6 +18,7 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="30" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
@@ -27,20 +28,44 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="60" />
             </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition />
+            </Grid.RowDefinitions>
 
             <TextBox Grid.Column="0" 
                      Name="ExpressionTextBox" 
                      MouseDoubleClick="ExpressionTextBox_MouseDoubleClick" 
-                     Text ="{Binding ExpressionText}" />
+                     Text ="{Binding ExpressionText}"
+                     Margin="2"/>
             
             <Button Grid.Column="1"  
                     Content="Evaluate" 
                     Command="{Binding EvaluateExpressionCommand}" 
                     x:Name="EvaluateButton" 
-                    Padding="0" Margin="0" />
+                    Padding="2" 
+                    Margin="2" />
+
+
+            <TextBox Grid.Column="0" 
+                     Grid.Row="1" 
+                     Name="SearchTextBox" 
+                     MouseDoubleClick="ExpressionTextBox_MouseDoubleClick" 
+                     Text ="{Binding SearchText}"
+                     Margin="2"/>
+
+            <Button Grid.Column="1"  
+                    Grid.Row="1" 
+                    Content="Search" 
+                    Command="{Binding SearchLocalsCommand}"
+                    x:Name="SearchButton" 
+                    Padding="2" 
+                    Margin="2" />
         </Grid>
 
-        <TabControl Grid.Row="1">
+        
+        
+        <TabControl Grid.Row="2">
             <TabItem Header="Grid">
                 <DataGrid Name="VariableContent" 
                           ItemsSource="{Binding Properties}" 
@@ -64,9 +89,9 @@
                  Text="{Binding ErrorMessage}"
                  Visibility="{Binding Path=IsErrorMessageVisible,Converter={common:BoolToVisibilityConverter TrueValue=Visible, FalseValue=Collapsed}}" 
                  DockPanel.Dock="Bottom"
-                 Grid.Row="2" Height="200"/>
+                 Grid.Row="3" Height="200"/>
 
-        <StatusBar  Grid.Row="3">
+        <StatusBar  Grid.Row="4">
             <StatusBarItem>
                 <TextBlock x:Name="StatusBarText" Text="{Binding StatusBarText}" />
             </StatusBarItem>

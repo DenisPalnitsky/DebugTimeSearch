@@ -50,7 +50,7 @@ namespace MyCompany.VariableExplorer.Model
             string errorString;
             uint pichError;
 
-
+             
             debugContext.ParseText(expression,
                                     enum_PARSEFLAGS.PARSE_EXPRESSION | enum_PARSEFLAGS.PARSE_DESIGN_TIME_EXPR_EVAL,
                                     10,
@@ -60,7 +60,7 @@ namespace MyCompany.VariableExplorer.Model
 
 
             IDebugProperty2 debugProperty;
-
+            
             debugExpression.EvaluateSync(
                 enum_EVALFLAGS.EVAL_NOSIDEEFFECTS |
                 enum_EVALFLAGS.EVAL_ALLOW_IMPLICIT_VARS |
@@ -70,6 +70,15 @@ namespace MyCompany.VariableExplorer.Model
                     out debugProperty).ThrowOnFailure();
             return debugProperty;
         }
-        
+
+
+
+        public IDebugProperty GetLocals()
+        {
+            IDebugProperty2 d;
+            _stackFrame.GetDebugProperty(out d);
+
+            return Model.DebugProperty.Create(d); 
+        }
     }
 }

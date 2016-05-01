@@ -31,6 +31,7 @@ namespace MyCompany.VariableExplorer.Model.Services
             Register<IConfiguration, Configuration>();
             Register<ILog, OutputWindowLogger>();            
             RegisterInstance<IExpressionEvaluatorViewModel>(new  ExpressionEvaluatorViewModel(Resolve<ILog>()));
+            RegisterInstance<ITaskSchedulerProvider>(new TaskSchedulerProvider());            
         }
 
         

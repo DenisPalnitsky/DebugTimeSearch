@@ -192,6 +192,7 @@
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="UI\ExpressionEvaluatorViewModel.cs" />
     <Compile Include="UI\IExpressionEvaluatorViewModel.cs" />
+    <Compile Include="UI\ITaskSchedulerProvider.cs" />
     <Compile Include="UI\ObservableObject.cs" />
     <Compile Include="VariableExplorerPackage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -28,11 +28,22 @@ namespace MyCompany.VariableExplorer.Model
                                                 propertyInfo.bstrValue);
                  
                 }
+                else if ( propertyInfo.bstrName == null &&
+                            propertyInfo.bstrType == null &&
+                            propertyInfo.bstrValue == null)
+                {
+                    return new BrokenValuePropertyInfo("<Name is null>",
+                                              "<Name is null>",
+                                              "<Value is null>");
+                }
                 else
+                {
                     return new ValuePropertyInfo(propertyInfo.bstrFullName,
                                                 propertyInfo.bstrName,
                                                 propertyInfo.bstrType,
                                                 propertyInfo.bstrValue);
+                }
+                
             }
         }
     }

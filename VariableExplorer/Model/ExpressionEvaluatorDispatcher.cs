@@ -24,10 +24,9 @@ namespace MyCompany.VariableExplorer.Model
         
         private  IExpressionEvaluator GetExpressionEvaluator(IDebugThread2 debugThread)
         {
-            var stackFrame = GetCurrentStackFrame(debugThread);
-            //stackFrame.GetExpressionContext(out expressionContext);
+            var stackFrame = GetCurrentStackFrame(debugThread);            
             return new ExpressionEvaluator(stackFrame);
-        }
+        }        
 
         private IDebugStackFrame2 GetCurrentStackFrame(IDebugThread2 thread)
         {
@@ -60,7 +59,7 @@ namespace MyCompany.VariableExplorer.Model
             result.debuggerEvents = new DebuggerEvents(vsDebugger);
             result.debuggerEvents.OnEnterBreakMode += result.debuggerSink_OnEnterBreakMode;
             result.debuggerEvents.OnEnterDesignMode += result.debuggerSink_OnEnterDesignMode;
-            vsDebugger.AdviseDebuggerEvents(result.debuggerEvents, out debugEventsCookie).ThrowOnFailure();            
+            vsDebugger.AdviseDebuggerEvents(result.debuggerEvents, out debugEventsCookie).ThrowOnFailure();      
             return result;
         }
 

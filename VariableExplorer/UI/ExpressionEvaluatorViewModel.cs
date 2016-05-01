@@ -25,6 +25,7 @@ namespace MyCompany.VariableExplorer.UI
         ILog _logger;
         private string _errorMessage;
         private string _statusBarText;
+        private string _searchText;
 
         public ExpressionEvaluatorViewModel(ILog logger)
         {
@@ -47,6 +48,16 @@ namespace MyCompany.VariableExplorer.UI
             set 
             { 
                 _expressionText = value;                
+                OnPropertyChanged();
+            }
+        }
+
+        public string SearchText
+        {
+            get { return _searchText; }
+            set
+            {
+                _searchText = value;
                 OnPropertyChanged();
             }
         }
@@ -79,6 +90,7 @@ namespace MyCompany.VariableExplorer.UI
         }
 
         
+                
         public ICommand EvaluateExpressionCommand
         {
             get 
@@ -87,70 +99,80 @@ namespace MyCompany.VariableExplorer.UI
             }
         }
         
+        public ICommand  SearchLocalsCommand
+        {
+            get { return new DelegateCommand(SearchLocals); }
+        }
 
         private void EvaluateExpression()
+        {            
+            var expressionEvaluatorProvider = IocContainer.Resolve<IExpressionEvaluatorProvider>();
+
+            if (expressionEvaluatorProvider.IsEvaluatorAvailable)
+            {                
+                _property = expressionEvaluatorProvider.ExpressionEvaluator.EvaluateExpression(ExpressionText);                
+                IterateThrueProperty(expressionEvaluatorProvider);
+            }            
+        }
+
+        private void SearchLocals()
         {
-            ErrorMessage = null;
-
-            try
+            var expressionEvaluatorProvider = IocContainer.Resolve<IExpressionEvaluatorProvider>();
+            if (expressionEvaluatorProvider.IsEvaluatorAvailable)
             {
-                var expressionEvaluatorProvider = IocContainer.Resolve<IExpressionEvaluatorProvider>();
-
-                if (expressionEvaluatorProvider.IsEvaluatorAvailable)
-                {
-                    _property = expressionEvaluatorProvider.ExpressionEvaluator.EvaluateExpression(ExpressionText);
-
-                    _visibleProperties.Clear();
-                    StatusBarText = "Searching...";
-                    Stopwatch stopwatch = new Stopwatch();
-                    stopwatch.Start();
-
-                    if (_property != null)
-                    {
-                        var eventSink = PropertyIterator.CreateThreadSafeActionBasedVisitor(
-                                    p =>
-                                    {
-                                        Application.Current.Dispatcher.Invoke(() =>
-                                        {
-                                            _visibleProperties.AddRange(p.Select(item => DebugPropertyViewModel.From(item)));
-                                        });
-                                    },
-                                    v =>
-                                    {
-                                        Application.Current.Dispatcher.Invoke(() =>
-                                        {
-                                            _visibleProperties.AddRange(v.Select(item => DebugPropertyViewModel.From(item)));
-                                        });
-                                    });
-
-                        PropertyIterator propertyIterator = new PropertyIterator(
-                            expressionEvaluatorProvider,
-                            eventSink);
-
-                        Task.Run(
-                            () => propertyIterator.TraversalOfPropertyTreeDeepFirst(_property))
-                            .ContinueWith(t => 
-                                                { 
-                                                    stopwatch.Stop(); 
-                                                    PostSearchCompleteMessage(stopwatch.Elapsed); 
-                                                },
-                                        TaskScheduler.FromCurrentSynchronizationContext());
-                    }
-                    else
-                    {
-                        _logger.Info("ExpressionEvaluator is not initialized");
-                        ErrorMessage = "ExpressionEvaluator is not initialized";
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                string errorMessage = String.Format("Exception during EvaluateExpression. {0} ", e.ToString());
-                _logger.Info(errorMessage);
-                ErrorMessage = errorMessage;
-
+                _property = expressionEvaluatorProvider.ExpressionEvaluator.GetLocals();
+                IterateThrueProperty(expressionEvaluatorProvider);
             }
         }
+
+
+        private void IterateThrueProperty(IExpressionEvaluatorProvider expressionEvaluatorProvider)
+        {
+            ErrorMessage = null;
+            _visibleProperties.Clear();
+            StatusBarText = "Searching...";
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
+
+            if (_property != null)
+            {
+                IPropertyVisitor eventSink = PropertyIterator.CreateThreadSafeActionBasedVisitor(
+                            expndableProperty =>
+                            {
+                                Application.Current.Dispatcher.Invoke(() =>
+                                {
+                                    _visibleProperties.AddRange(expndableProperty.Select(item => DebugPropertyViewModel.From(item)));
+                                });
+                            },
+                            valueProperty =>
+                            {
+                                Application.Current.Dispatcher.Invoke(() =>
+                                {
+                                    _visibleProperties.AddRange(valueProperty.Select(item => DebugPropertyViewModel.From(item)));
+                                });
+                            });
+
+                PropertyIterator propertyIterator = new PropertyIterator(
+                    expressionEvaluatorProvider,
+                    eventSink);
+
+                Task.Run(
+                    () => propertyIterator.TraversalOfPropertyTreeDeepFirst(_property))
+                    .ContinueWith(t =>
+                    {
+                        stopwatch.Stop();
+                        PostSearchCompleteMessage(stopwatch.Elapsed);
+                    },   
+                    IocContainer.Resolve<ITaskSchedulerProvider>().GetCurrentScheduler());
+            }
+            else
+            {
+                _logger.Info("ExpressionEvaluator is not initialized");
+                ErrorMessage = "ExpressionEvaluator is not initialized";
+            }
+        }
+
+ 
 
         void visibleProperties_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {

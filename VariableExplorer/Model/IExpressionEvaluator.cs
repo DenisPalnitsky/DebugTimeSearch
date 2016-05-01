@@ -7,6 +7,7 @@ namespace MyCompany.VariableExplorer.Model
     /// </summary>
     interface IExpressionEvaluator 
     {
-        IDebugProperty EvaluateExpression(string expression);        
+        IDebugProperty EvaluateExpression(string expression);
+        IDebugProperty GetLocals();        
     }
 }
