@@ -83,7 +83,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ExpressionEvaluatorViewModelTest.cs" />
-    <Compile Include="IocContainerTest.cs" />
     <Compile Include="LoadTestPropertyInfoEnumerator.cs" />
     <!---->
     <Compile Include="MenuItemTests\UIShellServiceMock.cs" />
@@ -92,6 +91,7 @@
     <Compile Include="MyToolWindowTest\WindowFrameMock.cs" />
     <Compile Include="MyToolWindowTest\UIShellServiceMock.cs" />
     <Compile Include="PropertyInfoEnumeratorTest.cs" />
+    <Compile Include="StringFilterTest.cs" />
     <Compile Include="TestObservableObject.cs" />
     <!---->
     <!---->

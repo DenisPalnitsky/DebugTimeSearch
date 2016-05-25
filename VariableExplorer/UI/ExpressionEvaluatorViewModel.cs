@@ -157,7 +157,7 @@ namespace MyCompany.VariableExplorer.UI
                     eventSink);
 
                 Task.Run(
-                    () => propertyIterator.TraversalOfPropertyTreeDeepFirst(_property))
+                    () => propertyIterator.TraversalOfPropertyTreeDeepFirst(_property, _searchText))
                     .ContinueWith(t =>
                     {
                         stopwatch.Stop();

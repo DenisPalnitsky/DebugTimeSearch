@@ -167,6 +167,7 @@
     <Compile Include="Model\Services\Configuration.cs" />
     <Compile Include="Model\DebugProperty.cs" />
     <Compile Include="Model\Services\OutputWindowLogger.cs" />
+    <Compile Include="Model\StringFilter.cs" />
     <Compile Include="Model\ThreadSafeActionBasedPropertyVisitor.cs" />
     <Compile Include="Model\ValuePropertyInfo.cs" />
     <Compile Include="Model\Services\IConfiguration.cs" />

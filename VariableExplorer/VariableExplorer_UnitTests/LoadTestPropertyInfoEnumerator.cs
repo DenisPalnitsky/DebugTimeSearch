@@ -43,8 +43,8 @@ namespace VariableExplorer_UnitTests
             }
         }
 
-
         [Test]
+        [Ignore]
         public void Test()
         {
             var sw = Stopwatch.StartNew();
@@ -66,7 +66,7 @@ namespace VariableExplorer_UnitTests
 
             PropertyIterator propertyIterator = new PropertyIterator(evaluatorProvider.Object, eventSink);
 
-            propertyIterator.TraversalOfPropertyTreeDeepFirst(propInfo);
+            propertyIterator.TraversalOfPropertyTreeDeepFirst(propInfo, String.Empty);
                         
             sw.Stop();
             var filename = "LoadTestResults.txt";

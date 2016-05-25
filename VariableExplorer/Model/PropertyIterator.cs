@@ -9,28 +9,47 @@ namespace MyCompany.VariableExplorer.Model
     class PropertyIterator
     {        
         IExpressionEvaluatorProvider _exparessionEvaluatorProvider;
-        IPropertyVisitor _propertyVisitor;        
+        IPropertyVisitor _propertyVisitor;
+       
 
         public PropertyIterator (IExpressionEvaluatorProvider exparessionEvaluatorProvider,
-            IPropertyVisitor propertyVisitor)
+            IPropertyVisitor propertyVisitor )
         {
             this._exparessionEvaluatorProvider = exparessionEvaluatorProvider;
             _propertyVisitor = propertyVisitor;            
         }
-  
-
-        internal void TraversalOfPropertyTreeDeepFirst (
-            IDebugProperty debugProperty)
+        
+        public static IPropertyVisitor CreateActionBasedVisitor(
+              Action<IExpandablePropertyInfo> expandablePropertyAttended,
+              Action<IValuePropertyInfo> valuePropertyAttended)
         {
-            RecursiveTraversalOfPropertyTreeDeepFirst(debugProperty);
+            return new ActionBasedPropertyVisitor(expandablePropertyAttended, valuePropertyAttended);
+        }
+
+        public static IPropertyVisitor CreateThreadSafeActionBasedVisitor(
+                    Action<IEnumerable<IExpandablePropertyInfo>> expandablePropertyAttended,
+                Action<IEnumerable<IValuePropertyInfo>> valuePropertyAttended)
+        {
+            return new ThreadSafeActionBasedPropertyVisitor(expandablePropertyAttended, valuePropertyAttended);
+        }
+
+        public void TraversalOfPropertyTreeDeepFirst (
+            IDebugProperty debugProperty,
+            string searchCriteria)
+        {
+             StringFilter stringFilter = new StringFilter(searchCriteria);
+
+             RecursiveTraversalOfPropertyTreeDeepFirst(debugProperty, stringFilter);
+            
             _propertyVisitor.Dispose();
         }
 
         private void RecursiveTraversalOfPropertyTreeDeepFirst (
-            IDebugProperty debugProperty)
+            IDebugProperty debugProperty,
+            StringFilter stringFilter)
         {
             // visit root            
-            RiseAppropriateAction(debugProperty.PropertyInfo);
+            RiseAppropriateAction(debugProperty.PropertyInfo, stringFilter);
             
             // travers all children
             foreach (IPropertyInfo childProperty in debugProperty.Children)
@@ -38,7 +57,7 @@ namespace MyCompany.VariableExplorer.Model
                 var valueProperty = childProperty as IValuePropertyInfo;
                 if (valueProperty != null)
                 {
-                    RiseAppropriateAction(childProperty);
+                    RiseAppropriateAction(childProperty, stringFilter);
                 }
                 else if (childProperty is IExpandablePropertyInfo)
                 {
@@ -46,7 +65,7 @@ namespace MyCompany.VariableExplorer.Model
                     evaluated = EvaluateExpression(childProperty);                         
 
                     if (evaluated != null)
-                        RecursiveTraversalOfPropertyTreeDeepFirst(evaluated);
+                        RecursiveTraversalOfPropertyTreeDeepFirst(evaluated, stringFilter);
                 }
                 else
                     throw new NotSupportedException("This property info type is not supported. Contact developer.");
@@ -68,45 +87,38 @@ namespace MyCompany.VariableExplorer.Model
             return null;
         }
 
-        private void RiseAppropriateAction(IPropertyInfo propertyInfo)
+        private void RiseAppropriateAction(IPropertyInfo propertyInfo, StringFilter stringFilter)
         {
             if (propertyInfo == null)
                 return;
+            
+            bool nameMatches = (stringFilter.IsMatching(propertyInfo.Name) || stringFilter.IsMatching(propertyInfo.FullName));
 
             if (propertyInfo is IExpandablePropertyInfo)
-                _propertyVisitor.ParentPropertyAttended((IExpandablePropertyInfo)propertyInfo);
+            {
+                if (nameMatches)
+                    _propertyVisitor.ParentPropertyAttended((IExpandablePropertyInfo)propertyInfo);
+            }
             else if (propertyInfo is IValuePropertyInfo)
             {
-                var valuePropertyInfo =  (IValuePropertyInfo)propertyInfo;
-                
-                if (valuePropertyInfo.IsEvaluated)
-                    _propertyVisitor.ValuePropertyAttended(valuePropertyInfo);
-                else
+                var valuePropertyInfo = (IValuePropertyInfo)propertyInfo;
+
+                if (!valuePropertyInfo.IsEvaluated)
                 {
                     IDebugProperty eveluatedProperty = EvaluateExpression(valuePropertyInfo);
                     if (eveluatedProperty != null && eveluatedProperty.PropertyInfo is IValuePropertyInfo)
-                        _propertyVisitor.ValuePropertyAttended((IValuePropertyInfo)eveluatedProperty.PropertyInfo);
+                        valuePropertyInfo = (IValuePropertyInfo)eveluatedProperty.PropertyInfo;
                 }
-                
+
+                if (nameMatches || stringFilter.IsMatching(valuePropertyInfo.Value))
+                    _propertyVisitor.ValuePropertyAttended(valuePropertyInfo);
 
             }
             else
                 throw new NotSupportedException("This property info type is not supported. Contact developer.");
         }
-
-        public static IPropertyVisitor CreateActionBasedVisitor(
-                Action<IExpandablePropertyInfo> expandablePropertyAttended,
-                Action<IValuePropertyInfo> valuePropertyAttended)
-        {
-            return new ActionBasedPropertyVisitor(expandablePropertyAttended, valuePropertyAttended);
-        }
-
-        public static IPropertyVisitor CreateThreadSafeActionBasedVisitor(
-                    Action<IEnumerable<IExpandablePropertyInfo>> expandablePropertyAttended,
-                Action<IEnumerable<IValuePropertyInfo>> valuePropertyAttended)
-        {
-            return new ThreadSafeActionBasedPropertyVisitor(expandablePropertyAttended, valuePropertyAttended);
-        }
+        
+      
        
     }
 }
