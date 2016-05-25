@@ -88,32 +88,13 @@ namespace MyCompany.VariableExplorer.UI
                 OnPropertyChanged(() => StatusBarText);
             }
         }
-
-        
-                
-        public ICommand EvaluateExpressionCommand
-        {
-            get 
-            {                
-                return new DelegateCommand( EvaluateExpression ); 
-            }
-        }
+            
         
         public ICommand  SearchLocalsCommand
         {
             get { return new DelegateCommand(SearchLocals); }
         }
-
-        private void EvaluateExpression()
-        {            
-            var expressionEvaluatorProvider = IocContainer.Resolve<IExpressionEvaluatorProvider>();
-
-            if (expressionEvaluatorProvider.IsEvaluatorAvailable)
-            {                
-                _property = expressionEvaluatorProvider.ExpressionEvaluator.EvaluateExpression(ExpressionText);                
-                IterateThrueProperty(expressionEvaluatorProvider);
-            }            
-        }
+     
 
         private void SearchLocals()
         {

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace MyCompany.VariableExplorer
 {
 
-    class ObjectDump
+    class EditorTextProvider
     {
 
         public static string GetCurrentText()

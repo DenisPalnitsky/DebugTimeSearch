@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="MyCompany.VariableExplorer.UI.MyControl"
+﻿<UserControl x:Class="MyCompany.VariableExplorer.UI.SearchLocalsControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -17,8 +17,7 @@
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="30" />
+            <RowDefinition Height="Auto" />            
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
@@ -34,23 +33,8 @@
             </Grid.RowDefinitions>
 
             <TextBox Grid.Column="0" 
-                     Name="ExpressionTextBox" 
-                     MouseDoubleClick="ExpressionTextBox_MouseDoubleClick" 
-                     Text ="{Binding ExpressionText}"
-                     Margin="2"/>
-            
-            <Button Grid.Column="1"  
-                    Content="Evaluate" 
-                    Command="{Binding EvaluateExpressionCommand}" 
-                    x:Name="EvaluateButton" 
-                    Padding="2" 
-                    Margin="2" />
-
-
-            <TextBox Grid.Column="0" 
                      Grid.Row="1" 
-                     Name="SearchTextBox" 
-                     MouseDoubleClick="ExpressionTextBox_MouseDoubleClick" 
+                     Name="SearchTextBox"                      
                      Text ="{Binding SearchText}"
                      Margin="2"/>
 
@@ -63,35 +47,23 @@
                     Margin="2" />
         </Grid>
 
-        
-        
-        <TabControl Grid.Row="2">
-            <TabItem Header="Grid">
-                <DataGrid Name="VariableContent" 
+
+        <DataGrid Grid.Row="1" Name="VariableContent" 
                           ItemsSource="{Binding Properties}" 
                           AutoGenerateColumns="False" SelectionMode="Single" SelectionUnit="CellOrRowHeader" 
                           Visibility="{Binding Path=IsErrorMessageVisible,Converter={common:BoolToVisibilityConverter TrueValue=Collapsed, FalseValue=Visible}}"
                           VerticalAlignment="Stretch">
-                    <DataGrid.Columns>
-                        <DataGridTextColumn Header="Name"  Binding="{Binding Name, Mode=OneWay}" Width="2*" />
-                        <DataGridTextColumn Header="Value" Binding="{Binding Value, Mode=OneWay}" Width="*" />
-                        <DataGridHyperlinkColumn Header="ValueType" Binding="{Binding ValueType, Mode=OneWay}" Width="2*" />
-                        <DataGridTextColumn Header="Full Name" Binding="{Binding FullName, Mode=OneWay}" Width="*" />
-                    </DataGrid.Columns>
-                </DataGrid>
-            </TabItem>       
-        </TabControl>
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Name"  Binding="{Binding Name, Mode=OneWay}" Width="2*" />
+                <DataGridTextColumn Header="Value" Binding="{Binding Value, Mode=OneWay}" Width="*" />
+                <DataGridHyperlinkColumn Header="ValueType" Binding="{Binding ValueType, Mode=OneWay}" Width="2*" />
+                <DataGridTextColumn Header="Full Name" Binding="{Binding FullName, Mode=OneWay}" Width="*" />
+            </DataGrid.Columns>
+        </DataGrid>
 
-        <TextBox Name="ErrorTextBlock" 
-                 IsReadOnly="True" 
-                 TextWrapping="Wrap" 
-                 AcceptsReturn="True" 
-                 Text="{Binding ErrorMessage}"
-                 Visibility="{Binding Path=IsErrorMessageVisible,Converter={common:BoolToVisibilityConverter TrueValue=Visible, FalseValue=Collapsed}}" 
-                 DockPanel.Dock="Bottom"
-                 Grid.Row="3" Height="200"/>
+       
 
-        <StatusBar  Grid.Row="4">
+        <StatusBar  Grid.Row="2">
             <StatusBarItem>
                 <TextBlock x:Name="StatusBarText" Text="{Binding StatusBarText}" />
             </StatusBarItem>
