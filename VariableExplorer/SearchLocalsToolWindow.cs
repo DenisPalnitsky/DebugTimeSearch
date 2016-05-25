@@ -22,12 +22,12 @@ namespace MyCompany.VariableExplorer
     /// implementation of the IVsUIElementPane interface.
     /// </summary>
     [Guid("569ac44f-8998-443a-ba4d-40c5f2ad9077")]
-    public class MyToolWindow : ToolWindowPane
+    public class SearchLocalsToolWindow : ToolWindowPane
     {
         /// <summary>
         /// Standard constructor for the tool window.
         /// </summary>
-        public MyToolWindow() :
+        public SearchLocalsToolWindow() :
             base(null)
         {
             // Set the window title reading it from the resources.

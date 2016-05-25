@@ -44,7 +44,7 @@ namespace MyCompany.VariableExplorer
     // This attribute is needed to let the shell know that this package exposes some menus.
     [ProvideMenuResource("Menus.ctmenu", 1)]
     // This attribute registers a tool window exposed by this package.
-    [ProvideToolWindow(typeof(MyToolWindow))]
+    [ProvideToolWindow(typeof(SearchLocalsToolWindow))]
     [Guid(GuidList.guidVariableExplorerPkgString)]
     [ProvideAutoLoad("{ADFC4E64-0397-11D1-9F4E-00A0C911004F}")]
     public sealed class VariableExplorerPackage : Package
@@ -80,7 +80,7 @@ namespace MyCompany.VariableExplorer
             // Get the instance number 0 of this tool window. This window is single instance so this instance
             // is actually the only one.
             // The last flag is set to true so that if the tool window does not exists it will be created.
-            MyToolWindow window = (MyToolWindow)this.FindToolWindow(typeof(MyToolWindow), 0, true);
+            SearchLocalsToolWindow window = (SearchLocalsToolWindow)this.FindToolWindow(typeof(SearchLocalsToolWindow), 0, true);
             if ((null == window) || (null == window.Frame))
             {
                 throw new NotSupportedException(Resources.CanNotCreateWindow);

@@ -179,7 +179,7 @@
     <Compile Include="UI\DebugPropertyViewModel.cs" />
     <Compile Include="UI\DebugPropertyViewModelCollection.cs" />
     <Compile Include="UI\DelegateCommand.cs" />
-    <Compile Include="MyToolWindow.cs" />
+    <Compile Include="SearchLocalsToolWindow.cs" />
     <Compile Include="Guids.cs" />
     <Compile Include="EditorTextProvider.cs" />
     <Compile Include="Resources.Designer.cs">
@@ -236,12 +236,7 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
-  <ItemGroup>
-    <WCFMetadata Include="Service References\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="VS\" />
-  </ItemGroup>
+  <ItemGroup />
   <PropertyGroup>
     <UseCodebase>true</UseCodebase>
   </PropertyGroup>
