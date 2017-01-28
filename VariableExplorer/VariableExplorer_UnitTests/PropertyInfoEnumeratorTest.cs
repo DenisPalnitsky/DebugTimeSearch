@@ -13,7 +13,39 @@ namespace VariableExplorer_UnitTests
     [TestFixture]
     class PropertyInfoVisitorTest
     {
-        IUnityContainer _container = new Microsoft.Practices.Unity.UnityContainer(); 
+        IUnityContainer _container = new Microsoft.Practices.Unity.UnityContainer();
+
+        #region Mocks 
+
+        internal class PropertyVisitorMock : IPropertyVisitor
+        {
+            private Action<IExpandablePropertyInfo> _expandablePropertyAttended;
+            private Action<IValuePropertyInfo> _valuePropertyAttended;
+
+            public PropertyVisitorMock(Action<IExpandablePropertyInfo> expandablePropertyAttended,
+                Action<IValuePropertyInfo> valuePropertyAttended)
+            {
+                _expandablePropertyAttended = expandablePropertyAttended;
+                _valuePropertyAttended = valuePropertyAttended;
+            }
+
+            public virtual void ParentPropertyAttended(IExpandablePropertyInfo expandablePropertyInfo)
+            {
+                _expandablePropertyAttended(expandablePropertyInfo);
+            }
+
+            public virtual void ValuePropertyAttended(IValuePropertyInfo valuePropertyInfo)
+            {
+                _valuePropertyAttended(valuePropertyInfo);
+            }
+
+            public void Dispose()
+            {
+                // no need to do anything
+            }
+        }
+
+        #endregion
 
         [SetUp]
         public void SetupContainer()
@@ -190,7 +222,7 @@ namespace VariableExplorer_UnitTests
             List<IPropertyInfo> results = new List<IPropertyInfo>();
             PropertyIterator propertyIterator = new PropertyIterator( 
                 exparessionEvaluatorProviderMock.Object, 
-                PropertyIterator.CreateActionBasedVisitor(
+                new PropertyVisitorMock(                
                  p=>results.Add(p), 
                  v=>results.Add(v)));
 

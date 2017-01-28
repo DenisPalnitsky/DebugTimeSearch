@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+VisualStudioVersion = 12.0.40629.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VariableExplorer", "VariableExplorer\VariableExplorer.csproj", "{FBEB997A-39E6-43CF-853C-27867509896C}"
 EndProject
@@ -10,6 +10,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{CE245EB3-1436-4C8D-A6C5-7B3E1C59830E}"
 	ProjectSection(SolutionItems) = preProject
 		IntegrationTests.testsettings = IntegrationTests.testsettings
+		Performance1.psess = Performance1.psess
 		UnitTests.testsettings = UnitTests.testsettings
 	EndProjectSection
 EndProject

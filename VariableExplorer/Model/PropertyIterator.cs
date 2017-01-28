@@ -17,14 +17,7 @@ namespace MyCompany.VariableExplorer.Model
         {
             this._exparessionEvaluatorProvider = exparessionEvaluatorProvider;
             _propertyVisitor = propertyVisitor;            
-        }
-        
-        public static IPropertyVisitor CreateActionBasedVisitor(
-              Action<IExpandablePropertyInfo> expandablePropertyAttended,
-              Action<IValuePropertyInfo> valuePropertyAttended)
-        {
-            return new ActionBasedPropertyVisitor(expandablePropertyAttended, valuePropertyAttended);
-        }
+        }            
 
         public static IPropertyVisitor CreateThreadSafeActionBasedVisitor(
                     Action<IEnumerable<IExpandablePropertyInfo>> expandablePropertyAttended,

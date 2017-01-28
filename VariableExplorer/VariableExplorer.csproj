@@ -144,7 +144,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EditorHelper\CodeUnderCursor.cs" />
-    <Compile Include="Model\ActionBasedPropertyVisitor.cs" />
     <Compile Include="Model\BrokenValuePropertyInfo.cs" />
     <Compile Include="Model\IPropertyVisitor.cs" />
     <Compile Include="Model\ITaskFactory.cs" />

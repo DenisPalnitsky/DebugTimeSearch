@@ -32,7 +32,7 @@ namespace VariableExplorer_UnitTests
             Assert.IsTrue(filter.IsMatching("ABc"));
 
             filter = new StringFilter(String.Empty);
-            Assert.IsFalse(filter.IsMatching("ABc"));
+            Assert.IsTrue(filter.IsMatching("ABc"));
         }
 
         [Test]

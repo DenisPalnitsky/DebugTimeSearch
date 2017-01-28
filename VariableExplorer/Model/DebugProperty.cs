@@ -92,6 +92,7 @@ namespace MyCompany.VariableExplorer.Model
             logger.Info("Fetch children");            
             do
             {
+                // TODO: Performance bottlneck
                 debugPropertyEnum.Next(ITEMS_TO_FETCH, debugPropInfos, out fetched).ThrowOnFailure();
                 foreach (var p in debugPropInfos.Take((int)fetched).Select(d => _propertyInfoFactory.Create(d)).Cast<IPropertyInfo>())
                     yield return p;

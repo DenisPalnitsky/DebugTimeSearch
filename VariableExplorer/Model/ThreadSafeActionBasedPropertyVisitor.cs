@@ -23,26 +23,26 @@ namespace MyCompany.VariableExplorer.Model
 
         public void ParentPropertyAttended(IExpandablePropertyInfo expandablePropertyInfo)
         {
-            CheckAndReleaseProperiesInfoList();
+            CheckAndReleasePropertiesInfoList();
 
             _propertyInfos.Add(expandablePropertyInfo);
         }
 
-        private void CheckAndReleaseProperiesInfoList()
-        {
-            if (_propertyInfos.Count == ITEMS_TO_RELEASE_PER_EVENT)
-                ReleaseEventList();
-        }
-
         public void ValuePropertyAttended(IValuePropertyInfo valuePropertyInfo)
         {
-            CheckAndReleaseProperiesInfoList();
+            CheckAndReleasePropertiesInfoList();
             _propertyInfos.Add(valuePropertyInfo);
         }
 
         public void Dispose()
         {
             if (_propertyInfos.Count > 0)
+                ReleaseEventList();
+        }
+
+        private void CheckAndReleasePropertiesInfoList()
+        {
+            if (_propertyInfos.Count == ITEMS_TO_RELEASE_PER_EVENT)
                 ReleaseEventList();
         }
 
