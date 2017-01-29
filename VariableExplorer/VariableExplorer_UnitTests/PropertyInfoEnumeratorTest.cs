@@ -7,6 +7,8 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using Microsoft.Practices.Unity;
+using MyCompany.VariableExplorer.Model.VSPropertyModel;
+using MyCompany.VariableExplorer.Model.ExpressioEvaluation;
 
 namespace VariableExplorer_UnitTests
 {

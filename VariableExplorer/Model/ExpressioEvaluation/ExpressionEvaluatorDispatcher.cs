@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MyCompany.VariableExplorer.Model
+namespace MyCompany.VariableExplorer.Model.ExpressioEvaluation
 {
     class ExpressionEvaluatorDispatcher : IDisposable
     {        

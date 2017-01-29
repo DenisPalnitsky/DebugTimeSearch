@@ -22,6 +22,7 @@ using MyCompany.VariableExplorer.Model;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Editor;
 using MyCompany.VariableExplorer.EditorHelper;
+using MyCompany.VariableExplorer.Model.ExpressioEvaluation;
 
 namespace MyCompany.VariableExplorer
 {

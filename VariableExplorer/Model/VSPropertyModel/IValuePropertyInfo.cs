@@ -1,5 +1,4 @@
-﻿using System;
-namespace MyCompany.VariableExplorer.Model
+﻿namespace MyCompany.VariableExplorer.Model.VSPropertyModel
 {
     interface IValuePropertyInfo : IPropertyInfo
     {

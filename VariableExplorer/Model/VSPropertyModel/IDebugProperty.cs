@@ -1,6 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-namespace MyCompany.VariableExplorer.Model
+﻿using System.Collections.Generic;
+
+namespace MyCompany.VariableExplorer.Model.VSPropertyModel
 {
     interface IDebugProperty
     {

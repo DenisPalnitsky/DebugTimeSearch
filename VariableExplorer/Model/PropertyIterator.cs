@@ -1,11 +1,10 @@
-﻿using System;
+﻿using MyCompany.VariableExplorer.Model.ExpressioEvaluation;
+using MyCompany.VariableExplorer.Model.VSPropertyModel;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MyCompany.VariableExplorer.Model
-{   
+{
     class PropertyIterator
     {        
         IExpressionEvaluatorProvider _exparessionEvaluatorProvider;

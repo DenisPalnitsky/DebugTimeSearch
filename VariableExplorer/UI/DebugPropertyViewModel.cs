@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MyCompany.VariableExplorer.Model.VSPropertyModel;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,18 +15,18 @@ namespace MyCompany.VariableExplorer.UI
 
         private DebugPropertyViewModel() { }
 
-        public static DebugPropertyViewModel From(Model.IPropertyInfo debugPropertyInfo)
+        public static DebugPropertyViewModel From(IPropertyInfo debugPropertyInfo)
         {
-            if (debugPropertyInfo is Model.IExpandablePropertyInfo)
-                return From((Model.IExpandablePropertyInfo)debugPropertyInfo);
+            if (debugPropertyInfo is IExpandablePropertyInfo)
+                return From((IExpandablePropertyInfo)debugPropertyInfo);
 
-            if (debugPropertyInfo is Model.IValuePropertyInfo)
-                return From((Model.IValuePropertyInfo)debugPropertyInfo);
+            if (debugPropertyInfo is IValuePropertyInfo)
+                return From((IValuePropertyInfo)debugPropertyInfo);
 
             throw new NotSupportedException();
         }
 
-        static DebugPropertyViewModel From(Model.IValuePropertyInfo debugPropertyInfo)
+        static DebugPropertyViewModel From(IValuePropertyInfo debugPropertyInfo)
         {
             DebugPropertyViewModel vm = new DebugPropertyViewModel()
             {
@@ -39,7 +40,7 @@ namespace MyCompany.VariableExplorer.UI
             return vm;
         }
 
-        static DebugPropertyViewModel From(Model.IExpandablePropertyInfo debugPropertyInfo)
+        static DebugPropertyViewModel From(IExpandablePropertyInfo debugPropertyInfo)
         {
             DebugPropertyViewModel vm = new DebugPropertyViewModel()
             {

@@ -3,9 +3,9 @@ using MyCompany.VariableExplorer.Model.Services;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace MyCompany.VariableExplorer.Model
+namespace MyCompany.VariableExplorer.Model.VSPropertyModel
 {    
-    class DebugProperty : MyCompany.VariableExplorer.Model.IDebugProperty
+    class DebugProperty : IDebugProperty
     {        
         IPropertyInfo _debugPropertyInfo;
         IConfiguration _configuration = IocContainer.Resolve<IConfiguration>();

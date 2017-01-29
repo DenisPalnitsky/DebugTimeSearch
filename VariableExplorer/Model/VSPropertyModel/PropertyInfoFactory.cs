@@ -1,12 +1,7 @@
 ﻿using Microsoft.VisualStudio.Debugger.Interop;
-using MyCompany.VariableExplorer.Model.Services;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace MyCompany.VariableExplorer.Model
+namespace MyCompany.VariableExplorer.Model.VSPropertyModel
 {
     class PropertyInfoFactory
     {

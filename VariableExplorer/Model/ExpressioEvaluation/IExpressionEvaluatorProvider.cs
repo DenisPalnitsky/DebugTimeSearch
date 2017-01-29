@@ -1,10 +1,4 @@
-﻿using MyCompany.VariableExplorer.Model;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace MyCompany.VariableExplorer.Model
+﻿namespace MyCompany.VariableExplorer.Model.ExpressioEvaluation
 {
     /// <summary>
     /// Main mechanism to retreive IExpressionEvaluator

@@ -1,11 +1,6 @@
-﻿using Microsoft.VisualStudio.Debugger.Interop;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
 
-namespace MyCompany.VariableExplorer.Model
+namespace MyCompany.VariableExplorer.Model.VSPropertyModel
 {
     class ValuePropertyInfo : IValuePropertyInfo
     {

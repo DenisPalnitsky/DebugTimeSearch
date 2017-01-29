@@ -1,13 +1,13 @@
 ﻿using Moq;
 using MyCompany.VariableExplorer.Model;
+using MyCompany.VariableExplorer.Model.ExpressioEvaluation;
+using MyCompany.VariableExplorer.Model.VSPropertyModel;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace VariableExplorer_UnitTests
 {

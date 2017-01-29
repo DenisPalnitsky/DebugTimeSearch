@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using MyCompany.VariableExplorer.Model.VSPropertyModel;
+using System;
 
 namespace MyCompany.VariableExplorer.Model
 {
@@ -9,10 +7,6 @@ namespace MyCompany.VariableExplorer.Model
     {
         void ParentPropertyAttended(IExpandablePropertyInfo expandablePropertyInfo);
         void ValuePropertyAttended(IValuePropertyInfo valuePropertyInfo);
-    }
-
-  
-
-   
+    }     
 
 }

@@ -1,5 +1,6 @@
-﻿using System;
-namespace MyCompany.VariableExplorer.Model
+﻿using MyCompany.VariableExplorer.Model.VSPropertyModel;
+
+namespace MyCompany.VariableExplorer.Model.ExpressioEvaluation
 {
     /// <summary>
     /// Evaluates code expressions.

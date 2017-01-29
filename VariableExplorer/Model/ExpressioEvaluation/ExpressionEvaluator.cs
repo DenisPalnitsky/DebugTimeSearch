@@ -1,27 +1,23 @@
 ﻿using Microsoft.VisualStudio.Debugger.Interop;
-using MyCompany.VariableExplorer.Model;
 using MyCompany.VariableExplorer.Model.Services;
+using MyCompany.VariableExplorer.Model.VSPropertyModel;
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
-namespace MyCompany.VariableExplorer.Model
+namespace MyCompany.VariableExplorer.Model.ExpressioEvaluation
 {
     class ExpressionEvaluator : IExpressionEvaluator
     {       
         ILog _log = IocContainer.Resolve<ILog>();
-        ConcurrentDictionary<string, IDebugProperty> _cache = new ConcurrentDictionary<string, IDebugProperty>(); 
-       
+        ConcurrentDictionary<string, IDebugProperty> _cache = new ConcurrentDictionary<string, IDebugProperty>();
+        IDebugStackFrame2 _stackFrame;
+
         public ExpressionEvaluator(IDebugStackFrame2 stackFrame )
         {
             _stackFrame = stackFrame;
         }
-
-        IDebugStackFrame2 _stackFrame;
-
+        
         public IDebugProperty EvaluateExpression(string expression)
         {
             if (string.IsNullOrEmpty(expression))
@@ -31,12 +27,15 @@ namespace MyCompany.VariableExplorer.Model
 
             _log.Info("Evaluating expression {0}. CurrentTime {1:H:mm:ss.ffff}", expression, DateTime.Now);
             if (_cache.ContainsKey(expression))
+            {
+                _log.Info("Expression '{0}' taken from cache", expression);                
                 return _cache[expression];
+            }
             
             IDebugProperty2 debugProperty = GetVsDebugProperty(expression);
             _log.Info("Done evaluating expression {0}. CurrentTime {1:H:mm:ss.ffff}", expression, DateTime.Now);
             
-            var resultDebugProperty = Model.DebugProperty.Create (debugProperty);            
+            IDebugProperty resultDebugProperty = DebugProperty.Create(debugProperty);            
             _cache[expression] = resultDebugProperty;
             return resultDebugProperty;
         }
@@ -46,7 +45,7 @@ namespace MyCompany.VariableExplorer.Model
             IDebugProperty2 d;
             _stackFrame.GetDebugProperty(out d);
 
-            return Model.DebugProperty.Create(d);
+            return DebugProperty.Create(d);
         }
 
         private IDebugProperty2 GetVsDebugProperty(string expression)
