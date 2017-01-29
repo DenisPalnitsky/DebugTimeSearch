@@ -115,8 +115,8 @@ namespace MyCompany.VariableExplorer.UI
 
             if (_property != null)
             {
-                IPropertyVisitor propertyVisitor = PropertyIterator.CreateThreadSafeActionBasedVisitor(
-                            expandableProperty =>
+                IPropertyVisitor propertyVisitor = new ActionBasedPropertyVisitor(
+                    expandableProperty =>
                             {
                                 Application.Current.Dispatcher.Invoke(() =>
                                 {

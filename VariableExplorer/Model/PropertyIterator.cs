@@ -1,4 +1,5 @@
 ﻿using MyCompany.VariableExplorer.Model.ExpressioEvaluation;
+using MyCompany.VariableExplorer.Model.Services;
 using MyCompany.VariableExplorer.Model.VSPropertyModel;
 using System;
 using System.Collections.Generic;
@@ -10,40 +11,35 @@ namespace MyCompany.VariableExplorer.Model
         IExpressionEvaluatorProvider _exparessionEvaluatorProvider;
         IPropertyVisitor _propertyVisitor;
         HashSet<string> _processedExpressions = new HashSet<string>();
+        ILog _logger = IocContainer.Resolve<ILog>();
         
 
-        public PropertyIterator (IExpressionEvaluatorProvider exparessionEvaluatorProvider,
+        public PropertyIterator (
+            IExpressionEvaluatorProvider exparessionEvaluatorProvider,
             IPropertyVisitor propertyVisitor )
         {
             this._exparessionEvaluatorProvider = exparessionEvaluatorProvider;
             _propertyVisitor = propertyVisitor;            
         }            
 
-        public static IPropertyVisitor CreateThreadSafeActionBasedVisitor(
-                    Action<IEnumerable<IExpandablePropertyInfo>> expandablePropertyAttended,
-                Action<IEnumerable<IValuePropertyInfo>> valuePropertyAttended)
-        {
-            return new ThreadSafeActionBasedPropertyVisitor(expandablePropertyAttended, valuePropertyAttended);
-        }
 
         public void TraversPropertyTree (
             IDebugProperty debugProperty,
             string searchCriteria)
         {
              StringFilter stringFilter = new StringFilter(searchCriteria);
-
-             TraversPropertyTreeInternal(debugProperty, stringFilter);
-            
+             TraversPropertyTreeInternal(debugProperty, stringFilter);            
             _propertyVisitor.Dispose();
         }
 
         /// <summary>
         /// Traversal of Properties Tree (deep-fir, recursive)
         /// </summary>         
-        private void TraversPropertyTreeInternal (
+        private void TraversPropertyTreeInternal(
             IDebugProperty debugProperty,
             StringFilter stringFilter)
         {
+            _logger.Info("TRaversing property {0}",  debugProperty.PropertyInfo.FullName);
             // visit root            
             RiseAppropriateAction(debugProperty.PropertyInfo, stringFilter);
             

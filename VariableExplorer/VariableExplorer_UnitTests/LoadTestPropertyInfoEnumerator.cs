@@ -2,6 +2,7 @@
 using MyCompany.VariableExplorer.Model;
 using MyCompany.VariableExplorer.Model.ExpressioEvaluation;
 using MyCompany.VariableExplorer.Model.VSPropertyModel;
+using MyCompany.VariableExplorer.UI;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -56,7 +57,7 @@ namespace VariableExplorer_UnitTests
             evaluatorProvider.Setup(e => e.IsEvaluatorAvailable).Returns(true);
             evaluatorProvider.Setup(e => e.ExpressionEvaluator).Returns(evaluator.Object);
 
-            var eventSink = PropertyIterator.CreateThreadSafeActionBasedVisitor (e => {
+            var eventSink = new ActionBasedPropertyVisitor(e => {
 
                 System.Diagnostics.Debug.WriteLine( "ExpandableProps released:" + e.Count() ); 
 

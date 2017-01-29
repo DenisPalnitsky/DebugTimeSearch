@@ -180,7 +180,7 @@
     <Compile Include="Model\VSPropertyModel\DebugProperty.cs" />
     <Compile Include="Model\Services\OutputWindowLogger.cs" />
     <Compile Include="Model\StringFilter.cs" />
-    <Compile Include="Model\ThreadSafeActionBasedPropertyVisitor.cs" />
+    <Compile Include="UI\ActionBasedPropertyVisitor.cs" />
     <Compile Include="Model\VSPropertyModel\ValuePropertyInfo.cs" />
     <Compile Include="Model\Services\IConfiguration.cs" />
     <Compile Include="dbgGuids.cs" />

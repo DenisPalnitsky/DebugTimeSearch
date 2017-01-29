@@ -9,7 +9,7 @@ namespace MyCompany.VariableExplorer.Model.VSPropertyModel
     {        
         IPropertyInfo _debugPropertyInfo;
         IConfiguration _configuration = IocContainer.Resolve<IConfiguration>();
-        IEnumerable<IPropertyInfo> _children;
+        IPropertyInfo[] _children;
         IDebugProperty2 _vsDebugProperty;
         ILog _logger = IocContainer.Resolve<ILog>();
         private const uint ITEMS_TO_FETCH = 1000;
@@ -68,7 +68,7 @@ namespace MyCompany.VariableExplorer.Model.VSPropertyModel
             return propertyInfoFactory.Create(propertyInfo[0]);
         }
 
-        private IEnumerable<IPropertyInfo> GetChildren(IDebugProperty2 debugProperty)
+        private IPropertyInfo[] GetChildren(IDebugProperty2 debugProperty)
         {
             var logger = IocContainer.Resolve<ILog>();
             logger.Info("EnumChildren");
@@ -89,16 +89,24 @@ namespace MyCompany.VariableExplorer.Model.VSPropertyModel
             DEBUG_PROPERTY_INFO[] debugPropInfos = new DEBUG_PROPERTY_INFO[ITEMS_TO_FETCH];
             uint fetched;
 
-            logger.Info("Fetch children");            
+            logger.Info("Fetch children");
+
+            List<IPropertyInfo> result = new List<IPropertyInfo>();
             do
             {
                 // TODO: Performance bottlneck
                 debugPropertyEnum.Next(ITEMS_TO_FETCH, debugPropInfos, out fetched).ThrowOnFailure();
+
+                logger.Info("Received next {0} of children", ITEMS_TO_FETCH );
                 foreach (var p in debugPropInfos.Take((int)fetched).Select(d => _propertyInfoFactory.Create(d)).Cast<IPropertyInfo>())
-                    yield return p;
+                {
+                    logger.Info("Returning property: '{0}'", p.Name);
+                    result.Add(p);
+                }
             } while (fetched >= ITEMS_TO_FETCH );
 
-            logger.Info("Return children");            
+            logger.Info("All children returned");
+            return result.ToArray();
         }
     }
 }
