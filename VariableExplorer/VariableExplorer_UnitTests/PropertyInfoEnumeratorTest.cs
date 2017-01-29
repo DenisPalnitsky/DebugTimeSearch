@@ -121,7 +121,7 @@ namespace VariableExplorer_UnitTests
             PropertyIterator propertIterator = new PropertyIterator(exparessionEvaluatorProviderMock.Object,
                 propertyVisitorMock.Object );
 
-            propertIterator.TraversalOfPropertyTreeDeepFirst(parentDebugPropertyMock.Object, String.Empty);
+            propertIterator.TraversPropertyTree(parentDebugPropertyMock.Object, String.Empty);
          
             // Assert
             exparessionEvaluatorProviderMock.VerifyAll();
@@ -187,7 +187,7 @@ namespace VariableExplorer_UnitTests
             PropertyIterator propertIterator = new PropertyIterator(exparessionEvaluatorProviderMock.Object,
                 propertyVisitorMock.Object);
 
-            propertIterator.TraversalOfPropertyTreeDeepFirst(parentDebugPropertyMock.Object, String.Empty);
+            propertIterator.TraversPropertyTree(parentDebugPropertyMock.Object, String.Empty);
 
             // Assert
             exparessionEvaluatorProviderMock.VerifyAll();
@@ -226,7 +226,7 @@ namespace VariableExplorer_UnitTests
                  p=>results.Add(p), 
                  v=>results.Add(v)));
 
-            propertyIterator.TraversalOfPropertyTreeDeepFirst(debugPropertyMock.Object, String.Empty);            
+            propertyIterator.TraversPropertyTree(debugPropertyMock.Object, String.Empty);            
 
             exparessionEvaluatorProviderMock.Verify();
             expressionEvaluatorMock.VerifyAll();
@@ -260,7 +260,7 @@ namespace VariableExplorer_UnitTests
                 new DependencyOverride<IExpressionEvaluator>(expressionEvaluatorMock.Object));
 
             // Act 
-            propertyIterator.TraversalOfPropertyTreeDeepFirst(debugPropertyMock.Object, string.Empty);            
+            propertyIterator.TraversPropertyTree(debugPropertyMock.Object, string.Empty);            
                         
             // Assert
             expressionEvaluatorMock.Verify(s=>s.EvaluateExpression(It.IsAny<string>()), Times.Never());

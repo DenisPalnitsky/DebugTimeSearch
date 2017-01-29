@@ -10,7 +10,8 @@ namespace MyCompany.VariableExplorer.Model
     {        
         IExpressionEvaluatorProvider _exparessionEvaluatorProvider;
         IPropertyVisitor _propertyVisitor;
-       
+        HashSet<string> _processedExpressions = new HashSet<string>();
+        
 
         public PropertyIterator (IExpressionEvaluatorProvider exparessionEvaluatorProvider,
             IPropertyVisitor propertyVisitor )
@@ -26,18 +27,21 @@ namespace MyCompany.VariableExplorer.Model
             return new ThreadSafeActionBasedPropertyVisitor(expandablePropertyAttended, valuePropertyAttended);
         }
 
-        public void TraversalOfPropertyTreeDeepFirst (
+        public void TraversPropertyTree (
             IDebugProperty debugProperty,
             string searchCriteria)
         {
              StringFilter stringFilter = new StringFilter(searchCriteria);
 
-             RecursiveTraversalOfPropertyTreeDeepFirst(debugProperty, stringFilter);
+             TraversPropertyTreeInternal(debugProperty, stringFilter);
             
             _propertyVisitor.Dispose();
         }
 
-        private void RecursiveTraversalOfPropertyTreeDeepFirst (
+        /// <summary>
+        /// Traversal of Properties Tree (deep-fir, recursive)
+        /// </summary>         
+        private void TraversPropertyTreeInternal (
             IDebugProperty debugProperty,
             StringFilter stringFilter)
         {
@@ -58,14 +62,15 @@ namespace MyCompany.VariableExplorer.Model
                     evaluated = EvaluateExpression(childProperty);                         
 
                     if (evaluated != null)
-                        RecursiveTraversalOfPropertyTreeDeepFirst(evaluated, stringFilter);
+                        TraversPropertyTreeInternal(evaluated, stringFilter);
                 }
                 else
                     throw new NotSupportedException("This property info type is not supported. Contact developer.");
             }
         }
+        
 
-        HashSet<string> _processedExpressions = new HashSet<string>();
+
         private IDebugProperty EvaluateExpression(IPropertyInfo propertyToEvaluate)
         {
             // property name in [] means that it's parent property and should not be evaluated
@@ -73,10 +78,10 @@ namespace MyCompany.VariableExplorer.Model
                 (!propertyToEvaluate.Name.StartsWith("[") && !propertyToEvaluate.Name.EndsWith("]")
                 && _exparessionEvaluatorProvider.IsEvaluatorAvailable))
             {
-
                 _processedExpressions.Add(propertyToEvaluate.FullName);
                 return _exparessionEvaluatorProvider.ExpressionEvaluator.EvaluateExpression(propertyToEvaluate.FullName);
             }
+
             return null;
         }
 

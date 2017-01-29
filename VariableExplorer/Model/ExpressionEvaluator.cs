@@ -14,6 +14,7 @@ namespace MyCompany.VariableExplorer.Model
     {       
         ILog _log = IocContainer.Resolve<ILog>();
         ConcurrentDictionary<string, IDebugProperty> _cache = new ConcurrentDictionary<string, IDebugProperty>(); 
+       
         public ExpressionEvaluator(IDebugStackFrame2 stackFrame )
         {
             _stackFrame = stackFrame;
@@ -38,6 +39,14 @@ namespace MyCompany.VariableExplorer.Model
             var resultDebugProperty = Model.DebugProperty.Create (debugProperty);            
             _cache[expression] = resultDebugProperty;
             return resultDebugProperty;
+        }
+
+        public IDebugProperty GetLocals()
+        {
+            IDebugProperty2 d;
+            _stackFrame.GetDebugProperty(out d);
+
+            return Model.DebugProperty.Create(d);
         }
 
         private IDebugProperty2 GetVsDebugProperty(string expression)
@@ -70,15 +79,6 @@ namespace MyCompany.VariableExplorer.Model
                     out debugProperty).ThrowOnFailure();
             return debugProperty;
         }
-
-
-
-        public IDebugProperty GetLocals()
-        {
-            IDebugProperty2 d;
-            _stackFrame.GetDebugProperty(out d);
-
-            return Model.DebugProperty.Create(d); 
-        }
+     
     }
 }

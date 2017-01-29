@@ -117,12 +117,12 @@ namespace MyCompany.VariableExplorer.UI
 
             if (_property != null)
             {
-                IPropertyVisitor eventSink = PropertyIterator.CreateThreadSafeActionBasedVisitor(
-                            expndableProperty =>
+                IPropertyVisitor propertyVisitor = PropertyIterator.CreateThreadSafeActionBasedVisitor(
+                            expandableProperty =>
                             {
                                 Application.Current.Dispatcher.Invoke(() =>
                                 {
-                                    _visibleProperties.AddRange(expndableProperty.Select(item => DebugPropertyViewModel.From(item)));
+                                    _visibleProperties.AddRange(expandableProperty.Select(item => DebugPropertyViewModel.From(item)));
                                 });
                             },
                             valueProperty =>
@@ -135,10 +135,10 @@ namespace MyCompany.VariableExplorer.UI
 
                 PropertyIterator propertyIterator = new PropertyIterator(
                     expressionEvaluatorProvider,
-                    eventSink);
+                    propertyVisitor);
 
                 Task.Run(
-                    () => propertyIterator.TraversalOfPropertyTreeDeepFirst(_property, _searchText))
+                    () => propertyIterator.TraversPropertyTree(_property, _searchText))
                     .ContinueWith(t =>
                     {
                         stopwatch.Stop();
@@ -153,9 +153,7 @@ namespace MyCompany.VariableExplorer.UI
             }
         }
 
- 
-
-        void visibleProperties_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        private void visibleProperties_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             OnPropertyChanged(() => Properties);
         }

@@ -66,7 +66,7 @@ namespace VariableExplorer_UnitTests
 
             PropertyIterator propertyIterator = new PropertyIterator(evaluatorProvider.Object, eventSink);
 
-            propertyIterator.TraversalOfPropertyTreeDeepFirst(propInfo, String.Empty);
+            propertyIterator.TraversPropertyTree(propInfo, String.Empty);
                         
             sw.Stop();
             var filename = "LoadTestResults.txt";
