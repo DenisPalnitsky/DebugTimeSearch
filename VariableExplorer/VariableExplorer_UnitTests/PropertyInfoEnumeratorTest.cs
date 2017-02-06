@@ -254,6 +254,9 @@ namespace VariableExplorer_UnitTests
             var debugPropertyMock = new Mock<IDebugProperty>();
             debugPropertyMock.Setup(d => d.Children).Returns(new[] { expandablePropertyMock.Object});
 
+            debugPropertyMock.Setup(d => d.PropertyInfo).Returns(
+                new ValuePropertyInfo("fullName", "name", "string"));
+
             ObservableCollection<IPropertyInfo> result = new ObservableCollection<IPropertyInfo>();
           
             List<IPropertyInfo> results = new List<IPropertyInfo>();
