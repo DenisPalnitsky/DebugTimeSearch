@@ -17,15 +17,22 @@
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />            
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-                     
+        <Grid.Resources>
+            <Style TargetType="TextBox" >
+                <Setter Property="Margin" Value="2" />
+                <Setter Property="Height" Value="21" />
+             </Style>
+        </Grid.Resources>
+
         <Grid Grid.Row="0" x:Name="ExpressionGrid" Margin="5" >
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="60" />
+                <ColumnDefinition Width="80" />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition />
@@ -36,7 +43,7 @@
                      Grid.Row="1" 
                      Name="SearchTextBox"                      
                      Text ="{Binding SearchText}"
-                     Margin="2"/>
+                     />
 
             <Button Grid.Column="1"  
                     Grid.Row="1" 
@@ -47,8 +54,12 @@
                     Margin="2" />
         </Grid>
 
+        <StackPanel Grid.Row="1" Margin="5">
+            <TextBlock Text="Filter Text" Margin="2" />
+            <TextBox Text ="{Binding FilterText}" />
+        </StackPanel>
 
-        <DataGrid Grid.Row="1" Name="VariableContent" 
+        <DataGrid Grid.Row="2" Name="VariableContent" 
                           ItemsSource="{Binding Properties}" 
                           AutoGenerateColumns="False" SelectionMode="Single" SelectionUnit="CellOrRowHeader" 
                           Visibility="{Binding Path=IsErrorMessageVisible,Converter={common:BoolToVisibilityConverter TrueValue=Collapsed, FalseValue=Visible}}"
@@ -63,7 +74,7 @@
 
        
 
-        <StatusBar  Grid.Row="2">
+        <StatusBar Grid.Row="3">
             <StatusBarItem>
                 <TextBlock x:Name="StatusBarText" Text="{Binding StatusBarText}" />
             </StatusBarItem>

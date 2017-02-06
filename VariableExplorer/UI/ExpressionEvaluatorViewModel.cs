@@ -16,14 +16,14 @@ namespace MyCompany.VariableExplorer.UI
     class ExpressionEvaluatorViewModel : ObservableObject, MyCompany.VariableExplorer.UI.IExpressionEvaluatorViewModel
     {
         IDebugProperty _property;
-        string _expressionText;
+        string _filterText;
         DebugPropertyViewModelCollection _visibleProperties = new DebugPropertyViewModelCollection();
         object _visiblePropertiesLock = new object();
 
         ILog _logger;
         private string _errorMessage;
         private string _statusBarText;
-        private string _searchText;
+        private string _searchText;        
 
         public ExpressionEvaluatorViewModel(ILog logger)
         {
@@ -40,12 +40,12 @@ namespace MyCompany.VariableExplorer.UI
             }
         }
 
-        public string ExpressionText
+        public string FilterText
         {
-            get { return _expressionText; }
+            get { return _filterText; }
             set 
             { 
-                _expressionText = value;                
+                _filterText = value;                
                 OnPropertyChanged();
             }
         }
@@ -59,6 +59,7 @@ namespace MyCompany.VariableExplorer.UI
                 OnPropertyChanged();
             }
         }
+        
 
         public string ErrorMessage
         {
@@ -90,17 +91,25 @@ namespace MyCompany.VariableExplorer.UI
         
         public ICommand  SearchLocalsCommand
         {
-            get { return new DelegateCommand(SearchLocals); }
+            get { return new DelegateCommand(Search); }
         }
      
 
-        private void SearchLocals()
+        private void Search()
         {
             var expressionEvaluatorProvider = IocContainer.Resolve<IExpressionEvaluatorProvider>();
             if (expressionEvaluatorProvider.IsEvaluatorAvailable)
             {
-                _property = expressionEvaluatorProvider.ExpressionEvaluator.GetLocals();
-                IterateThrueProperty(expressionEvaluatorProvider);
+                if (String.IsNullOrEmpty(FilterText)) // search all locals
+                {
+                    _property = expressionEvaluatorProvider.ExpressionEvaluator.GetLocals();
+                    IterateThrueProperty(expressionEvaluatorProvider);
+                }
+                else
+                {
+                    _property = expressionEvaluatorProvider.ExpressionEvaluator.EvaluateExpression(FilterText);
+                    IterateThrueProperty(expressionEvaluatorProvider);
+                }
             }
         }
 

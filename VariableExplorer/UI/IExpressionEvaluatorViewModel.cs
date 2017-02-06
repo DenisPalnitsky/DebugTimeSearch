@@ -3,7 +3,7 @@ namespace MyCompany.VariableExplorer.UI
 {
     interface IExpressionEvaluatorViewModel
     {        
-        string ExpressionText { get; set; }        
+        string FilterText { get; set; }        
         System.Collections.Generic.IEnumerable<DebugPropertyViewModel> Properties { get; }
     }
 }

@@ -167,7 +167,7 @@ namespace MyCompany.VariableExplorer
                 
             string textUnderCursor =  CodeUnderCursor.GetExpression(vTextView);
             var expressionEvaluatorViewModel = MyCompany.VariableExplorer.Model.Services.IocContainer.Resolve<MyCompany.VariableExplorer.UI.IExpressionEvaluatorViewModel>();
-            expressionEvaluatorViewModel.ExpressionText = textUnderCursor;
+            expressionEvaluatorViewModel.FilterText = textUnderCursor;
             ShowToolWindow();
 
                 
