@@ -42,8 +42,13 @@
             <TextBox Grid.Column="0" 
                      Grid.Row="1" 
                      Name="SearchTextBox"                      
-                     Text ="{Binding SearchText}"
-                     />
+                     Text ="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"                    
+                     >
+                <TextBox.InputBindings>
+                    <!--<KeyBinding Command="{Binding SearchLocalsCommand}" Key="Return" /> -->
+                    <KeyBinding Command="{Binding SearchLocalsCommand}" Key="Enter" />
+                </TextBox.InputBindings>
+            </TextBox>
 
             <Button Grid.Column="1"  
                     Grid.Row="1" 
