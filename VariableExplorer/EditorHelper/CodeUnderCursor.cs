@@ -21,8 +21,9 @@ namespace MyCompany.VariableExplorer.EditorHelper
             vsTextView.GetWordExtent(
                 line,
                 column,
-                (uint)WORDEXTFLAGS.WORDEXT_FINDEXPRESSION,
-                textSpan);
+                (uint) WORDEXTFLAGS.WORDEXT_FINDTOKEN, // WORDEXTFLAGS.WORDEXT_FINDEXPRESSION - does not work in VS2015
+                textSpan).ThrowOnFailure();
+            
 
             if (textSpan.Length > 0)
             {

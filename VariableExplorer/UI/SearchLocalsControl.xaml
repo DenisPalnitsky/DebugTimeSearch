@@ -17,18 +17,29 @@
             <Style TargetType="Label">
                 <Setter Property="Foreground" Value="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowTextBrushKey}}"/>
             </Style>
-
-            <Style TargetType="TextBlock">
+           
+            <Style TargetType="TextBlock" x:Key="TextBlockStyle" >
                 <Setter Property="Foreground" Value="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowTextBrushKey}}"/>
+                <Setter Property="Background" Value="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowBackgroundBrushKey}}"/>
             </Style>
 
-            <Style TargetType="TextBox">
+            <Style BasedOn="{StaticResource TextBlockStyle}" TargetType="TextBlock" />
+
+            <Style TargetType="TextBox" >
                 <Setter Property="Foreground" Value="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowTextBrushKey}}"/>
                 <Setter Property="Background" Value="{DynamicResource {x:Static vs_shell:EnvironmentColors.SearchBoxBackgroundBrushKey}}" />
                 <Setter Property="Margin" Value="2" />
                 <Setter Property="Height" Value="21" />
             </Style>
-            
+
+            <Style TargetType="DataGrid" >
+                <Setter Property="BorderBrush" Value="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowBorderBrushKey}}"/>
+                <Setter Property="Background" Value="Transparent"/>
+            </Style>
+
+            <Style TargetType="StatusBar" >
+                <Setter Property="Background" Value="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowBackgroundBrushKey}}" />
+            </Style>
 
             <common:BoolToVisibilityConverter FalseValue="Collapsed" x:Key="btvc" />
         </ResourceDictionary>
@@ -86,15 +97,27 @@
                           Visibility="{Binding Path=IsErrorMessageVisible,Converter={common:BoolToVisibilityConverter TrueValue=Collapsed, FalseValue=Visible}}"
                           VerticalAlignment="Stretch" >
             <DataGrid.Resources>
+                <Style TargetType="DataGridCell">
+                    <Setter Property="Background" Value="Transparent" />
+                </Style>
+                
                 <DataTemplate x:Key="NameTemplate" >
-                    <TextBlock Text="{Binding Name}" ToolTip="{Binding FullName}"/>
+                    <TextBlock Text="{Binding Name}" ToolTip="{Binding FullName}" Style="{StaticResource TextBlockStyle}"/>
+                </DataTemplate>
+                
+                <DataTemplate x:Key="ValueTemplate" >
+                    <TextBlock Text="{Binding Value}"  Style="{StaticResource TextBlockStyle}"/>
+                </DataTemplate>
+
+                <DataTemplate x:Key="TypeTemplate" >
+                    <TextBlock Text="{Binding ValueType}" Style="{StaticResource TextBlockStyle}"/>
                 </DataTemplate>
             </DataGrid.Resources>
 
             <DataGrid.Columns>
                 <DataGridTemplateColumn Header="Name" CellTemplate="{StaticResource NameTemplate}" Width="2*" />
-                <DataGridTextColumn Header="Value" Binding="{Binding Value, Mode=OneWay}" Width="*" />
-                <DataGridTextColumn Header="Type" Binding="{Binding ValueType, Mode=OneWay}" Width="2*" />
+                <DataGridTemplateColumn Header="Value" CellTemplate="{StaticResource ValueTemplate}" Width="*" />
+                <DataGridTemplateColumn Header="Type" CellTemplate="{StaticResource TypeTemplate}" Width="2*" />
             </DataGrid.Columns>
         </DataGrid>
 
