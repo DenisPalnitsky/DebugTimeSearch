@@ -11,7 +11,10 @@ namespace VariableExplorer_UnitTests
     {
         public static void Main()
         {
-            //PropertyInfoVisitorTest.Enumerate_when_called_initialize_parent_propert();
+            var t = new PropertyInfoVisitorTest();
+            t.SetupContainer();
+            t.Enumerate_when_called_do_not_evaluates_properties_in_square_brackets();
+            t.Enumerate_when_called_do_not_evaluates_properties_containing_round_brackets();
         }    
     }
 }

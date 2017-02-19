@@ -54,7 +54,9 @@ namespace VariableExplorer_UnitTests
         {            
             _container.RegisterInstance<IPropertyVisitor>(Mock.Of<IPropertyVisitor>());
 
-            _container.RegisterInstance<IExpressionEvaluator>(Mock.Of<IExpressionEvaluator>());
+            var iExpressionEvaluatorMock = new Mock<IExpressionEvaluator>( );
+            iExpressionEvaluatorMock.Name = "Default IExpressionEvaluator";
+            _container.RegisterInstance<IExpressionEvaluator>(iExpressionEvaluatorMock.Object);
 
             var exparessionEvaluatorProviderMock = new Mock<IExpressionEvaluatorProvider>();
             exparessionEvaluatorProviderMock.Setup(p => p.IsEvaluatorAvailable).Returns(true).Verifiable();
@@ -252,36 +254,55 @@ namespace VariableExplorer_UnitTests
 
 
         [Test]
-        public void Enumerate_when_called_do_not_evaluates_properties_in_brackets()
+        public void Enumerate_when_called_do_not_evaluates_properties_in_square_brackets()
+        {           
+            string expandablePropertyFullName = "[ExpandableProperty]";
+            TestSkippPropertyByName(expandablePropertyFullName);
+        }
+
+        [Test]
+        public void Enumerate_when_called_do_not_evaluates_properties_containing_round_brackets()
         {
             // Arrange
+            string expandablePropertyFullName = "(string)PropertyInfoVisitorTestExpandableProperty";
+            TestSkippPropertyByName(expandablePropertyFullName);
+        }
+
+        private void TestSkippPropertyByName(string expandablePropertyFullName)
+        {
             var expandablePropertyMock = new Mock<IExpandablePropertyInfo>();
 
-            string expandablePropertyFullName = "ExpandableProperty";            
-            expandablePropertyMock.Setup(p => p.Name).Returns("[" + expandablePropertyFullName + "]" ).Verifiable();            
-            
+            expandablePropertyMock.Setup(p => p.Name).Returns(expandablePropertyFullName).Verifiable();
+
             var expressionEvaluatorMock = new Mock<IExpressionEvaluator>(MockBehavior.Strict);
-            expressionEvaluatorMock.Setup(s=>s.EvaluateExpression(It.IsAny<string>()));
+            expressionEvaluatorMock.Name = "MyOverridenMock";
+            expressionEvaluatorMock.Setup(s => s.EvaluateExpression(It.IsAny<string>())).
+                Callback(()=> { throw new Exception("Should not be called"); });
+
+            var exparessionEvaluatorProviderMock = new Mock<IExpressionEvaluatorProvider>();
+            exparessionEvaluatorProviderMock.Setup(p => p.IsEvaluatorAvailable).Returns(true);
+            exparessionEvaluatorProviderMock.Setup(p => p.ExpressionEvaluator).Returns(expressionEvaluatorMock.Object);
 
             var debugPropertyMock = new Mock<IDebugProperty>();
-            debugPropertyMock.Setup(d => d.Children).Returns(new[] { expandablePropertyMock.Object});
+            debugPropertyMock.Setup(d => d.Children).Returns(new[] { expandablePropertyMock.Object });
 
             debugPropertyMock.Setup(d => d.PropertyInfo).Returns(
                 new ValuePropertyInfo("fullName", "name", "string", "value", null));
 
             ObservableCollection<IPropertyInfo> result = new ObservableCollection<IPropertyInfo>();
-          
+
             List<IPropertyInfo> results = new List<IPropertyInfo>();
 
-            PropertyIterator propertyIterator = _container.Resolve<PropertyIterator>(
-                new DependencyOverride<IExpressionEvaluator>(expressionEvaluatorMock.Object));
+            PropertyIterator propertyIterator = new PropertyIterator(exparessionEvaluatorProviderMock.Object, Mock.Of<IPropertyVisitor>());
 
             // Act 
-            propertyIterator.TraversPropertyTree(debugPropertyMock.Object, string.Empty);            
-                        
-            // Assert
-            expressionEvaluatorMock.Verify(s=>s.EvaluateExpression(It.IsAny<string>()), Times.Never());
+            propertyIterator.TraversPropertyTree(debugPropertyMock.Object, string.Empty);
+
+            // Assert see callback above
+            
         }
+
+
 
         //[Test]
         //public void Enumerate_when_called_do_not_evaluates_with_same_names()

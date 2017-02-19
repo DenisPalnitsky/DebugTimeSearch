@@ -69,8 +69,10 @@ namespace MyCompany.VariableExplorer.Model
         private IDebugProperty EvaluateExpression(IPropertyInfo propertyToEvaluate)
         {
             // property name in [] means that it's parent property and should not be evaluated
+            // property namy with ( ) means that we cas type which is not required
             if (!_processedExpressions.Contains(propertyToEvaluate.FullName) &&
-                (!propertyToEvaluate.Name.StartsWith("[") && !propertyToEvaluate.Name.EndsWith("]")
+                (!propertyToEvaluate.Name.StartsWith("[") && !propertyToEvaluate.Name.EndsWith("]")  &&
+                (!propertyToEvaluate.Name.StartsWith("(") && !propertyToEvaluate.Name.EndsWith(")"))
                 && _exparessionEvaluatorProvider.IsEvaluatorAvailable))
             {
                 _processedExpressions.Add(propertyToEvaluate.FullName);
