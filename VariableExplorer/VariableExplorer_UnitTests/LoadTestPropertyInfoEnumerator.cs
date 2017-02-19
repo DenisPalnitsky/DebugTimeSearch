@@ -27,7 +27,7 @@ namespace VariableExplorer_UnitTests
                     var valueProperties = new List<ValuePropertyInfo>();
 
                     for (int i = 0; i < valuePropertiesCount; i++)
-                        valueProperties.Add(new ValuePropertyInfo("Prop " + i, "Name" + i, "Type" + i));
+                        valueProperties.Add(new ValuePropertyInfo("Prop " + i, "Name" + i, "Type" + i, "Value"+i, null));
 
                     var expandableProperties = new List<IExpandablePropertyInfo>();
                     for (int i = 0; i < expandablePropertiesCount; i++)
@@ -40,7 +40,7 @@ namespace VariableExplorer_UnitTests
 
             public IPropertyInfo PropertyInfo
             {
-                get { return new ValuePropertyInfo("Root", "Root name", "string"); }
+                get { return new ValuePropertyInfo("Root", "Root name", "string", "value", null); }
             }
         }
 

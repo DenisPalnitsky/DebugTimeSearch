@@ -6,17 +6,17 @@ namespace MyCompany.VariableExplorer.Model.VSPropertyModel
     {
         string _value;
 
-        public ValuePropertyInfo(string fullName, string name, string valueType, string value)
-            : this(fullName, name, valueType, value, true)
+        public ValuePropertyInfo(string fullName, string name, string valueType, string value, IExpandablePropertyInfo parent)
+            : this(fullName, name, valueType, value, true, parent)
         {            
         }
 
-        public ValuePropertyInfo(string fullName, string name, string valueType)
-            : this(fullName, name, valueType, null, false)
-        {                        
-        }
-
-        private ValuePropertyInfo(string fullName, string name, string valueType, string value, bool isEvaluated)
+        private ValuePropertyInfo(string fullName, 
+            string name, 
+            string valueType, 
+            string value, 
+            bool isEvaluated, 
+            IExpandablePropertyInfo parent)
         {
             if (String.IsNullOrEmpty(fullName) || String.IsNullOrEmpty(name) || String.IsNullOrEmpty(valueType))
                 throw new InvalidOperationException("Name and ValueType should not be null");
@@ -26,6 +26,7 @@ namespace MyCompany.VariableExplorer.Model.VSPropertyModel
             FullName = fullName;
             IsEvaluated = isEvaluated;
             _value = value;
+            Parent = parent;
         }
 
         public string ValueType
@@ -64,5 +65,9 @@ namespace MyCompany.VariableExplorer.Model.VSPropertyModel
             private set;     
         }
 
+        public IExpandablePropertyInfo Parent
+        {
+            get; private set;
+        }
     }
 }

@@ -7,7 +7,7 @@ namespace MyCompany.VariableExplorer.Model.VSPropertyModel
 {    
     class DebugProperty : IDebugProperty
     {        
-        IPropertyInfo _debugPropertyInfo;
+        IPropertyInfo _propertyInfo;
         IConfiguration _configuration = IocContainer.Resolve<IConfiguration>();
         IPropertyInfo[] _children;
         IDebugProperty2 _vsDebugProperty;
@@ -27,7 +27,7 @@ namespace MyCompany.VariableExplorer.Model.VSPropertyModel
             var result =  new DebugProperty(vsDebugProperty);
 
             result._logger.Info("Start GetPropertyInfo()");
-            result._debugPropertyInfo = GetPropertyInfo(vsDebugProperty, result._propertyInfoFactory);
+            result._propertyInfo = GetPropertyInfo(vsDebugProperty, result._propertyInfoFactory);
             result._logger.Info("Finish GetPropertyInfo()");
             return result;
         }
@@ -38,7 +38,7 @@ namespace MyCompany.VariableExplorer.Model.VSPropertyModel
             {
                 _logger.Info("Start getting children for {0}", this.PropertyInfo.FullName);
                 if(_children == null)
-                    _children = GetChildren(_vsDebugProperty);
+                    _children = GetChildren(_vsDebugProperty, _propertyInfo as IExpandablePropertyInfo);
 
                 _logger.Info("Finish getting children for {0}", this.PropertyInfo.FullName);
                 return _children; 
@@ -49,7 +49,7 @@ namespace MyCompany.VariableExplorer.Model.VSPropertyModel
         {
             get
             {                
-                return _debugPropertyInfo;
+                return _propertyInfo;
             }
         }
 
@@ -65,10 +65,10 @@ namespace MyCompany.VariableExplorer.Model.VSPropertyModel
                     reference,
                     0,
                     propertyInfo).ThrowOnFailure();
-            return propertyInfoFactory.Create(propertyInfo[0]);
+            return propertyInfoFactory.Create(propertyInfo[0], null);
         }
 
-        private IPropertyInfo[] GetChildren(IDebugProperty2 debugProperty)
+        private IPropertyInfo[] GetChildren(IDebugProperty2 debugProperty, IExpandablePropertyInfo parent)
         {
             var logger = IocContainer.Resolve<ILog>();
             logger.Info("EnumChildren");
@@ -98,7 +98,7 @@ namespace MyCompany.VariableExplorer.Model.VSPropertyModel
                 debugPropertyEnum.Next(ITEMS_TO_FETCH, debugPropInfos, out fetched).ThrowOnFailure();
 
                 logger.Info("Received next {0} of children", ITEMS_TO_FETCH );
-                foreach (var p in debugPropInfos.Take((int)fetched).Select(d => _propertyInfoFactory.Create(d)).Cast<IPropertyInfo>())
+                foreach (var p in debugPropInfos.Take((int)fetched).Select(d => _propertyInfoFactory.Create(d, parent)).Cast<IPropertyInfo>())
                 {
                     logger.Info("Returning property: '{0}'", p.Name);
                     result.Add(p);

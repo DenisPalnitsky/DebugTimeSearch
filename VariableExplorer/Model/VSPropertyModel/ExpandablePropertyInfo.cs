@@ -1,13 +1,16 @@
-﻿namespace MyCompany.VariableExplorer.Model.VSPropertyModel
+﻿using System;
+
+namespace MyCompany.VariableExplorer.Model.VSPropertyModel
 {
     class ExpandablePropertyInfo : IExpandablePropertyInfo
     {
         private Microsoft.VisualStudio.Debugger.Interop.DEBUG_PROPERTY_INFO propertyInfo;
 
-        public ExpandablePropertyInfo(Microsoft.VisualStudio.Debugger.Interop.DEBUG_PROPERTY_INFO propertyInfo)
+        public ExpandablePropertyInfo(Microsoft.VisualStudio.Debugger.Interop.DEBUG_PROPERTY_INFO propertyInfo, IExpandablePropertyInfo parent)
         {
             // TODO: Complete member initialization
             this.propertyInfo = propertyInfo;
+            Parent = parent;
         }
 
         public string FullName
@@ -18,6 +21,11 @@
         public string Name
         {
             get { return propertyInfo.bstrName; }
+        }
+
+        public IExpandablePropertyInfo Parent
+        {
+            get; private set;
         }
 
         public string ValueType

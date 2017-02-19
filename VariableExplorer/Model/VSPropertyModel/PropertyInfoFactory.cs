@@ -7,11 +7,11 @@ namespace MyCompany.VariableExplorer.Model.VSPropertyModel
     {
         Dictionary<string, IPropertyInfo> _evaluatedProperties = new Dictionary<string, IPropertyInfo>();
 
-        public IPropertyInfo Create(DEBUG_PROPERTY_INFO propertyInfo ) 
+        public IPropertyInfo Create(DEBUG_PROPERTY_INFO propertyInfo, IExpandablePropertyInfo parent) 
         {
             if (propertyInfo.dwAttrib.HasFlag(enum_DBG_ATTRIB_FLAGS.DBG_ATTRIB_OBJ_IS_EXPANDABLE))
             {
-                return new ExpandablePropertyInfo(propertyInfo);
+                return new ExpandablePropertyInfo(propertyInfo, parent);
             }
             else
             {
@@ -20,7 +20,8 @@ namespace MyCompany.VariableExplorer.Model.VSPropertyModel
                     // evaluate fetched properties                 
                     return new BrokenValuePropertyInfo(propertyInfo.bstrFullName,
                                                 propertyInfo.bstrName,                                                
-                                                propertyInfo.bstrValue);
+                                                propertyInfo.bstrValue, 
+                                                parent);
                  
                 }
                 else if ( propertyInfo.bstrName == null &&
@@ -29,14 +30,16 @@ namespace MyCompany.VariableExplorer.Model.VSPropertyModel
                 {
                     return new BrokenValuePropertyInfo("<Name is null>",
                                               "<Name is null>",
-                                              "<Value is null>");
+                                              "<Value is null>", 
+                                              parent);
                 }
                 else
                 {
                     return new ValuePropertyInfo(propertyInfo.bstrFullName,
                                                 propertyInfo.bstrName,
                                                 propertyInfo.bstrType,
-                                                propertyInfo.bstrValue);
+                                                propertyInfo.bstrValue, 
+                                                parent);
                 }
                 
             }

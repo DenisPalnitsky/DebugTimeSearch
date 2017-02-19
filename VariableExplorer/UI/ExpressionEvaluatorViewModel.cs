@@ -131,6 +131,7 @@ namespace MyCompany.VariableExplorer.UI
                                 {
                                     _visibleProperties.AddRange(expandableProperty.Select(item => DebugPropertyViewModel.From(item)));
                                 });
+                                _logger.Info(String.Join("\n", expandableProperty));
                             },
                             valueProperty =>
                             {
@@ -138,6 +139,7 @@ namespace MyCompany.VariableExplorer.UI
                                 {
                                     _visibleProperties.AddRange(valueProperty.Select(item => DebugPropertyViewModel.From(item)));
                                 });
+                                _logger.Info(String.Join("\n", valueProperty));
                             });
 
                 PropertyIterator propertyIterator = new PropertyIterator(
@@ -158,6 +160,11 @@ namespace MyCompany.VariableExplorer.UI
                 _logger.Info("ExpressionEvaluator is not initialized");
                 ErrorMessage = "ExpressionEvaluator is not initialized";
             }
+        }
+
+        private void ExpandableProperyVisited (IExpandablePropertyInfo prop)
+        {
+
         }
 
         private void visibleProperties_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)

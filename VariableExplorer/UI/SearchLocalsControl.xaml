@@ -33,8 +33,8 @@
             </Style>
 
             <Style TargetType="DataGrid" >
-                <Setter Property="BorderBrush" Value="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowBorderBrushKey}}"/>
-                <Setter Property="Background" Value="Transparent"/>
+                <!-- <Setter Property="BorderBrush" Value="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowBorderBrushKey}}"/>
+                <Setter Property="Background" Value="Transparent"/> -->
             </Style>
 
             <Style TargetType="StatusBar" >
@@ -97,20 +97,20 @@
                           Visibility="{Binding Path=IsErrorMessageVisible,Converter={common:BoolToVisibilityConverter TrueValue=Collapsed, FalseValue=Visible}}"
                           VerticalAlignment="Stretch" >
             <DataGrid.Resources>
-                <Style TargetType="DataGridCell">
+                <!--<Style TargetType="DataGridCell">
                     <Setter Property="Background" Value="Transparent" />
-                </Style>
+                </Style>-->
                 
                 <DataTemplate x:Key="NameTemplate" >
-                    <TextBlock Text="{Binding Name}" ToolTip="{Binding FullName}" Style="{StaticResource TextBlockStyle}"/>
+                    <TextBox Text="{Binding Name, Mode=OneWay}" ToolTip="{Binding ToolTip, Mode=OneWay}" IsReadOnly="True" />
                 </DataTemplate>
                 
                 <DataTemplate x:Key="ValueTemplate" >
-                    <TextBlock Text="{Binding Value}"  Style="{StaticResource TextBlockStyle}"/>
+                    <TextBox Text="{Binding Value, Mode=OneWay}" IsReadOnly="True" />
                 </DataTemplate>
 
                 <DataTemplate x:Key="TypeTemplate" >
-                    <TextBlock Text="{Binding ValueType}" Style="{StaticResource TextBlockStyle}"/>
+                    <TextBox Text="{Binding ValueType, Mode=OneWay}" IsReadOnly="True" />
                 </DataTemplate>
             </DataGrid.Resources>
 

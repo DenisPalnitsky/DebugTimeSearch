@@ -13,7 +13,7 @@ using MyCompany.VariableExplorer.Model.ExpressioEvaluation;
 namespace VariableExplorer_UnitTests
 {
     [TestFixture]
-    class PropertyInfoVisitorTest
+    public class PropertyInfoVisitorTest
     {
         IUnityContainer _container = new Microsoft.Practices.Unity.UnityContainer();
 
@@ -69,67 +69,79 @@ namespace VariableExplorer_UnitTests
         public void Enumerate_when_called_goes_through_all_child_properties_and_return_value_properties()
         {
             // Arrange
-
-            // we setup here this object
-            //   -Parent 
-            //   -- ExpandableProperty 
-            //   -- ValueProperty1
-                        
-            var expandablePropertyMock = new Mock<IExpandablePropertyInfo>();                                    
-            string expandablePropertyFullName = "ExpandableProperty";            
-            expandablePropertyMock.Setup(p => p.FullName).Returns(expandablePropertyFullName).Verifiable();
-            expandablePropertyMock.Setup(p => p.Name).Returns(expandablePropertyFullName).Verifiable();
-
-            var parentPropertyMock = new Mock<IExpandablePropertyInfo>();            
-            parentPropertyMock.Setup(p => p.FullName).Returns("Parent").Verifiable();
-            parentPropertyMock.Setup(p => p.Name).Returns("Parent").Verifiable();
+            Mock<IExpandablePropertyInfo> expandablePropertyMock;
+            Mock<IDebugProperty> parentDebugPropertyMock;
             
-            var valuePropertyInfoFromExpandable = new Moq.Mock<IValuePropertyInfo>();
-            valuePropertyInfoFromExpandable.Setup(p => p.Name).Returns("ValueProp");                      
-            
-            var parentDebugPropertyMock = new Mock<IDebugProperty>();
-            parentDebugPropertyMock.Setup(d => d.Children).Returns(new List<IPropertyInfo>
-                    { 
-                        expandablePropertyMock.Object,
-                        valuePropertyInfoFromExpandable.Object 
-                    }
-                ).Verifiable();
-            parentDebugPropertyMock.Setup(d => d.PropertyInfo).Returns(parentPropertyMock.Object).Verifiable();
+            Mock<IExpressionEvaluator> expressionEvaluatorMock;
 
+            var exparessionEvaluatorProviderMock = 
+            SetUpExpressionEvaluatorWithInitializedPropertyObject(out expandablePropertyMock, out parentDebugPropertyMock, out expressionEvaluatorMock);
 
-            var expandableDebugPropertyMock = new Mock<IDebugProperty>();
-            expandableDebugPropertyMock.Setup(d => d.Children).Returns(new List<IPropertyInfo>
-                    {  }
-                ).Verifiable();
-            expandableDebugPropertyMock.Setup(d => d.PropertyInfo).Returns(expandablePropertyMock.Object).Verifiable();
-
-
-            var exparessionEvaluatorProviderMock = new Mock<IExpressionEvaluatorProvider>();
-            var expressionEvaluatorMock = new Mock<IExpressionEvaluator>();
-
-            expressionEvaluatorMock.Setup(e => e.EvaluateExpression(expandablePropertyFullName)).Returns(expandableDebugPropertyMock.Object).Verifiable();
-            
-            exparessionEvaluatorProviderMock.Setup(p => p.IsEvaluatorAvailable).Returns(true).Verifiable();
-            exparessionEvaluatorProviderMock.Setup(p => p.ExpressionEvaluator).Returns(expressionEvaluatorMock.Object).Verifiable();
-
-            Mock<IPropertyVisitor> propertyVisitorMock = new Mock<IPropertyVisitor>(  MockBehavior.Strict);
+            Mock<IPropertyVisitor> propertyVisitorMock = new Mock<IPropertyVisitor>(MockBehavior.Strict);
             propertyVisitorMock.Setup(v => v.ParentPropertyAttended(It.Is<IExpandablePropertyInfo>(e => e.Name == "Parent"))).Verifiable();
-            propertyVisitorMock.Setup(v=>v.ParentPropertyAttended(It.Is<IExpandablePropertyInfo>(e=>e.Name == expandablePropertyFullName )) ).Verifiable();
-            propertyVisitorMock.Setup(v=>v.ValuePropertyAttended(It.Is<IValuePropertyInfo>(e => e.Name == "ValueProp"))).Verifiable();
+            propertyVisitorMock.Setup(v => v.ParentPropertyAttended(It.Is<IExpandablePropertyInfo>(e => e.Name == "ExpandableProperty"))).Verifiable();
+            propertyVisitorMock.Setup(v => v.ValuePropertyAttended(It.Is<IValuePropertyInfo>(e => e.Name == "ValueProp"))).Verifiable();
             propertyVisitorMock.Setup(v => v.Dispose());
 
             // Act
             List<IValuePropertyInfo> results = new List<IValuePropertyInfo>();
             PropertyIterator propertIterator = new PropertyIterator(exparessionEvaluatorProviderMock.Object,
-                propertyVisitorMock.Object );
+                propertyVisitorMock.Object);
 
             propertIterator.TraversPropertyTree(parentDebugPropertyMock.Object, String.Empty);
-         
+
             // Assert
             exparessionEvaluatorProviderMock.VerifyAll();
             expressionEvaluatorMock.VerifyAll();
             parentDebugPropertyMock.VerifyAll();
-            expandablePropertyMock.VerifyAll();  
+            expandablePropertyMock.VerifyAll();
+        }
+
+        private static Mock<IExpressionEvaluatorProvider> SetUpExpressionEvaluatorWithInitializedPropertyObject(out Mock<IExpandablePropertyInfo> expandablePropertyMock, 
+            out Mock<IDebugProperty> parentDebugPropertyMock, 
+            out Mock<IExpressionEvaluator> expressionEvaluatorMock)
+        {
+            // we setup here this object
+            //   -Parent 
+            //   -- ExpandableProperty 
+            //   -- ValueProperty1
+
+            expandablePropertyMock = new Mock<IExpandablePropertyInfo>();
+            string expandablePropertyFullName = "ExpandableProperty";
+            expandablePropertyMock.Setup(p => p.FullName).Returns(expandablePropertyFullName);
+            expandablePropertyMock.Setup(p => p.Name).Returns(expandablePropertyFullName);
+
+            var parentPropertyMock = new Mock<IExpandablePropertyInfo>();
+            parentPropertyMock.Setup(p => p.FullName).Returns("Parent");
+            parentPropertyMock.Setup(p => p.Name).Returns("Parent");
+
+            var valuePropertyInfoFromExpandable = new Moq.Mock<IValuePropertyInfo>();
+            valuePropertyInfoFromExpandable.Setup(p => p.Name).Returns("ValueProp");
+
+            parentDebugPropertyMock = new Mock<IDebugProperty>();
+            parentDebugPropertyMock.Setup(d => d.Children).Returns(new List<IPropertyInfo>
+                    {
+                        expandablePropertyMock.Object,
+                        valuePropertyInfoFromExpandable.Object
+                    }).Verifiable();
+            parentDebugPropertyMock.Setup(d => d.PropertyInfo).Returns(parentPropertyMock.Object);
+
+
+            var expandableDebugPropertyMock = new Mock<IDebugProperty>();
+            expandableDebugPropertyMock.Setup(d => d.Children).Returns(new List<IPropertyInfo>
+            { }
+                ).Verifiable();
+            expandableDebugPropertyMock.Setup(d => d.PropertyInfo).Returns(expandablePropertyMock.Object);
+
+
+            var exparessionEvaluatorProviderMock = new Mock<IExpressionEvaluatorProvider>();
+            expressionEvaluatorMock = new Mock<IExpressionEvaluator>();
+            expressionEvaluatorMock.Setup(e => e.EvaluateExpression(expandablePropertyFullName)).Returns(expandableDebugPropertyMock.Object);
+
+            exparessionEvaluatorProviderMock.Setup(p => p.IsEvaluatorAvailable).Returns(true);
+            exparessionEvaluatorProviderMock.Setup(p => p.ExpressionEvaluator).Returns(expressionEvaluatorMock.Object);
+
+            return exparessionEvaluatorProviderMock;
         }
 
         [Test]
@@ -255,7 +267,7 @@ namespace VariableExplorer_UnitTests
             debugPropertyMock.Setup(d => d.Children).Returns(new[] { expandablePropertyMock.Object});
 
             debugPropertyMock.Setup(d => d.PropertyInfo).Returns(
-                new ValuePropertyInfo("fullName", "name", "string"));
+                new ValuePropertyInfo("fullName", "name", "string", "value", null));
 
             ObservableCollection<IPropertyInfo> result = new ObservableCollection<IPropertyInfo>();
           
@@ -279,14 +291,14 @@ namespace VariableExplorer_UnitTests
         //    string expandablePropertyFullName = "ExpandableProperty";
         //    expandablePropertyMock.Setup(p => p.FullName).Returns(expandablePropertyFullName ).Verifiable();
         //    expandablePropertyMock.Setup(p => p.Name).Returns(expandablePropertyFullName).Verifiable();                   
-            
+
         //    var debugPropertyMock = new Mock<IDebugProperty>();
         //    debugPropertyMock.Setup(d => d.Children).Returns(new[] { expandablePropertyMock.Object });
 
         //    // circular reference
         //    var expressionEvaluatorMock = new Mock<IExpressionEvaluator>(MockBehavior.Strict);                                    
         //    expressionEvaluatorMock.Setup(s => s.EvaluateExpression(expandablePropertyFullName)).Returns(debugPropertyMock.Object);
-            
+
 
         //    ObservableCollection<IPropertyInfo> result = new ObservableCollection<IPropertyInfo>();
 
@@ -295,12 +307,11 @@ namespace VariableExplorer_UnitTests
         //    PropertyIterator propertyIterator = _container.Resolve<PropertyIterator>(new DependencyOverride<IExpressionEvaluator>(expressionEvaluatorMock.Object));
 
         //    propertyIterator.TraversalOfPropertyTreeDeepFirst(debugPropertyMock.Object);
-            
+
         //    expressionEvaluatorMock.Verify(s => s.EvaluateExpression(expandablePropertyFullName), Times.Once);                        
+
         //}
 
 
- 
-         
     }
 }

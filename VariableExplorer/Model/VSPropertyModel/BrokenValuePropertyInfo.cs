@@ -1,14 +1,19 @@
-﻿namespace MyCompany.VariableExplorer.Model.VSPropertyModel
+﻿using System;
+
+namespace MyCompany.VariableExplorer.Model.VSPropertyModel
 {
     class BrokenValuePropertyInfo : IValuePropertyInfo
     {        
-        public BrokenValuePropertyInfo(string fullName, string name, string errorMessage)
+        public BrokenValuePropertyInfo(string fullName, string name, string errorMessage, IExpandablePropertyInfo parent)
         {
             // TODO: Complete member initialization
             FullName = fullName;
             Name = name;
             Value = errorMessage;
+            Parent = parent;
         }
+
+
 
 
         public bool IsEvaluated
@@ -38,6 +43,11 @@
         public string ValueType
         {
             get { return "[Evaluation error]"; }
+        }
+
+        public IExpandablePropertyInfo Parent
+        {
+            get; private set;
         }
     }
 }
