@@ -272,6 +272,7 @@ namespace VariableExplorer_UnitTests
         {
             var expandablePropertyMock = new Mock<IExpandablePropertyInfo>();
 
+            expandablePropertyMock.Setup(p => p.FullName).Returns(expandablePropertyFullName).Verifiable();
             expandablePropertyMock.Setup(p => p.Name).Returns(expandablePropertyFullName).Verifiable();
 
             var expressionEvaluatorMock = new Mock<IExpressionEvaluator>(MockBehavior.Strict);
