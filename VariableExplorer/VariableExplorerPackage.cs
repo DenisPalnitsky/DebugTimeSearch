@@ -1,28 +1,17 @@
-﻿using System;
+﻿using Microsoft.VisualStudio.Editor;
+using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.Shell.Interop;
+using Microsoft.VisualStudio.Text.Editor;
+//using Microsoft.VisualStudio.ComponentModelHost;
+//using Microsoft.VisualStudio.Editor;
+using Microsoft.VisualStudio.TextManager.Interop;
+using MyCompany.VariableExplorer.EditorHelper;
+using MyCompany.VariableExplorer.Model.ExpressioEvaluation;
+using System;
+using System.ComponentModel.Design;
 using System.Diagnostics;
 using System.Globalization;
 using System.Runtime.InteropServices;
-using System.ComponentModel.Design;
-using Microsoft.Win32;
-using Microsoft.VisualStudio;
-using Microsoft.VisualStudio.Shell.Interop;
-using Microsoft.VisualStudio.OLE.Interop;
-using Microsoft.VisualStudio.Shell;
-
-using Microsoft.VisualStudio;
-//using Microsoft.VisualStudio.ComponentModelHost;
-//using Microsoft.VisualStudio.Editor;
-using Microsoft.VisualStudio.OLE.Interop;
-using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.Shell.Interop;
-using Microsoft.VisualStudio.TextManager.Interop;
-using Microsoft.VisualStudio.Debugger.Interop;
-using EnvDTE;
-using MyCompany.VariableExplorer.Model;
-using Microsoft.VisualStudio.Text.Editor;
-using Microsoft.VisualStudio.Editor;
-using MyCompany.VariableExplorer.EditorHelper;
-using MyCompany.VariableExplorer.Model.ExpressioEvaluation;
 
 namespace MyCompany.VariableExplorer
 {
@@ -157,8 +146,7 @@ namespace MyCompany.VariableExplorer
         {
             // Show a Message Box to prove we were here
             IVsUIShell uiShell = (IVsUIShell)GetService(typeof(SVsUIShell));
-            Guid clsid = Guid.Empty;
-            int result;
+            Guid clsid = Guid.Empty;            
 
             IVsTextManager txtMgr = VisualStudioServices.GetService<SVsTextManager,IVsTextManager>();
             int mustHaveFocus = 1;
