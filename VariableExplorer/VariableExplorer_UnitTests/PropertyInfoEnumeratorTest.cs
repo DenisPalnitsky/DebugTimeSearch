@@ -81,8 +81,11 @@ namespace VariableExplorer_UnitTests
 
             Mock<IPropertyVisitor> propertyVisitorMock = new Mock<IPropertyVisitor>(MockBehavior.Strict);
             propertyVisitorMock.Setup(v => v.ParentPropertyAttended(It.Is<IExpandablePropertyInfo>(e => e.Name == "Parent"))).Verifiable();
+            propertyVisitorMock.Setup(v => v.ParentPropertyAttended(It.Is<IExpandablePropertyInfo>(e => e.FullName == "Parent"))).Verifiable();
             propertyVisitorMock.Setup(v => v.ParentPropertyAttended(It.Is<IExpandablePropertyInfo>(e => e.Name == "ExpandableProperty"))).Verifiable();
+            propertyVisitorMock.Setup(v => v.ParentPropertyAttended(It.Is<IExpandablePropertyInfo>(e => e.FullName == "ExpandableProperty"))).Verifiable();
             propertyVisitorMock.Setup(v => v.ValuePropertyAttended(It.Is<IValuePropertyInfo>(e => e.Name == "ValueProp"))).Verifiable();
+            propertyVisitorMock.Setup(v => v.ValuePropertyAttended(It.Is<IValuePropertyInfo>(e => e.FullName == "ValueProp"))).Verifiable();
             propertyVisitorMock.Setup(v => v.Dispose());
 
             // Act
@@ -119,6 +122,7 @@ namespace VariableExplorer_UnitTests
 
             var valuePropertyInfoFromExpandable = new Moq.Mock<IValuePropertyInfo>();
             valuePropertyInfoFromExpandable.Setup(p => p.Name).Returns("ValueProp");
+            valuePropertyInfoFromExpandable.Setup(p => p.FullName).Returns("ValueProp");
 
             parentDebugPropertyMock = new Mock<IDebugProperty>();
             parentDebugPropertyMock.Setup(d => d.Children).Returns(new List<IPropertyInfo>
@@ -167,6 +171,7 @@ namespace VariableExplorer_UnitTests
 
             var valuePropertyInfoFromExpandable = new Moq.Mock<IValuePropertyInfo>();
             valuePropertyInfoFromExpandable.Setup(p => p.Name).Returns("ValueProp");
+            valuePropertyInfoFromExpandable.Setup(p => p.FullName).Returns("ValueProp");
 
             var exparessionEvaluatorProviderMock = new Mock<IExpressionEvaluatorProvider>();
             var expressionEvaluatorMock = new Mock<IExpressionEvaluator>();

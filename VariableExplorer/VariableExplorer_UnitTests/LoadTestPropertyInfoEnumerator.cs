@@ -45,7 +45,7 @@ namespace VariableExplorer_UnitTests
         }
 
         [Test]
-        [Ignore]
+        [Ignore("")]
         public void Test()
         {
             var sw = Stopwatch.StartNew();
