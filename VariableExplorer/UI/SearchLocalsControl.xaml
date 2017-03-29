@@ -93,29 +93,13 @@
                           ItemsSource="{Binding Properties}" 
                           AutoGenerateColumns="False" SelectionMode="Single" SelectionUnit="CellOrRowHeader" 
                           Visibility="{Binding Path=IsErrorMessageVisible,Converter={common:BoolToVisibilityConverter TrueValue=Collapsed, FalseValue=Visible}}"
-                          VerticalAlignment="Stretch" >
-            <DataGrid.Resources>
-                <!--<Style TargetType="DataGridCell">
-                    <Setter Property="Background" Value="Transparent" />
-                </Style>-->
-                
-                <DataTemplate x:Key="NameTemplate" >
-                    <TextBox Text="{Binding Name, Mode=OneWay}" ToolTip="{Binding ToolTip, Mode=OneWay}" IsReadOnly="True" />
-                </DataTemplate>
-                
-                <DataTemplate x:Key="ValueTemplate" >
-                    <TextBox Text="{Binding Value, Mode=OneWay}" IsReadOnly="True" />
-                </DataTemplate>
-
-                <DataTemplate x:Key="TypeTemplate" >
-                    <TextBox Text="{Binding ValueType, Mode=OneWay}" IsReadOnly="True" />
-                </DataTemplate>
-            </DataGrid.Resources>
+                          VerticalAlignment="Stretch" 
+                          IsReadOnly="True" ClipboardCopyMode="ExcludeHeader"  >
 
             <DataGrid.Columns>
-                <DataGridTemplateColumn Header="Name" CellTemplate="{StaticResource NameTemplate}" Width="2*" />
-                <DataGridTemplateColumn Header="Value" CellTemplate="{StaticResource ValueTemplate}" Width="*" />
-                <DataGridTemplateColumn Header="Type" CellTemplate="{StaticResource TypeTemplate}" Width="2*" />
+                <DataGridTextColumn Header="Name" Binding="{Binding Name, Mode=OneWay}" Width="2*" />
+                <DataGridTextColumn Header="Value" Binding="{Binding Value, Mode=OneWay}" Width="*" />
+                <DataGridTextColumn Header="Type" Binding="{Binding ValueType, Mode=OneWay}" Width="2*" />
             </DataGrid.Columns>
         </DataGrid>
 
