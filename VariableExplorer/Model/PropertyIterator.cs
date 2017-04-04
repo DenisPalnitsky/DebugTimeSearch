@@ -2,6 +2,7 @@
 using MyCompany.VariableExplorer.Model.Services;
 using MyCompany.VariableExplorer.Model.VSPropertyModel;
 using System;
+using System.Linq;
 using System.Collections.Generic;
 
 namespace MyCompany.VariableExplorer.Model
@@ -12,7 +13,8 @@ namespace MyCompany.VariableExplorer.Model
         IPropertyVisitor _propertyVisitor;
         HashSet<string> _processedExpressions = new HashSet<string>();
         ILog _logger = IocContainer.Resolve<ILog>();
-        
+
+        public int MaxDepth { get; set; } = 50;
 
         public PropertyIterator (
             IExpressionEvaluatorProvider exparessionEvaluatorProvider,
@@ -28,7 +30,7 @@ namespace MyCompany.VariableExplorer.Model
             string searchCriteria)
         {
              StringFilter stringFilter = new StringFilter(searchCriteria);
-             TraversPropertyTreeInternal(debugProperty, stringFilter);            
+             TraversPropertyTreeInternal(debugProperty, stringFilter, 0);            
             _propertyVisitor.Dispose();
         }
 
@@ -37,8 +39,17 @@ namespace MyCompany.VariableExplorer.Model
         /// </summary>         
         private void TraversPropertyTreeInternal(
             IDebugProperty debugProperty,
-            StringFilter stringFilter)
+            StringFilter stringFilter,
+            int depth)
         {
+            depth++;
+            if (depth > MaxDepth )
+            {
+                _logger.Info("Skip traversing property {0}. MaxDepth reached", debugProperty.PropertyInfo.FullName);
+                // TODO: Let user know that we reached max depth
+                return;
+            }
+
             _logger.Info("TRaversing property {0}",  debugProperty.PropertyInfo.FullName);
             // visit root            
             RiseAppropriateAction(debugProperty.PropertyInfo, stringFilter);
@@ -57,10 +68,10 @@ namespace MyCompany.VariableExplorer.Model
                     evaluated = EvaluateExpression(childProperty);                         
 
                     if (evaluated != null)
-                        TraversPropertyTreeInternal(evaluated, stringFilter);
+                        TraversPropertyTreeInternal(evaluated, stringFilter, depth);
                 }
                 else
-                    throw new NotSupportedException("This property info type is not supported. Contact developer.");
+                    throw new NotSupportedException($"Property info type { childProperty.GetType().Name } is not supported. Contact developer.");
             }
         }
         
@@ -70,10 +81,12 @@ namespace MyCompany.VariableExplorer.Model
         {
             // property name in [] means that it's parent property and should not be evaluated
             // property namy with ( ) means that we cas type which is not required
-            if (!_processedExpressions.Contains(propertyToEvaluate.FullName) &&
-                (!propertyToEvaluate.Name.StartsWith("[") && !propertyToEvaluate.Name.EndsWith("]")  &&
-                (!propertyToEvaluate.FullName.StartsWith("(") )
-                && _exparessionEvaluatorProvider.IsEvaluatorAvailable))
+            if (
+                _exparessionEvaluatorProvider.IsEvaluatorAvailable &&
+                !_processedExpressions.Contains(propertyToEvaluate.FullName) &&
+                (!propertyToEvaluate.Name.StartsWith("[") && !propertyToEvaluate.Name.EndsWith("]")) &&
+                !propertyToEvaluate.Name.Any(c=> c == ',' || c == ' '  || c == '(')  &&                
+                !propertyToEvaluate.FullName.StartsWith("(") )                 
             {
                 _processedExpressions.Add(propertyToEvaluate.FullName);
                 return _exparessionEvaluatorProvider.ExpressionEvaluator.EvaluateExpression(propertyToEvaluate.FullName);
