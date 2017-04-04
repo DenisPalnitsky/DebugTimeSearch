@@ -1,13 +1,13 @@
 ﻿using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Debugger.Interop;
-using MyCompany.VariableExplorer.Model.Services;
+using SearchLocals.Model.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MyCompany.VariableExplorer.Model.ExpressioEvaluation
+namespace SearchLocals.Model.ExpressioEvaluation
 {
     class ExpressionEvaluatorDispatcher : IDisposable
     {        

@@ -1,7 +1,7 @@
-﻿using MyCompany.VariableExplorer.Model;
-using MyCompany.VariableExplorer.Model.ExpressioEvaluation;
-using MyCompany.VariableExplorer.Model.Services;
-using MyCompany.VariableExplorer.Model.VSPropertyModel;
+﻿using SearchLocals.Model;
+using SearchLocals.Model.ExpressioEvaluation;
+using SearchLocals.Model.Services;
+using SearchLocals.Model.VSPropertyModel;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -11,10 +11,10 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 
-namespace MyCompany.VariableExplorer.UI
+namespace SearchLocals.UI
 {
 
-    class ExpressionEvaluatorViewModel : ObservableObject, MyCompany.VariableExplorer.UI.IExpressionEvaluatorViewModel, IDataErrorInfo
+    class ExpressionEvaluatorViewModel : ObservableObject, SearchLocals.UI.IExpressionEvaluatorViewModel, IDataErrorInfo
     {
         IDebugProperty _property;
         string _filterText;

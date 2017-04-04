@@ -1,6 +1,6 @@
-﻿using MyCompany.VariableExplorer.Model.VSPropertyModel;
+﻿using SearchLocals.Model.VSPropertyModel;
 
-namespace MyCompany.VariableExplorer.Model.ExpressioEvaluation
+namespace SearchLocals.Model.ExpressioEvaluation
 {
     /// <summary>
     /// Evaluates code expressions.

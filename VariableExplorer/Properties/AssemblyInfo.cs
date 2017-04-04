@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("VariableExplorer")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("MyCompany")]
+[assembly: AssemblyCompany("MyCom_65465")]
 [assembly: AssemblyProduct("VariableExplorer")]
 [assembly: AssemblyCopyright("")]
 [assembly: AssemblyTrademark("")]

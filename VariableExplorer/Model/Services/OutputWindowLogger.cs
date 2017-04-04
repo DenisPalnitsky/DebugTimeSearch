@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace MyCompany.VariableExplorer.Model.Services
+namespace SearchLocals.Model.Services
 {
     class OutputWindowLogger : ILog
     {        

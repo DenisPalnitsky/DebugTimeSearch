@@ -1,11 +1,11 @@
-﻿using MyCompany.VariableExplorer.Model.ExpressioEvaluation;
-using MyCompany.VariableExplorer.Model.Services;
-using MyCompany.VariableExplorer.Model.VSPropertyModel;
+﻿using SearchLocals.Model.ExpressioEvaluation;
+using SearchLocals.Model.Services;
+using SearchLocals.Model.VSPropertyModel;
 using System;
 using System.Linq;
 using System.Collections.Generic;
 
-namespace MyCompany.VariableExplorer.Model
+namespace SearchLocals.Model
 {
     class PropertyIterator
     {        

@@ -1,7 +1,7 @@
-﻿using MyCompany.VariableExplorer.Model.VSPropertyModel;
+﻿using SearchLocals.Model.VSPropertyModel;
 using System;
 
-namespace MyCompany.VariableExplorer.Model
+namespace SearchLocals.Model
 {
     interface IPropertyVisitor :IDisposable
     {

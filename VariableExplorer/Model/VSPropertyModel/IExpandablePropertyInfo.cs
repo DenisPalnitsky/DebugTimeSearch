@@ -1,4 +1,4 @@
-﻿namespace MyCompany.VariableExplorer.Model.VSPropertyModel
+﻿namespace SearchLocals.Model.VSPropertyModel
 {
     interface IExpandablePropertyInfo : IPropertyInfo
     {

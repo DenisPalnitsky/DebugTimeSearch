@@ -5,15 +5,15 @@ using Microsoft.VisualStudio.Text.Editor;
 //using Microsoft.VisualStudio.ComponentModelHost;
 //using Microsoft.VisualStudio.Editor;
 using Microsoft.VisualStudio.TextManager.Interop;
-using MyCompany.VariableExplorer.EditorHelper;
-using MyCompany.VariableExplorer.Model.ExpressioEvaluation;
+using SearchLocals.EditorHelper;
+using SearchLocals.Model.ExpressioEvaluation;
 using System;
 using System.ComponentModel.Design;
 using System.Diagnostics;
 using System.Globalization;
 using System.Runtime.InteropServices;
 
-namespace MyCompany.VariableExplorer
+namespace SearchLocals
 {
     /// <summary>
     /// This is the class that implements the package exposed by this assembly.
@@ -154,7 +154,7 @@ namespace MyCompany.VariableExplorer
             txtMgr.GetActiveView(mustHaveFocus, null, out vTextView);
                 
             string textUnderCursor =  CodeUnderCursor.GetExpression(vTextView);
-            var expressionEvaluatorViewModel = MyCompany.VariableExplorer.Model.Services.IocContainer.Resolve<MyCompany.VariableExplorer.UI.IExpressionEvaluatorViewModel>();
+            var expressionEvaluatorViewModel = SearchLocals.Model.Services.IocContainer.Resolve<SearchLocals.UI.IExpressionEvaluatorViewModel>();
             expressionEvaluatorViewModel.FilterText = textUnderCursor;
             ShowToolWindow();
 

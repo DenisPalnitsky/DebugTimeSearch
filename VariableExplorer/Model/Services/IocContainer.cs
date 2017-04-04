@@ -4,10 +4,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using MyCompany.VariableExplorer.Model.Services;
-using MyCompany.VariableExplorer.UI;
+using SearchLocals.Model.Services;
+using SearchLocals.UI;
 
-namespace MyCompany.VariableExplorer.Model.Services
+namespace SearchLocals.Model.Services
 {
     class IocContainer
     {

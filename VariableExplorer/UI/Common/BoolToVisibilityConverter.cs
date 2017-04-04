@@ -7,7 +7,7 @@ using System.Windows;
 using System.Windows.Data;
 using System.Windows.Markup;
 
-namespace MyCompany.VariableExplorer.UI.Common
+namespace SearchLocals.UI.Common
 {
     // copy-paste from http://blogs.msdn.com/b/ukadc/archive/2009/11/17/five-minute-recipe-for-a-decent-booltovisibilityconverter.aspx
 

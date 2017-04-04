@@ -3,7 +3,7 @@ using System.ComponentModel;
 using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 
-namespace MyCompany.VariableExplorer.UI
+namespace SearchLocals.UI
 {
     abstract class ObservableObject : INotifyPropertyChanged
     {

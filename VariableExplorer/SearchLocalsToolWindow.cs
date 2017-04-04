@@ -7,10 +7,10 @@ using System.Windows;
 using System.Runtime.InteropServices;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Shell;
-using MyCompany.VariableExplorer.UI;
-using MyCompany.VariableExplorer.Model.Services;
+using SearchLocals.UI;
+using SearchLocals.Model.Services;
 
-namespace MyCompany.VariableExplorer
+namespace SearchLocals
 {
     /// <summary>
     /// This class implements the tool window exposed by this package and hosts a user control.

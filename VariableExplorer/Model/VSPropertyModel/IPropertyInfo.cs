@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MyCompany.VariableExplorer.Model.VSPropertyModel
+namespace SearchLocals.Model.VSPropertyModel
 {
     interface IPropertyInfo
     {

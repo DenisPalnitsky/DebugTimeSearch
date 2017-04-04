@@ -1,10 +1,10 @@
-﻿using MyCompany.VariableExplorer.Model;
-using MyCompany.VariableExplorer.Model.VSPropertyModel;
+﻿using SearchLocals.Model;
+using SearchLocals.Model.VSPropertyModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace MyCompany.VariableExplorer.UI
+namespace SearchLocals.UI
 {
 
     /// <summary>

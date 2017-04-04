@@ -1,9 +1,9 @@
 ﻿using Microsoft.VisualStudio.Debugger.Interop;
-using MyCompany.VariableExplorer.Model.Services;
+using SearchLocals.Model.Services;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace MyCompany.VariableExplorer.Model.VSPropertyModel
+namespace SearchLocals.Model.VSPropertyModel
 {    
     class DebugProperty : IDebugProperty
     {        

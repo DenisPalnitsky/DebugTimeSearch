@@ -1,7 +1,7 @@
 ﻿using Moq;
-using MyCompany.VariableExplorer.Model;
-using MyCompany.VariableExplorer.Model.Services;
-using MyCompany.VariableExplorer.UI;
+using SearchLocals.Model;
+using SearchLocals.Model.Services;
+using SearchLocals.UI;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;

@@ -2,7 +2,7 @@
 // MUST match guids.h
 using System;
 
-namespace MyCompany.VariableExplorer
+namespace SearchLocals
 {
     static class GuidList
     {

@@ -1,11 +1,11 @@
 ﻿using Microsoft.VisualStudio.Debugger.Interop;
-using MyCompany.VariableExplorer.Model.Services;
-using MyCompany.VariableExplorer.Model.VSPropertyModel;
+using SearchLocals.Model.Services;
+using SearchLocals.Model.VSPropertyModel;
 using System;
 using System.Collections.Concurrent;
 using System.Text;
 
-namespace MyCompany.VariableExplorer.Model.ExpressioEvaluation
+namespace SearchLocals.Model.ExpressioEvaluation
 {
     class ExpressionEvaluator : IExpressionEvaluator
     {       

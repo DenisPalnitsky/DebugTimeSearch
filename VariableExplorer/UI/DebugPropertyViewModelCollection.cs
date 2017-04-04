@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MyCompany.VariableExplorer.UI
+namespace SearchLocals.UI
 {
     class DebugPropertyViewModelCollection : IList<DebugPropertyViewModel>, INotifyPropertyChanged , INotifyCollectionChanged
     {

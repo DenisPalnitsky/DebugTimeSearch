@@ -1,7 +1,7 @@
 ﻿using Microsoft.VisualStudio.Debugger.Interop;
 using System.Collections.Generic;
 
-namespace MyCompany.VariableExplorer.Model.VSPropertyModel
+namespace SearchLocals.Model.VSPropertyModel
 {
     class PropertyInfoFactory
     {

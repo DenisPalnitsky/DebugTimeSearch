@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Input;
 
-namespace MyCompany.VariableExplorer.UI
+namespace SearchLocals.UI
 {
     public class DelegateCommand : ICommand
     {

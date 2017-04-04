@@ -2,7 +2,7 @@
 // MUST match PkgCmdID.h
 using System;
 
-namespace MyCompany.VariableExplorer
+namespace SearchLocals
 {
     static class PkgCmdIDList
     {

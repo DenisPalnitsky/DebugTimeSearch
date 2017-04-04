@@ -1,5 +1,5 @@
 ﻿using Moq;
-using MyCompany.VariableExplorer.Model;
+using SearchLocals.Model;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -7,8 +7,8 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using Microsoft.Practices.Unity;
-using MyCompany.VariableExplorer.Model.VSPropertyModel;
-using MyCompany.VariableExplorer.Model.ExpressioEvaluation;
+using SearchLocals.Model.VSPropertyModel;
+using SearchLocals.Model.ExpressioEvaluation;
 
 namespace VariableExplorer_UnitTests
 {

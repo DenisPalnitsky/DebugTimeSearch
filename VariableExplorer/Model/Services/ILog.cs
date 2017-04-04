@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace MyCompany.VariableExplorer.Model.Services
+namespace SearchLocals.Model.Services
 {
     interface ILog: IDisposable
     {

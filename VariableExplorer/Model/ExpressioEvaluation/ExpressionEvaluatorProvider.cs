@@ -1,4 +1,4 @@
-﻿namespace MyCompany.VariableExplorer.Model.ExpressioEvaluation
+﻿namespace SearchLocals.Model.ExpressioEvaluation
 {
     class ExpressionEvaluatorProvider : IExpressionEvaluatorProvider, IExpressionEvaluatorContainer
     {

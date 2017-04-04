@@ -1,5 +1,5 @@
 ﻿using System;
-namespace MyCompany.VariableExplorer.UI
+namespace SearchLocals.UI
 {
     interface IExpressionEvaluatorViewModel
     {        

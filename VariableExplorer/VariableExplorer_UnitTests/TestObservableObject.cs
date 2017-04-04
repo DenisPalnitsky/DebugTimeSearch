@@ -1,5 +1,5 @@
 ﻿
-using MyCompany.VariableExplorer.UI;
+using SearchLocals.UI;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;

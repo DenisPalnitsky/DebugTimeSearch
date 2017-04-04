@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MyCompany.VariableExplorer
+namespace SearchLocals
 {
     public class VsCommandIdentifier : IEquatable<VsCommandIdentifier>
     {

@@ -1,4 +1,4 @@
-﻿namespace MyCompany.VariableExplorer.Model.ExpressioEvaluation
+﻿namespace SearchLocals.Model.ExpressioEvaluation
 {
     /// <summary>
     /// Main mechanism to retreive IExpressionEvaluator

@@ -1,4 +1,4 @@
-﻿using MyCompany.VariableExplorer.Model;
+﻿using SearchLocals.Model;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
