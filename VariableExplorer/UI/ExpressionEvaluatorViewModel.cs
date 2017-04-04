@@ -4,6 +4,7 @@ using MyCompany.VariableExplorer.Model.Services;
 using MyCompany.VariableExplorer.Model.VSPropertyModel;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,7 +14,7 @@ using System.Windows.Input;
 namespace MyCompany.VariableExplorer.UI
 {
 
-    class ExpressionEvaluatorViewModel : ObservableObject, MyCompany.VariableExplorer.UI.IExpressionEvaluatorViewModel
+    class ExpressionEvaluatorViewModel : ObservableObject, MyCompany.VariableExplorer.UI.IExpressionEvaluatorViewModel, IDataErrorInfo
     {
         IDebugProperty _property;
         string _filterText;
@@ -93,7 +94,44 @@ namespace MyCompany.VariableExplorer.UI
         {
             get { return new DelegateCommand(Search); }
         }
-     
+
+        #region IDataErrorInfo 
+
+        public string Error { get; private set; }
+
+        public string this[string columnName]
+        {
+            get
+            {
+                string validationMessage = string.Empty;
+                switch (columnName)
+                {
+                    case nameof(FilterText):
+                        var expressionEvaluatorProvider = IocContainer.Resolve<IExpressionEvaluatorProvider>();
+                        if (string.IsNullOrEmpty(FilterText))
+                            break;  
+
+                        if (expressionEvaluatorProvider.IsEvaluatorAvailable)
+                        {
+                            var propertyInfo = expressionEvaluatorProvider.ExpressionEvaluator.EvaluateExpression(FilterText).PropertyInfo;
+                            
+
+                            if( !(propertyInfo is ExpandablePropertyInfo))
+                                validationMessage = "Object does not exist or it's not expandable";
+                        }
+                        else
+                        {
+                            validationMessage = "Visual Studio is not in debug mode";
+                        }
+                        break;
+                }
+
+                return validationMessage;
+            }
+        }
+        #endregion
+
+
 
         private void Search()
         {

@@ -10,11 +10,11 @@
              >
 
     <UserControl.Resources>
-                
+
         <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                 >
-                
+
             <!--<Style TargetType="Label">
                 <Setter Property="Foreground" Value="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowTextBrushKey}}"/>
             </Style>
@@ -31,9 +31,29 @@
                 <Setter Property="Background" Value="{DynamicResource {x:Static vs_shell:EnvironmentColors.SearchBoxBackgroundBrushKey}}" />-->
                 <Setter Property="Margin" Value="2" />
                 <Setter Property="Height" Value="21" />
+
+                <Setter Property="Validation.ErrorTemplate">
+                    <Setter.Value>
+                        <ControlTemplate>
+                            <DockPanel LastChildFill="true">
+                                <Border Background="OrangeRed" DockPanel.Dock="right" Margin="-25,0,0,0" 
+                                Width="15" Height="15" CornerRadius="10"
+                                ToolTip="{Binding ElementName=customAdorner, 
+                                          Path=AdornedElement.(Validation.Errors)[0].ErrorContent}">
+                                    <TextBlock Text="!" VerticalAlignment="center" HorizontalAlignment="center" 
+                                   FontWeight="Bold" Foreground="white" />
+                                </Border>
+                                <AdornedElementPlaceholder Name="customAdorner" VerticalAlignment="Center" >
+                                    <Border BorderBrush="red" BorderThickness="1" />
+                                </AdornedElementPlaceholder>
+                            </DockPanel>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+
             </Style>
 
-         
+
 
             <Style TargetType="StatusBar" >
                 <!--<Setter Property="Background" Value="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowBackgroundBrushKey}}" />-->
@@ -41,7 +61,7 @@
 
             <common:BoolToVisibilityConverter FalseValue="Collapsed" x:Key="btvc" />
         </ResourceDictionary>
-        
+
     </UserControl.Resources>
 
     <Grid>
@@ -51,7 +71,7 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        
+
 
         <Grid Grid.Row="0" x:Name="ExpressionGrid" Margin="5" >
             <Grid.ColumnDefinitions>
@@ -84,8 +104,8 @@
         </Grid>
 
         <DockPanel Grid.Row="1" Margin="5">
-            <TextBlock Text="Filter Text" Margin="2,2,2,2" DockPanel.Dock="Left" VerticalAlignment="Center" />
-            <TextBox Text ="{Binding FilterText}"  />
+            <TextBlock Text="Filter" Margin="2,0,2,4.6" DockPanel.Dock="Left" VerticalAlignment="Bottom" />
+            <TextBox Text ="{Binding FilterText, ValidatesOnDataErrors=True}"   />
         </DockPanel>
 
         <!-- Search results -->
