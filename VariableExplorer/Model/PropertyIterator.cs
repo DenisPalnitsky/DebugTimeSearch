@@ -83,10 +83,11 @@ namespace SearchLocals.Model
             // property namy with ( ) means that we cas type which is not required
             if (
                 _exparessionEvaluatorProvider.IsEvaluatorAvailable &&
-                !_processedExpressions.Contains(propertyToEvaluate.FullName) &&
-                (!propertyToEvaluate.Name.StartsWith("[") && !propertyToEvaluate.Name.EndsWith("]")) &&
-                !propertyToEvaluate.Name.Any(c=> c == ',' || c == ' '  || c == '(')  &&                
-                !propertyToEvaluate.FullName.StartsWith("(") )                 
+                !_processedExpressions.Contains(propertyToEvaluate.FullName)
+                // (!propertyToEvaluate.Name.StartsWith("[") && !propertyToEvaluate.Name.EndsWith("]")) &&
+                //!propertyToEvaluate.Name.Any(c=> c == ',' || c == ' '  || c == '(')  &&                
+                //!propertyToEvaluate.FullName.StartsWith("(")  
+                )                 
             {
                 _processedExpressions.Add(propertyToEvaluate.FullName);
                 return _exparessionEvaluatorProvider.ExpressionEvaluator.EvaluateExpression(propertyToEvaluate.FullName);
