@@ -29,8 +29,9 @@ namespace SearchLocals.Model.Services
         public static void DefaultRegistration ()
         {
             Register<IConfiguration, Configuration>();
-            Register<ILog, OutputWindowLogger>();            
-            RegisterInstance<IExpressionEvaluatorViewModel>(new  ExpressionEvaluatorViewModel(Resolve<ILog>()));
+            Register<ILog, OutputWindowLogger>();
+            RegisterInstance<ExpressioEvaluation.ISearchStatus>(new SearchStatusLister());
+            RegisterInstance<IExpressionEvaluatorViewModel>(new  ExpressionEvaluatorViewModel());
             RegisterInstance<ITaskSchedulerProvider>(new TaskSchedulerProvider());            
         }
 

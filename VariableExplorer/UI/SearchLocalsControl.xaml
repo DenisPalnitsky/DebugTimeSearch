@@ -6,7 +6,7 @@
              xmlns:common ="clr-namespace:SearchLocals.UI.Common"  
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300"
-             Name="MyToolWindow"             
+             Name="SearchLocals"             
              >
 
     <UserControl.Resources>
@@ -127,6 +127,9 @@
         <StatusBar Grid.Row="3">
             <StatusBarItem>
                 <TextBlock x:Name="StatusBarText" Text="{Binding StatusBarText}" />
+            </StatusBarItem>
+            <StatusBarItem>
+                <TextBlock Text="{Binding SearchingReportText}" TextTrimming="CharacterEllipsis" />
             </StatusBarItem>
         </StatusBar>
 

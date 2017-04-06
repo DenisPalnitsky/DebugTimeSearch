@@ -21,16 +21,19 @@ namespace SearchLocals.UI
         DebugPropertyViewModelCollection _visibleProperties = new DebugPropertyViewModelCollection();
         object _visiblePropertiesLock = new object();
 
-        ILog _logger;
+        ILog _logger = IocContainer.Resolve<ILog>();
+        ISearchStatus _searchStatus = IocContainer.Resolve<ISearchStatus>();
+
         private string _errorMessage;
         private string _statusBarText;
-        private string _searchText;        
+        private string _searchText;
+        string _searchingReportText;
 
-        public ExpressionEvaluatorViewModel(ILog logger)
-        {
-            _logger = logger;
+        public ExpressionEvaluatorViewModel()
+        {            
             _visibleProperties.CollectionChanged += visibleProperties_CollectionChanged;
             System.Windows.Data.BindingOperations.EnableCollectionSynchronization(_visibleProperties, _visiblePropertiesLock);
+            _searchStatus.StatusUpdated = (s) => SearchingReportText = s;
         }
 
         public IEnumerable<DebugPropertyViewModel> Properties
@@ -88,8 +91,18 @@ namespace SearchLocals.UI
                 OnPropertyChanged(() => StatusBarText);
             }
         }
-            
         
+        public string SearchingReportText
+        {
+            get { return _searchingReportText; }
+            private set
+            {
+                _searchingReportText = value;
+                OnPropertyChanged(() => SearchingReportText);
+            }
+        }
+
+
         public ICommand  SearchLocalsCommand
         {
             get { return new DelegateCommand(Search); }
@@ -98,6 +111,7 @@ namespace SearchLocals.UI
         #region IDataErrorInfo 
 
         public string Error { get; private set; }
+        
 
         public string this[string columnName]
         {
@@ -155,8 +169,10 @@ namespace SearchLocals.UI
         private void IterateThrueProperty(IExpressionEvaluatorProvider expressionEvaluatorProvider)
         {
             ErrorMessage = null;
-            _visibleProperties.Clear();
-            StatusBarText = "Searching...";
+            _visibleProperties.Clear();            
+
+            StatusBarText = "Searching...";            
+
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
 
