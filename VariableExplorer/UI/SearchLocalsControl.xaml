@@ -129,6 +129,10 @@
                 <TextBlock x:Name="StatusBarText" Text="{Binding StatusBarText}" />
             </StatusBarItem>
             <StatusBarItem>
+                <Button Command="{Binding CancelSearch}" Content="Cancel" />
+            </StatusBarItem>
+            
+            <StatusBarItem>
                 <TextBlock Text="{Binding SearchingReportText}" TextTrimming="CharacterEllipsis" />
             </StatusBarItem>
         </StatusBar>

@@ -13,8 +13,14 @@ namespace SearchLocals.Model
         IPropertyVisitor _propertyVisitor;
         HashSet<string> _processedExpressions = new HashSet<string>();
         ILog _logger = IocContainer.Resolve<ILog>();
+        bool _isCanceling = false;
 
-        public int MaxDepth { get; set; } = 50;
+        public int MaxDepth { get; private set; } = 50;
+
+        public void Cancel()
+        {
+            _isCanceling = true;
+        }
 
         public PropertyIterator (
             IExpressionEvaluatorProvider exparessionEvaluatorProvider,
@@ -30,6 +36,7 @@ namespace SearchLocals.Model
             string searchCriteria)
         {
              StringFilter stringFilter = new StringFilter(searchCriteria);
+            _isCanceling = false;
              TraversPropertyTreeInternal(debugProperty, stringFilter, 0);            
             _propertyVisitor.Dispose();
         }
@@ -43,12 +50,16 @@ namespace SearchLocals.Model
             int depth)
         {
             depth++;
-            if (depth > MaxDepth )
+            if (depth > MaxDepth)
             {
                 _logger.Info("Skip traversing property {0}. MaxDepth reached", debugProperty.PropertyInfo.FullName);
                 // TODO: Let user know that we reached max depth
                 return;
             }
+
+            // TODO: Report proper state to TAsk by throwing System.Threading.Tasks.TaskCanceledException or something similar
+            if (_isCanceling) return;
+
 
             _logger.Info("TRaversing property {0}",  debugProperty.PropertyInfo.FullName);
             // visit root            
@@ -57,6 +68,9 @@ namespace SearchLocals.Model
             // travers all children
             foreach (IPropertyInfo childProperty in debugProperty.Children)
             {
+                // TODO: Report proper state to TAsk by throwing System.Threading.Tasks.TaskCanceledException or something similar
+                if (_isCanceling) return;
+
                 var valueProperty = childProperty as IValuePropertyInfo;
                 if (valueProperty != null)
                 {

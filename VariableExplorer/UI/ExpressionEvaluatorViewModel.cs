@@ -2,6 +2,7 @@
 using SearchLocals.Model.ExpressioEvaluation;
 using SearchLocals.Model.Services;
 using SearchLocals.Model.VSPropertyModel;
+using SearchLocals.UI.Common;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -23,6 +24,7 @@ namespace SearchLocals.UI
 
         ILog _logger = IocContainer.Resolve<ILog>();
         ISearchStatus _searchStatus = IocContainer.Resolve<ISearchStatus>();
+        MutableDelegateCommand _cancelSearch = new MutableDelegateCommand();
 
         private string _errorMessage;
         private string _statusBarText;
@@ -106,6 +108,13 @@ namespace SearchLocals.UI
         public ICommand  SearchLocalsCommand
         {
             get { return new DelegateCommand(Search); }
+        }
+
+        
+
+        public ICommand CancelSearch
+        {
+            get { return _cancelSearch; }
         }
 
         #region IDataErrorInfo 
@@ -200,12 +209,15 @@ namespace SearchLocals.UI
                     expressionEvaluatorProvider,
                     propertyVisitor);
 
+                _cancelSearch.Action = propertyIterator.Cancel;                
+
                 Task.Run(
                     () => propertyIterator.TraversPropertyTree(_property, _searchText))
                     .ContinueWith(t =>
                     {
                         stopwatch.Stop();
                         PostSearchCompleteMessage(stopwatch.Elapsed);
+                        _cancelSearch.Action = null;
                     },   
                     IocContainer.Resolve<ITaskSchedulerProvider>().GetCurrentScheduler());
             }

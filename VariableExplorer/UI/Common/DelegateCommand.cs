@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Input;
 
-namespace SearchLocals.UI
+namespace SearchLocals.UI.Common
 {
     public class DelegateCommand : ICommand
     {
