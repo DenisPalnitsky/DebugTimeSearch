@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace SearchLocals.Model.VSPropertyModel
 {    
-    class DebugProperty : IDebugProperty
+    class VSDebugPropertyProxy : IVSDebugPropertyProxy
     {        
         IPropertyInfo _propertyInfo;
         IConfiguration _configuration = IocContainer.Resolve<IConfiguration>();
@@ -15,16 +15,16 @@ namespace SearchLocals.Model.VSPropertyModel
         private const uint ITEMS_TO_FETCH = 1000;
         PropertyInfoFactory _propertyInfoFactory = new PropertyInfoFactory();
 
-        private DebugProperty() { }
+        private VSDebugPropertyProxy() { }
 
-        private DebugProperty (IDebugProperty2 debugProperty)
+        private VSDebugPropertyProxy (IDebugProperty2 debugProperty)
         {
             _vsDebugProperty = debugProperty;
         }
 
-        public static IDebugProperty Create(IDebugProperty2 vsDebugProperty)
+        public static IVSDebugPropertyProxy Create(IDebugProperty2 vsDebugProperty)
         {
-            var result =  new DebugProperty(vsDebugProperty);
+            var result =  new VSDebugPropertyProxy(vsDebugProperty);
 
             result._logger.Info("Start GetPropertyInfo()");
             result._propertyInfo = GetPropertyInfo(vsDebugProperty, result._propertyInfoFactory);

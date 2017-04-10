@@ -32,7 +32,7 @@ namespace SearchLocals.Model
 
 
         public void TraversPropertyTree (
-            IDebugProperty debugProperty,
+            IVSDebugPropertyProxy debugProperty,
             string searchCriteria)
         {
              StringFilter stringFilter = new StringFilter(searchCriteria);
@@ -45,7 +45,7 @@ namespace SearchLocals.Model
         /// Traversal of Properties Tree (deep-fir, recursive)
         /// </summary>         
         private void TraversPropertyTreeInternal(
-            IDebugProperty debugProperty,
+            IVSDebugPropertyProxy debugProperty,
             StringFilter stringFilter,
             int depth)
         {
@@ -78,7 +78,7 @@ namespace SearchLocals.Model
                 }
                 else if (childProperty is IExpandablePropertyInfo)
                 {
-                    IDebugProperty evaluated = null;
+                    IVSDebugPropertyProxy evaluated = null;
                     evaluated = EvaluateExpression(childProperty);                         
 
                     if (evaluated != null)
@@ -91,7 +91,7 @@ namespace SearchLocals.Model
         
 
 
-        private IDebugProperty EvaluateExpression(IPropertyInfo propertyToEvaluate)
+        private IVSDebugPropertyProxy EvaluateExpression(IPropertyInfo propertyToEvaluate)
         {
             // property name in [] means that it's parent property and should not be evaluated
             // property namy with ( ) means that we cas type which is not required
@@ -128,7 +128,7 @@ namespace SearchLocals.Model
 
                 if (!valuePropertyInfo.IsEvaluated)
                 {
-                    IDebugProperty eveluatedProperty = EvaluateExpression(valuePropertyInfo);
+                    IVSDebugPropertyProxy eveluatedProperty = EvaluateExpression(valuePropertyInfo);
                     if (eveluatedProperty != null && eveluatedProperty.PropertyInfo is IValuePropertyInfo)
                         valuePropertyInfo = (IValuePropertyInfo)eveluatedProperty.PropertyInfo;
                 }

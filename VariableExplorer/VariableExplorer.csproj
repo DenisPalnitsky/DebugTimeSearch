@@ -166,13 +166,13 @@
     <Compile Include="Model\ExpressioEvaluation\IExpressionEvaluatorContainer.cs" />
     <Compile Include="Model\ExpressioEvaluation\IExpressionEvaluatorProvider.cs" />
     <Compile Include="Model\ExpressioEvaluation\ExpressionEvaluatorDispatcher.cs" />
-    <Compile Include="Model\VSPropertyModel\IDebugProperty.cs" />
+    <Compile Include="Model\VSPropertyModel\IVSDebugPropertyProxy.cs" />
     <Compile Include="Model\VSPropertyModel\IPropertyInfo.cs" />
     <Compile Include="Model\VSPropertyModel\IValuePropertyInfo.cs" />
     <Compile Include="Model\ExpressioEvaluation\IExpressionEvaluator.cs" />
     <Compile Include="Model\Services\IocContainer.cs" />
     <Compile Include="Model\Services\Configuration.cs" />
-    <Compile Include="Model\VSPropertyModel\DebugProperty.cs" />
+    <Compile Include="Model\VSPropertyModel\VSDebugPropertyProxy.cs" />
     <Compile Include="Model\Services\OutputWindowLogger.cs" />
     <Compile Include="Model\StringFilter.cs" />
     <Compile Include="UI\ActionBasedPropertyVisitor.cs" />
@@ -183,9 +183,10 @@
     <Compile Include="ErrorCheckForVsCalls.cs" />
     <Compile Include="Model\ExpressioEvaluation\ExpressionEvaluator.cs" />
     <Compile Include="UI\Common\BoolToVisibilityConverter.cs" />
+    <Compile Include="UI\Common\MutableDelegateCommand.cs" />
     <Compile Include="UI\DebugPropertyViewModel.cs" />
     <Compile Include="UI\DebugPropertyViewModelCollection.cs" />
-    <Compile Include="UI\DelegateCommand.cs" />
+    <Compile Include="UI\Common\DelegateCommand.cs" />
     <Compile Include="SearchLocalsToolWindow.cs" />
     <Compile Include="Guids.cs" />
     <Compile Include="EditorTextProvider.cs" />

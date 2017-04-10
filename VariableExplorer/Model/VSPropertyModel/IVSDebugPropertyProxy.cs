@@ -2,7 +2,7 @@
 
 namespace SearchLocals.Model.VSPropertyModel
 {
-    interface IDebugProperty
+    interface IVSDebugPropertyProxy
     {
         IEnumerable<IPropertyInfo> Children { get; }
         IPropertyInfo PropertyInfo { get; }
