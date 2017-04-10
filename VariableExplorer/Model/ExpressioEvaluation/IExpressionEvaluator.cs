@@ -8,7 +8,7 @@ namespace SearchLocals.Model.ExpressioEvaluation
     /// </summary>
     interface IExpressionEvaluator 
     {
-        IDebugProperty EvaluateExpression(string expression);
-        IDebugProperty GetLocals();        
+        IVSDebugPropertyProxy EvaluateExpression(string expression);
+        IVSDebugPropertyProxy GetLocals();        
     }
 }

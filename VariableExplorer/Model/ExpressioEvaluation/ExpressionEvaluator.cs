@@ -11,7 +11,7 @@ namespace SearchLocals.Model.ExpressioEvaluation
     {       
         ILog _log = IocContainer.Resolve<ILog>();
         ISearchStatus _searchStatus = IocContainer.Resolve<ISearchStatus>();
-        ConcurrentDictionary<string, IDebugProperty> _cache = new ConcurrentDictionary<string, IDebugProperty>();
+        ConcurrentDictionary<string, IVSDebugPropertyProxy> _cache = new ConcurrentDictionary<string, IVSDebugPropertyProxy>();
         IDebugStackFrame2 _stackFrame;
 
         public ExpressionEvaluator(IDebugStackFrame2 stackFrame )
@@ -19,14 +19,13 @@ namespace SearchLocals.Model.ExpressioEvaluation
             _stackFrame = stackFrame;
         }
         
-        public IDebugProperty EvaluateExpression(string expression)
+        public IVSDebugPropertyProxy EvaluateExpression(string expression)
         {
             if (string.IsNullOrEmpty(expression))
             {
                 throw new ArgumentNullException("Expression is empty");
             }
-
-            // TODO: report to UI 
+            
             _searchStatus.Report($"Evaluating { expression } ");
             _log.Info("Evaluating expression {0}. CurrentTime {1:H:mm:ss.ffff}", expression, DateTime.Now);
             if (_cache.ContainsKey(expression))
@@ -38,17 +37,17 @@ namespace SearchLocals.Model.ExpressioEvaluation
             IDebugProperty2 debugProperty = GetVsDebugProperty(expression);
             _log.Info("Done evaluating expression {0}. CurrentTime {1:H:mm:ss.ffff}", expression, DateTime.Now);
             
-            IDebugProperty resultDebugProperty = DebugProperty.Create(debugProperty);            
+            IVSDebugPropertyProxy resultDebugProperty = VSDebugPropertyProxy.Create(debugProperty);            
             _cache[expression] = resultDebugProperty;
             return resultDebugProperty;
         }
 
-        public IDebugProperty GetLocals()
+        public IVSDebugPropertyProxy GetLocals()
         {
             IDebugProperty2 d;
             _stackFrame.GetDebugProperty(out d);
 
-            return DebugProperty.Create(d);
+            return VSDebugPropertyProxy.Create(d);
         }
 
         private IDebugProperty2 GetVsDebugProperty(string expression)

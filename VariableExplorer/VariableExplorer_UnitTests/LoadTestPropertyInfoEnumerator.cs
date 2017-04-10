@@ -15,7 +15,7 @@ namespace VariableExplorer_UnitTests
     [TestFixture]
     public class LoadTestPropertyInfoEnumerator
     {
-        internal class MockDebugPropertyInfo : IDebugProperty
+        internal class MockDebugPropertyInfo : IVSDebugPropertyProxy
         {
             public int valuePropertiesCount = 1000000;
             public int expandablePropertiesCount = 1000;
@@ -52,7 +52,7 @@ namespace VariableExplorer_UnitTests
             var propInfo = new MockDebugPropertyInfo();
             Mock<IExpressionEvaluatorProvider> evaluatorProvider = new Mock<IExpressionEvaluatorProvider>();
             Mock<IExpressionEvaluator> evaluator = new Mock<IExpressionEvaluator>();
-            evaluator.Setup(e => e.EvaluateExpression(It.IsAny<string>())).Returns(Mock.Of < IDebugProperty>());
+            evaluator.Setup(e => e.EvaluateExpression(It.IsAny<string>())).Returns(Mock.Of < IVSDebugPropertyProxy>());
 
             evaluatorProvider.Setup(e => e.IsEvaluatorAvailable).Returns(true);
             evaluatorProvider.Setup(e => e.ExpressionEvaluator).Returns(evaluator.Object);

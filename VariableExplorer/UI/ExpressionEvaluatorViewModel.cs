@@ -17,7 +17,7 @@ namespace SearchLocals.UI
 
     class ExpressionEvaluatorViewModel : ObservableObject, SearchLocals.UI.IExpressionEvaluatorViewModel, IDataErrorInfo
     {
-        IDebugProperty _property;
+        IVSDebugPropertyProxy _property;
         string _filterText;
         DebugPropertyViewModelCollection _visibleProperties = new DebugPropertyViewModelCollection();
         object _visiblePropertiesLock = new object();
