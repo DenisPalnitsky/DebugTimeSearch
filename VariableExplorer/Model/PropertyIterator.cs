@@ -15,7 +15,7 @@ namespace SearchLocals.Model
         ILog _logger = IocContainer.Resolve<ILog>();
         bool _isCanceling = false;
 
-        public int MaxDepth { get; private set; } = 50;
+        public int MaxDepth { get; private set; }
 
         public void Cancel()
         {
@@ -24,12 +24,20 @@ namespace SearchLocals.Model
 
         public PropertyIterator (
             IExpressionEvaluatorProvider exparessionEvaluatorProvider,
-            IPropertyVisitor propertyVisitor )
+            IPropertyVisitor propertyVisitor ):this(exparessionEvaluatorProvider, propertyVisitor, 50)
+        {
+            this._exparessionEvaluatorProvider = exparessionEvaluatorProvider;               
+        }
+
+        public PropertyIterator(
+            IExpressionEvaluatorProvider exparessionEvaluatorProvider,
+            IPropertyVisitor propertyVisitor,
+            int maxDepth)
         {
             this._exparessionEvaluatorProvider = exparessionEvaluatorProvider;
-            _propertyVisitor = propertyVisitor;            
-        }            
-
+            _propertyVisitor = propertyVisitor;
+            MaxDepth = maxDepth;
+        }
 
         public void TraversPropertyTree (
             IVSDebugPropertyProxy debugProperty,

@@ -90,6 +90,28 @@ namespace VariableExplorer_UnitTests
             
         }
 
+        [Test]
+        public void Enumerate_when_called_stops_on_defined_depth()
+        {
+            // Arrange
+            var exparessionEvaluator = CreateEvaluatorWithThreeLevelProperty();
+
+            Mock<IPropertyVisitor> propertyVisitorMock = new Mock<IPropertyVisitor>(MockBehavior.Strict);
+
+            // no other calls except top level
+            propertyVisitorMock.Setup(v => v.ParentPropertyAttended(It.Is<IExpandablePropertyInfo>(e => e.Name == "Parent"))).Verifiable();
+            propertyVisitorMock.Setup(v => v.Dispose());
+
+            // Act            
+            PropertyIterator propertIterator = new PropertyIterator(exparessionEvaluator,
+                propertyVisitorMock.Object, 1);
+
+            propertIterator.TraversPropertyTree(exparessionEvaluator.ExpressionEvaluator.EvaluateExpression("Parent"), String.Empty);
+
+            // Assert
+            propertyVisitorMock.VerifyAll();
+        }
+
         private static IExpressionEvaluatorProvider CreateEvaluatorWithThreeLevelProperty()
         {
             // we setup here object with structure below
