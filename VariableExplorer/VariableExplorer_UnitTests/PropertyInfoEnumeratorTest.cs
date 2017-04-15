@@ -9,6 +9,8 @@ using System.Text;
 using Microsoft.Practices.Unity;
 using SearchLocals.Model.VSPropertyModel;
 using SearchLocals.Model.ExpressioEvaluation;
+using System.Threading.Tasks;
+using System.Threading;
 
 namespace VariableExplorer_UnitTests
 {
@@ -68,7 +70,7 @@ namespace VariableExplorer_UnitTests
         }
 
         [Test]
-        public void Enumerate_when_called_goes_through_all_child_properties_and_return_value_properties()
+        public void TraversPropertyTree_when_called_goes_through_all_child_properties_and_return_value_properties()
         {
             // Arrange
             var exparessionEvaluator = CreateEvaluatorWithThreeLevelProperty();
@@ -91,7 +93,7 @@ namespace VariableExplorer_UnitTests
         }
 
         [Test]
-        public void Enumerate_when_called_stops_on_defined_depth()
+        public void TraversPropertyTree_when_called_stops_on_defined_depth()
         {
             // Arrange
             var exparessionEvaluator = CreateEvaluatorWithThreeLevelProperty();
@@ -160,7 +162,7 @@ namespace VariableExplorer_UnitTests
         }
 
         [Test]
-        public void Enumerate_when_called_returns_property_value()
+        public void TraversPropertyTree_when_called_returns_property_value()
         {
             var parentValuePropertyInfo = new Mock<IValuePropertyInfo>();
             parentValuePropertyInfo.Setup(p => p.Value).Returns("1").Verifiable();
@@ -199,7 +201,45 @@ namespace VariableExplorer_UnitTests
             Assert.That(results.Any(p => (p as IValuePropertyInfo) != null && (p as IValuePropertyInfo).Value == "1"));            
         }
 
+        [Test]
+        public void Cancel_when_called_stops_search()
+        {
+            // Arrange
+            var exparessionEvaluator = CreateEvaluatorWithThreeLevelProperty();
+            
+            ManualResetEvent mre = new ManualResetEvent(false);
+            
+            Mock<IPropertyVisitor> propertyVisitorMock = new Mock<IPropertyVisitor>(MockBehavior.Loose);
+            propertyVisitorMock.Setup(v => v.ParentPropertyAttended(It.IsAny<IExpandablePropertyInfo>()))
+                .Callback(() => mre.Set() );
 
+            propertyVisitorMock.Setup(v => v.ValuePropertyAttended(It.IsAny<IValuePropertyInfo>()))
+             .Callback(() => mre.Set());
+
+            // Act            
+            PropertyIterator propertIterator = new PropertyIterator(exparessionEvaluator,
+                propertyVisitorMock.Object);
+          
+            var task = Task.Run(() =>
+                {
+                    propertIterator.TraversPropertyTree(exparessionEvaluator.ExpressionEvaluator.EvaluateExpression("Parent"), String.Empty);
+                   
+                });
+
+            mre.WaitOne(); // wait till search process start            
+            propertIterator.Cancel(); // cancel process
+            mre.Set();
+
+
+
+            Task.WaitAll(task);
+
+            Assert.AreEqual(TaskStatus.Canceled, task.Status);
+
+            // Assert
+            propertyVisitorMock.VerifyAll();
+
+        }
 
 
         //[Test]

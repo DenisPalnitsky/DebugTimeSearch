@@ -13,7 +13,10 @@ namespace SearchLocals.Model
         IPropertyVisitor _propertyVisitor;
         HashSet<string> _processedExpressions = new HashSet<string>();
         ILog _logger = IocContainer.Resolve<ILog>();
+        ISearchStatus _searchStatus = IocContainer.Resolve<ISearchStatus>();
+
         bool _isCanceling = false;
+
 
         public int MaxDepth { get; private set; }
 
@@ -61,23 +64,20 @@ namespace SearchLocals.Model
             if (depth > MaxDepth)
             {
                 _logger.Info("Skip traversing property {0}. MaxDepth reached", debugProperty.PropertyInfo.FullName);
-                // TODO: Let user know that we reached max depth
+                _searchStatus.StatusUpdated($"Skipping property: {debugProperty.PropertyInfo.FullName}. Max depth reached");
                 return;
             }
 
-            // TODO: Report proper state to TAsk by throwing System.Threading.Tasks.TaskCanceledException or something similar
-            if (_isCanceling) return;
+            ThrowIfCancelRequested();
 
-
-            _logger.Info("TRaversing property {0}",  debugProperty.PropertyInfo.FullName);
+            _logger.Info("Traversing property {0}", debugProperty.PropertyInfo.FullName);
             // visit root            
             RiseAppropriateAction(debugProperty.PropertyInfo, stringFilter);
-            
+
             // travers all children
             foreach (IPropertyInfo childProperty in debugProperty.Children)
             {
-                // TODO: Report proper state to TAsk by throwing System.Threading.Tasks.TaskCanceledException or something similar
-                if (_isCanceling) return;
+                ThrowIfCancelRequested();
 
                 var valueProperty = childProperty as IValuePropertyInfo;
                 if (valueProperty != null)
@@ -87,7 +87,7 @@ namespace SearchLocals.Model
                 else if (childProperty is IExpandablePropertyInfo)
                 {
                     IVSDebugPropertyProxy evaluated = null;
-                    evaluated = EvaluateExpression(childProperty);                         
+                    evaluated = EvaluateExpression(childProperty);
 
                     if (evaluated != null)
                         TraversPropertyTreeInternal(evaluated, stringFilter, depth);
@@ -96,7 +96,17 @@ namespace SearchLocals.Model
                     throw new NotSupportedException($"Property info type { childProperty.GetType().Name } is not supported. Contact developer.");
             }
         }
-        
+
+        private void ThrowIfCancelRequested()
+        {
+            // TODO: Report proper state to TAsk by throwing System.Threading.Tasks.TaskCanceledException or something similar
+            if (_isCanceling)
+            {
+                _searchStatus.StatusUpdated("Search canceled");
+                _logger.Info("Canceling traversing");
+                throw new System.Threading.Tasks.TaskCanceledException("Search canceled");
+            }
+        }
 
 
         private IVSDebugPropertyProxy EvaluateExpression(IPropertyInfo propertyToEvaluate)
@@ -111,6 +121,7 @@ namespace SearchLocals.Model
                 //!propertyToEvaluate.FullName.StartsWith("(")  
                 )                 
             {
+                _searchStatus.Report($"Evaluating { propertyToEvaluate.FullName } ");
                 _processedExpressions.Add(propertyToEvaluate.FullName);
                 return _exparessionEvaluatorProvider.ExpressionEvaluator.EvaluateExpression(propertyToEvaluate.FullName);
             }

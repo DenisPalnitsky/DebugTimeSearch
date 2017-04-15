@@ -10,7 +10,6 @@ namespace SearchLocals.Model.ExpressioEvaluation
     class ExpressionEvaluator : IExpressionEvaluator
     {       
         ILog _log = IocContainer.Resolve<ILog>();
-        ISearchStatus _searchStatus = IocContainer.Resolve<ISearchStatus>();
         ConcurrentDictionary<string, IVSDebugPropertyProxy> _cache = new ConcurrentDictionary<string, IVSDebugPropertyProxy>();
         IDebugStackFrame2 _stackFrame;
 
@@ -25,8 +24,7 @@ namespace SearchLocals.Model.ExpressioEvaluation
             {
                 throw new ArgumentNullException("Expression is empty");
             }
-            
-            _searchStatus.Report($"Evaluating { expression } ");
+                        
             _log.Info("Evaluating expression {0}. CurrentTime {1:H:mm:ss.ffff}", expression, DateTime.Now);
             if (_cache.ContainsKey(expression))
             {

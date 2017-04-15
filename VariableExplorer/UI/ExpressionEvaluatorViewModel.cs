@@ -216,7 +216,9 @@ namespace SearchLocals.UI
                     .ContinueWith(t =>
                     {
                         stopwatch.Stop();
-                        PostSearchCompleteMessage(stopwatch.Elapsed);
+                        if (t.Exception.InnerExceptions.Any(e => e is TaskCanceledException))
+                            PostSearchCompleteMessage(stopwatch.Elapsed, true);
+
                         _cancelSearch.Action = null;
                     },   
                     IocContainer.Resolve<ITaskSchedulerProvider>().GetCurrentScheduler());
@@ -238,7 +240,7 @@ namespace SearchLocals.UI
             OnPropertyChanged(() => Properties);
         }
       
-        private void  PostSearchCompleteMessage(TimeSpan timeSpent)
+        private void  PostSearchCompleteMessage(TimeSpan timeSpent, bool isCanceled)
         {
             string time = String.Format(@"{0:.000} seconds", timeSpent.TotalSeconds);
             if (timeSpent.Days > 0)
@@ -250,8 +252,13 @@ namespace SearchLocals.UI
             if (timeSpent.Minutes > 0)
                 time = String.Format(@"{0:.00} minutes ", timeSpent.TotalMinutes);
 
- 	        StatusBarText = String.Format("Search Complete. {0} item(s) found. Search time: {1}", 
+            string start = "Search completed.";
+            if (isCanceled)
+                start = "Search canceled.";
+
+ 	        StatusBarText = String.Format(start+ " {0} item(s) found. Search time: {1}", 
                 _visibleProperties.Count, time);
+
             System.Media.SystemSounds.Beep.Play();
         } 
         
