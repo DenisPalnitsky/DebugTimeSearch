@@ -60,6 +60,7 @@
             </Style>
 
             <common:BoolToVisibilityConverter FalseValue="Collapsed" x:Key="btvc" />
+            <common:InverseBooleanConverter x:Key="InverseBooleanConverter" />
         </ResourceDictionary>
 
     </UserControl.Resources>
@@ -86,7 +87,8 @@
             <TextBox Grid.Column="0" 
                      Grid.Row="1" 
                      Name="SearchTextBox"                      
-                     Text ="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"                    
+                     Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                     IsEnabled="{Binding Path=IsSearchInProgress, Converter={StaticResource InverseBooleanConverter}}"
                      >
                 <TextBox.InputBindings>
                     <!--<KeyBinding Command="{Binding SearchLocalsCommand}" Key="Return" /> -->
@@ -100,7 +102,8 @@
                     Command="{Binding SearchLocalsCommand}"
                     x:Name="SearchButton" 
                     Padding="2" 
-                    Margin="2" />
+                    Margin="2"
+                    IsEnabled = "{Binding Path=IsSearchInProgress, Converter={StaticResource InverseBooleanConverter}}" />
         </Grid>
 
         <DockPanel Grid.Row="1" Margin="5">
@@ -115,7 +118,7 @@
                           Visibility="{Binding Path=IsErrorMessageVisible,Converter={common:BoolToVisibilityConverter TrueValue=Collapsed, FalseValue=Visible}}"
                           VerticalAlignment="Stretch" 
                           IsReadOnly="True" ClipboardCopyMode="ExcludeHeader"  >
-
+            <!-- TODO: Add full property name -->
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Name" Binding="{Binding Name, Mode=OneWay}" Width="2*" />
                 <DataGridTextColumn Header="Value" Binding="{Binding Value, Mode=OneWay}" Width="*" />
@@ -132,7 +135,8 @@
                 <Button Command="{Binding CancelSearch}" Content="Cancel" />
             </StatusBarItem>
             
-            <StatusBarItem>
+            <StatusBarItem 
+                Visibility="{Binding Path=IsSearchInProgress,Converter={common:BoolToVisibilityConverter TrueValue=Visible, FalseValue=Collapsed}}" >
                 <TextBlock Text="{Binding SearchingReportText}" TextTrimming="CharacterEllipsis" />
             </StatusBarItem>
         </StatusBar>

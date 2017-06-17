@@ -183,6 +183,7 @@
     <Compile Include="ErrorCheckForVsCalls.cs" />
     <Compile Include="Model\ExpressioEvaluation\ExpressionEvaluator.cs" />
     <Compile Include="UI\Common\BoolToVisibilityConverter.cs" />
+    <Compile Include="UI\Common\InverseBooleanConverter.cs" />
     <Compile Include="UI\Common\MutableDelegateCommand.cs" />
     <Compile Include="UI\DebugPropertyViewModel.cs" />
     <Compile Include="UI\DebugPropertyViewModelCollection.cs" />

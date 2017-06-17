@@ -30,6 +30,7 @@ namespace SearchLocals.UI
         private string _statusBarText;
         private string _searchText;
         string _searchingReportText;
+        private bool _isSearchInProgress = false;
 
         public ExpressionEvaluatorViewModel()
         {            
@@ -108,14 +109,23 @@ namespace SearchLocals.UI
         public ICommand  SearchLocalsCommand
         {
             get { return new DelegateCommand(Search); }
-        }
-
-        
+        }        
 
         public ICommand CancelSearch
         {
             get { return _cancelSearch; }
+        }      
+
+        public bool IsSearchInProgress
+        {
+            get { return _isSearchInProgress; }
+            private set
+            {
+                _isSearchInProgress = value;
+                OnPropertyChanged(nameof(IsSearchInProgress));
+            }
         }
+        
 
         #region IDataErrorInfo 
 
@@ -209,17 +219,22 @@ namespace SearchLocals.UI
                     expressionEvaluatorProvider,
                     propertyVisitor);
 
-                _cancelSearch.Action = propertyIterator.Cancel;                
+                _cancelSearch.Action = propertyIterator.Cancel;
 
-                Task.Run(
-                    () => propertyIterator.TraversPropertyTree(_property, _searchText))
+                var searchTask = Task.Run(
+                    () =>
+                    {
+                        IsSearchInProgress = true;
+                        propertyIterator.TraversPropertyTree(_property, _searchText);
+                    })                    
                     .ContinueWith(t =>
                     {
+                        IsSearchInProgress = false;
                         stopwatch.Stop();
-                        if (t.Exception.InnerExceptions.Any(e => e is TaskCanceledException))
+                        if (t.Exception != null && t.Exception.InnerExceptions.Any(e => e is TaskCanceledException))
                             PostSearchCompleteMessage(stopwatch.Elapsed, true);
 
-                        _cancelSearch.Action = null;
+                        _cancelSearch.Action = null;                        
                     },   
                     IocContainer.Resolve<ITaskSchedulerProvider>().GetCurrentScheduler());
             }
