@@ -231,13 +231,18 @@ namespace VariableExplorer_UnitTests
             mre.Set();
 
 
+            // assert
+            Assert.That ( 
+                () => {
+                    try { Task.WaitAll(task); }
+                    catch (AggregateException e)
+                    {
+                        return e.InnerExceptions.First() is TaskCanceledException;
+                    }
 
-            Task.WaitAll(task);
-
-            Assert.AreEqual(TaskStatus.Canceled, task.Status);
-
-            // Assert
-            propertyVisitorMock.VerifyAll();
+                    return false;
+            });
+            
 
         }
 

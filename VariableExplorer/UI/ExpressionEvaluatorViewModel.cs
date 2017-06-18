@@ -231,8 +231,24 @@ namespace SearchLocals.UI
                     {
                         IsSearchInProgress = false;
                         stopwatch.Stop();
-                        if (t.Exception != null && t.Exception.InnerExceptions.Any(e => e is TaskCanceledException))
-                            PostSearchCompleteMessage(stopwatch.Elapsed, true);
+                        if (t.Exception != null)
+                        {
+                            if (t.Exception.InnerExceptions.First() is TaskCanceledException)
+                            {
+                                _logger.Info("Search canceled");
+                                PostSearchCompleteMessage(stopwatch.Elapsed, true);
+                            }
+                            else // Error 
+                            {
+                                _logger.Error(t.Exception.ToString());
+                                throw t.Exception;
+                            }
+                        }
+                        else
+                        {
+                            _logger.Info("Search finished");
+                            PostSearchCompleteMessage(stopwatch.Elapsed, false);
+                        }
 
                         _cancelSearch.Action = null;                        
                     },   
@@ -247,7 +263,7 @@ namespace SearchLocals.UI
 
         private void ExpandableProperyVisited (IExpandablePropertyInfo prop)
         {
-
+            // nothing to do 
         }
 
         private void visibleProperties_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)

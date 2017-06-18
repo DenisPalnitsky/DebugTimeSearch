@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Markup;
@@ -10,22 +6,6 @@ using System.Windows.Markup;
 namespace SearchLocals.UI.Common
 {
     // copy-paste from http://blogs.msdn.com/b/ukadc/archive/2009/11/17/five-minute-recipe-for-a-decent-booltovisibilityconverter.aspx
-
-
-    //    <StackPanel VerticalAlignment="Bottom"> 
-    //    <StackPanel.Resources> 
-    //        <local:BoolToVisibilityConverter FalseValue="Collapsed" x:Key="btvc" /> 
-    //    </StackPanel.Resources> 
-    //    <CheckBox x:Name="HideOrShowCheck">Hide or show the text...</CheckBox> 
-    //    <TextBlock Text="Hello World!" Visibility="{Binding ElementName=HideOrShowCheck, Path=IsChecked,Converter={StaticResource btvc}}" /> 
-    //    </StackPanel> 
-
-
-    //    <StackPanel VerticalAlignment="Bottom"> 
-    //    <CheckBox x:Name="HideOrShowCheck">Hide or show the text...</CheckBox> 
-    //    <TextBlock Text="Hello World!" Visibility="{Binding ElementName=HideOrShowCheck, Path=IsChecked,Converter={local:BoolToVisibilityConverter FalseValue=Collapsed}}" /> 
-    //    </StackPanel> 
-
     public class BoolToVisibilityConverter : MarkupExtension, IValueConverter
     {
         public BoolToVisibilityConverter()

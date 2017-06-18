@@ -30,7 +30,7 @@
                 <!--<Setter Property="Foreground" Value="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowTextBrushKey}}"/>
                 <Setter Property="Background" Value="{DynamicResource {x:Static vs_shell:EnvironmentColors.SearchBoxBackgroundBrushKey}}" />-->
                 <Setter Property="Margin" Value="2" />
-                <Setter Property="Height" Value="21" />
+                <Setter Property="Height" Value="22" />
 
                 <Setter Property="Validation.ErrorTemplate">
                     <Setter.Value>
@@ -53,6 +53,12 @@
 
             </Style>
 
+            <Style TargetType="Button">
+                <Setter Property="Padding" Value="2"  />
+                <Setter Property="Margin"  Value="2" />
+                <Setter Property="Width"  Value="80" />
+                <Setter Property="Height"  Value="22" />
+            </Style>
 
 
             <Style TargetType="StatusBar" >
@@ -74,10 +80,10 @@
         </Grid.RowDefinitions>
 
 
-        <Grid Grid.Row="0" x:Name="ExpressionGrid" Margin="5" >
+        <Grid Grid.Row="0" x:Name="ExpressionGrid" Margin="5" IsEnabled="{Binding Path=IsSearchInProgress, Converter={StaticResource InverseBooleanConverter}}"  >
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="80" />
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition />
@@ -87,9 +93,8 @@
             <TextBox Grid.Column="0" 
                      Grid.Row="1" 
                      Name="SearchTextBox"                      
-                     Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
-                     IsEnabled="{Binding Path=IsSearchInProgress, Converter={StaticResource InverseBooleanConverter}}"
-                     >
+                     Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"                     
+                     ToolTip="Search in run-time objects" >
                 <TextBox.InputBindings>
                     <!--<KeyBinding Command="{Binding SearchLocalsCommand}" Key="Return" /> -->
                     <KeyBinding Command="{Binding SearchLocalsCommand}" Key="Enter" />
@@ -100,27 +105,29 @@
                     Grid.Row="1" 
                     Content="Search" 
                     Command="{Binding SearchLocalsCommand}"
-                    x:Name="SearchButton" 
-                    Padding="2" 
-                    Margin="2"
-                    IsEnabled = "{Binding Path=IsSearchInProgress, Converter={StaticResource InverseBooleanConverter}}" />
+                    x:Name="SearchButton"  />
         </Grid>
 
-        <DockPanel Grid.Row="1" Margin="5">
+        <DockPanel Grid.Row="1" Margin="5" IsEnabled="{Binding Path=IsSearchInProgress, Converter={StaticResource InverseBooleanConverter}}" >
             <TextBlock Text="Filter" Margin="2,0,2,4.6" DockPanel.Dock="Left" VerticalAlignment="Bottom" />
-            <TextBox Text ="{Binding FilterText, ValidatesOnDataErrors=True}"   />
+            <TextBox Text ="{Binding FilterText, ValidatesOnDataErrors=True}"  />
         </DockPanel>
 
         <!-- Search results -->
         <DataGrid Grid.Row="2" Name="SearchResults"
                           ItemsSource="{Binding Properties}" 
                           AutoGenerateColumns="False" SelectionMode="Single" SelectionUnit="CellOrRowHeader" 
-                          Visibility="{Binding Path=IsErrorMessageVisible,Converter={common:BoolToVisibilityConverter TrueValue=Collapsed, FalseValue=Visible}}"
+                          Visibility="{Binding Path=IsErrorMessageVisible, Converter={common:BoolToVisibilityConverter TrueValue=Collapsed, FalseValue=Visible}}"
                           VerticalAlignment="Stretch" 
                           IsReadOnly="True" ClipboardCopyMode="ExcludeHeader"  >
-            <!-- TODO: Add full property name -->
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Name" Binding="{Binding Name, Mode=OneWay}" Width="2*" />
+                <DataGridTextColumn Header="Name" Binding="{Binding FullName, Mode=OneWay}" Width="2*">
+                    <DataGridTextColumn.CellStyle>
+                        <Style TargetType="DataGridCell">
+                            <Setter Property="ToolTip" Value="{Binding Name}" />
+                        </Style>
+                    </DataGridTextColumn.CellStyle>
+                </DataGridTextColumn>
                 <DataGridTextColumn Header="Value" Binding="{Binding Value, Mode=OneWay}" Width="*" />
                 <DataGridTextColumn Header="Type" Binding="{Binding ValueType, Mode=OneWay}" Width="2*" />
             </DataGrid.Columns>
@@ -132,7 +139,7 @@
                 <TextBlock x:Name="StatusBarText" Text="{Binding StatusBarText}" />
             </StatusBarItem>
             <StatusBarItem>
-                <Button Command="{Binding CancelSearch}" Content="Cancel" />
+                <Button Command="{Binding CancelSearch}" Content="Cancel" Visibility="{Binding IsSearchInProgress, Converter={common:BoolToVisibilityConverter TrueValue=Visible, FalseValue=Collapsed}}"  />
             </StatusBarItem>
             
             <StatusBarItem 

@@ -98,8 +98,7 @@ namespace SearchLocals.Model
         }
 
         private void ThrowIfCancelRequested()
-        {
-            // TODO: Report proper state to TAsk by throwing System.Threading.Tasks.TaskCanceledException or something similar
+        {            
             if (_isCanceling)
             {
                 _searchStatus.StatusUpdated("Search canceled");
