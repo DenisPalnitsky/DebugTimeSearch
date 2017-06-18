@@ -69,7 +69,7 @@
         <Parent guid="guidVariableExplorerCmdSet" id="MyMenuGroup" />
         <Icon guid="guidImages" id="bmpPic1" />
         <Strings>
-          <ButtonText>View Variable Explorer</ButtonText>
+          <ButtonText>Search in object</ButtonText>
         </Strings>
       </Button>
 
