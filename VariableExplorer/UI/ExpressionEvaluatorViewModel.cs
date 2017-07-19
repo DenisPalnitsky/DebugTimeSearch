@@ -22,21 +22,31 @@ namespace SearchLocals.UI
         DebugPropertyViewModelCollection _visibleProperties = new DebugPropertyViewModelCollection();
         object _visiblePropertiesLock = new object();
 
-        ILog _logger = IocContainer.Resolve<ILog>();
-        ISearchStatus _searchStatus = IocContainer.Resolve<ISearchStatus>();
+        ILog _logger = ServiceLocator.Resolve<ILog>();
+        ISearchStatus _searchStatus = ServiceLocator.Resolve<ISearchStatus>();
         MutableDelegateCommand _cancelSearch = new MutableDelegateCommand();
 
         private string _errorMessage;
         private string _statusBarText;
         private string _searchText;
-        string _searchingReportText;
+        private string _searchingReportText;
         private bool _isSearchInProgress = false;
+        private bool _isEnabled;
 
         public ExpressionEvaluatorViewModel()
         {            
             _visibleProperties.CollectionChanged += visibleProperties_CollectionChanged;
             System.Windows.Data.BindingOperations.EnableCollectionSynchronization(_visibleProperties, _visiblePropertiesLock);
             _searchStatus.StatusUpdated = (s) => SearchingReportText = s;
+            var vsEvents = ServiceLocator.Resolve<IVsEnvironmentEvents>();
+            vsEvents.EvaluatorBecomeAvailable += (a, b) => { IsEnabled = true; };
+            vsEvents.EvaluatorBecomeUnAvailable += VsEvents_EvaluatorBecomeUnAvailable;
+        }
+
+        private void VsEvents_EvaluatorBecomeUnAvailable(object sender, EventArgs e)
+        {
+            IsEnabled = false;
+            _visibleProperties.Clear();
         }
 
         public IEnumerable<DebugPropertyViewModel> Properties
@@ -125,6 +135,16 @@ namespace SearchLocals.UI
                 OnPropertyChanged(nameof(IsSearchInProgress));
             }
         }
+
+        public bool IsEnabled
+        {
+            get { return _isEnabled; }
+            private set
+            {
+                _isEnabled = value;
+                OnPropertyChanged(nameof(IsEnabled));
+            }
+        }
         
 
         #region IDataErrorInfo 
@@ -140,7 +160,7 @@ namespace SearchLocals.UI
                 switch (columnName)
                 {
                     case nameof(FilterText):
-                        var expressionEvaluatorProvider = IocContainer.Resolve<IExpressionEvaluatorProvider>();
+                        var expressionEvaluatorProvider = ServiceLocator.Resolve<IExpressionEvaluatorProvider>();
                         if (string.IsNullOrEmpty(FilterText))
                             break;  
 
@@ -168,7 +188,7 @@ namespace SearchLocals.UI
 
         private void Search()
         {
-            var expressionEvaluatorProvider = IocContainer.Resolve<IExpressionEvaluatorProvider>();
+            var expressionEvaluatorProvider = ServiceLocator.Resolve<IExpressionEvaluatorProvider>();
             if (expressionEvaluatorProvider.IsEvaluatorAvailable)
             {
                 if (String.IsNullOrEmpty(FilterText)) // search all locals
@@ -252,7 +272,7 @@ namespace SearchLocals.UI
 
                         _cancelSearch.Action = null;                        
                     },   
-                    IocContainer.Resolve<ITaskSchedulerProvider>().GetCurrentScheduler());
+                    ServiceLocator.Resolve<ITaskSchedulerProvider>().GetCurrentScheduler());
             }
             else
             {

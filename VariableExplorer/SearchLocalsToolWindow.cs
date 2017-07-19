@@ -45,7 +45,7 @@ namespace SearchLocals
             // the object returned by the Content property.
             var myControl = new UI.SearchLocalsControl();
             base.Content = myControl;
-            myControl.DataContext = IocContainer.Resolve<IExpressionEvaluatorViewModel>();
+            myControl.DataContext = ServiceLocator.Resolve<IExpressionEvaluatorViewModel>();
             
         }
     }

@@ -9,11 +9,11 @@ using SearchLocals.UI;
 
 namespace SearchLocals.Model.Services
 {
-    class IocContainer
+    class ServiceLocator
     {
         static IUnityContainer _container = new UnityContainer();
         
-        static IocContainer()
+        static ServiceLocator()
         {            
             DefaultRegistration();
         }
@@ -30,12 +30,19 @@ namespace SearchLocals.Model.Services
         {
             Register<IConfiguration, Configuration>();
             Register<ILog, OutputWindowLogger>();
+
+            var ev = new VSEnvironmentEvents.VSEnvironmentEventsPublisher();
+            RegisterInstance<IVSEnvironmentEventsPublisher>(ev);
+            RegisterInstance<IVsEnvironmentEvents>(ev);
+
             RegisterInstance<ExpressioEvaluation.ISearchStatus>(new SearchStatusLister());
             RegisterInstance<IExpressionEvaluatorViewModel>(new  ExpressionEvaluatorViewModel());
-            RegisterInstance<ITaskSchedulerProvider>(new TaskSchedulerProvider());            
+            RegisterInstance<ITaskSchedulerProvider>(new TaskSchedulerProvider());
+
+         
         }
 
-        
+
         public static T Resolve<T> ()
         {
             return _container.Resolve<T>();

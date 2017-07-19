@@ -14,14 +14,25 @@ namespace SearchLocals.Model.ExpressioEvaluation
         DebuggerEvents debuggerEvents;
         IExpressionEvaluatorContainer _container;
 
-        ExpressionEvaluatorDispatcher() 
+        private ExpressionEvaluatorDispatcher() 
         {
-            var expressionEvaluatorProviderprovider = new ExpressionEvaluatorProvider();
-            IocContainer.RegisterInstance<IExpressionEvaluatorContainer>(expressionEvaluatorProviderprovider);
-            IocContainer.RegisterInstance<IExpressionEvaluatorProvider>(expressionEvaluatorProviderprovider);
-            _container = expressionEvaluatorProviderprovider;
+            var expressionEvaluatorProvider = new ExpressionEvaluatorProvider();
+            ServiceLocator.RegisterInstance<IExpressionEvaluatorContainer>(expressionEvaluatorProvider);
+            ServiceLocator.RegisterInstance<IExpressionEvaluatorProvider>(expressionEvaluatorProvider);
+            _container = expressionEvaluatorProvider;
         }
-        
+
+        internal static ExpressionEvaluatorDispatcher Create(Microsoft.VisualStudio.Shell.Interop.IVsDebugger vsDebugger)
+        {
+            ExpressionEvaluatorDispatcher result = new ExpressionEvaluatorDispatcher();
+            uint debugEventsCookie = VSConstants.VSCOOKIE_NIL;
+            result.debuggerEvents = new DebuggerEvents(vsDebugger);
+            result.debuggerEvents.OnEnterBreakMode += result.OnEnterBreakMode;
+            result.debuggerEvents.OnEnterDesignMode += result.debuggerSink_OnEnterDesignMode;
+            vsDebugger.AdviseDebuggerEvents(result.debuggerEvents, out debugEventsCookie).ThrowOnFailure();
+            return result;
+        }
+
         private  IExpressionEvaluator GetExpressionEvaluator(IDebugThread2 debugThread)
         {
             var stackFrame = GetCurrentStackFrame(debugThread);            
@@ -51,24 +62,13 @@ namespace SearchLocals.Model.ExpressioEvaluation
 
             return stackFrame;
         }
-
-        internal static ExpressionEvaluatorDispatcher Create(Microsoft.VisualStudio.Shell.Interop.IVsDebugger vsDebugger)
-        {
-            ExpressionEvaluatorDispatcher result = new ExpressionEvaluatorDispatcher();
-            uint debugEventsCookie = VSConstants.VSCOOKIE_NIL;
-            result.debuggerEvents = new DebuggerEvents(vsDebugger);
-            result.debuggerEvents.OnEnterBreakMode += result.debuggerSink_OnEnterBreakMode;
-            result.debuggerEvents.OnEnterDesignMode += result.debuggerSink_OnEnterDesignMode;
-            vsDebugger.AdviseDebuggerEvents(result.debuggerEvents, out debugEventsCookie).ThrowOnFailure();      
-            return result;
-        }
-
+        
         void debuggerSink_OnEnterDesignMode(object sender, EventArgs e)
         {
             _container.UnRegister();
         }
       
-        void debuggerSink_OnEnterBreakMode(object sender, IDebugThread2 debugThread)
+        void OnEnterBreakMode(object sender, IDebugThread2 debugThread)
         {
             _container.Register(GetExpressionEvaluator(debugThread));
         }
@@ -77,7 +77,7 @@ namespace SearchLocals.Model.ExpressioEvaluation
         public void Dispose()
         {
             _container.UnRegister();
-            debuggerEvents.OnEnterBreakMode -= debuggerSink_OnEnterBreakMode;
+            debuggerEvents.OnEnterBreakMode -= OnEnterBreakMode;
             debuggerEvents.OnEnterDesignMode += debuggerSink_OnEnterDesignMode;
         }
     }

@@ -1,27 +1,32 @@
-﻿namespace SearchLocals.Model.ExpressioEvaluation
+﻿using SearchLocals.Model.Services;
+using System;
+
+namespace SearchLocals.Model.ExpressioEvaluation
 {
     class ExpressionEvaluatorProvider : IExpressionEvaluatorProvider, IExpressionEvaluatorContainer
     {
-        private IExpressionEvaluator expressionEvaluator;
+        private IExpressionEvaluator _expressionEvaluator;
 
         public bool IsEvaluatorAvailable
         {
-            get { return expressionEvaluator != null; }
+            get { return _expressionEvaluator != null; }
         }
 
         public IExpressionEvaluator ExpressionEvaluator
         {
-            get { return expressionEvaluator; }
+            get { return _expressionEvaluator; }
         }
 
         public void Register(IExpressionEvaluator evaluator)
         {
-            expressionEvaluator = evaluator;
+            _expressionEvaluator = evaluator;
+            ServiceLocator.Resolve<IVSEnvironmentEventsPublisher>().ExpressionEvaluatorBecomeAvaialable();
         }
 
         public void UnRegister()
         {                        
-            expressionEvaluator = null;
+            _expressionEvaluator = null;
+            ServiceLocator.Resolve<IVSEnvironmentEventsPublisher>().ExpressionEvaluatorBecomeUnAvaialable();
         }
     }
 }

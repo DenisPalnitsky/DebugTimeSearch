@@ -6,7 +6,8 @@
              xmlns:common ="clr-namespace:SearchLocals.UI.Common"  
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300"
-             Name="SearchLocals"             
+             Name="SearchLocals"
+             IsEnabled="{Binding Path=IsEnabled}"
              >
 
     <UserControl.Resources>

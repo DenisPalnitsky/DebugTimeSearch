@@ -99,7 +99,7 @@ namespace SearchLocals
             VisualStudioServices.Initialize(this);
                         
             IVsDebugger _debugger = VisualStudioServices.VsDebugger;
-             _dispatcher =  ExpressionEvaluatorDispatcher.Create(VisualStudioServices.VsDebugger);            
+            _dispatcher =  ExpressionEvaluatorDispatcher.Create(VisualStudioServices.VsDebugger);            
 
 
             SomeMenuCode();
@@ -154,7 +154,7 @@ namespace SearchLocals
             txtMgr.GetActiveView(mustHaveFocus, null, out vTextView);
                 
             string textUnderCursor =  CodeUnderCursor.GetExpression(vTextView);
-            var expressionEvaluatorViewModel = SearchLocals.Model.Services.IocContainer.Resolve<SearchLocals.UI.IExpressionEvaluatorViewModel>();
+            var expressionEvaluatorViewModel = SearchLocals.Model.Services.ServiceLocator.Resolve<SearchLocals.UI.IExpressionEvaluatorViewModel>();
             expressionEvaluatorViewModel.FilterText = textUnderCursor;
             ShowToolWindow();
 

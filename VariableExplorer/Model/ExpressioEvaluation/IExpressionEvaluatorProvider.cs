@@ -1,4 +1,6 @@
-﻿namespace SearchLocals.Model.ExpressioEvaluation
+﻿using System;
+
+namespace SearchLocals.Model.ExpressioEvaluation
 {
     /// <summary>
     /// Main mechanism to retreive IExpressionEvaluator

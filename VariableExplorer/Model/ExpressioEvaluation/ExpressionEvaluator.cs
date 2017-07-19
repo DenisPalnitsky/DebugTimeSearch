@@ -9,7 +9,7 @@ namespace SearchLocals.Model.ExpressioEvaluation
 {
     class ExpressionEvaluator : IExpressionEvaluator
     {       
-        ILog _log = IocContainer.Resolve<ILog>();
+        ILog _log = ServiceLocator.Resolve<ILog>();
         ConcurrentDictionary<string, IVSDebugPropertyProxy> _cache = new ConcurrentDictionary<string, IVSDebugPropertyProxy>();
         IDebugStackFrame2 _stackFrame;
 
@@ -73,7 +73,7 @@ namespace SearchLocals.Model.ExpressioEvaluation
                 enum_EVALFLAGS.EVAL_NOSIDEEFFECTS |
                 enum_EVALFLAGS.EVAL_ALLOW_IMPLICIT_VARS |
                 enum_EVALFLAGS.EVAL_ALLOWERRORREPORT,
-                    IocContainer.Resolve<IConfiguration>().DefaultTimeoutForVSCalls,
+                    ServiceLocator.Resolve<IConfiguration>().DefaultTimeoutForVSCalls,
                     null,
                     out debugProperty).ThrowOnFailure();
             return debugProperty;

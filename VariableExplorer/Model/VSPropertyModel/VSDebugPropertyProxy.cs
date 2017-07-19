@@ -8,10 +8,10 @@ namespace SearchLocals.Model.VSPropertyModel
     class VSDebugPropertyProxy : IVSDebugPropertyProxy
     {        
         IPropertyInfo _propertyInfo;
-        IConfiguration _configuration = IocContainer.Resolve<IConfiguration>();
+        IConfiguration _configuration = ServiceLocator.Resolve<IConfiguration>();
         IPropertyInfo[] _children;
         IDebugProperty2 _vsDebugProperty;
-        ILog _logger = IocContainer.Resolve<ILog>();
+        ILog _logger = ServiceLocator.Resolve<ILog>();
         private const uint ITEMS_TO_FETCH = 1000;
         PropertyInfoFactory _propertyInfoFactory = new PropertyInfoFactory();
 
@@ -61,7 +61,7 @@ namespace SearchLocals.Model.VSPropertyModel
             debugProperty.GetPropertyInfo(
                     enum_DEBUGPROP_INFO_FLAGS.DEBUGPROP_INFO_ALL | enum_DEBUGPROP_INFO_FLAGS.DEBUGPROP_INFO_VALUE,
                     10,
-                    IocContainer.Resolve<IConfiguration>().DefaultTimeoutForVSCalls,
+                    ServiceLocator.Resolve<IConfiguration>().DefaultTimeoutForVSCalls,
                     reference,
                     0,
                     propertyInfo).ThrowOnFailure();
@@ -70,7 +70,7 @@ namespace SearchLocals.Model.VSPropertyModel
 
         private IPropertyInfo[] GetChildren(IDebugProperty2 debugProperty, IExpandablePropertyInfo parent)
         {
-            var logger = IocContainer.Resolve<ILog>();
+            var logger = ServiceLocator.Resolve<ILog>();
             logger.Info("EnumChildren");
 
             IEnumDebugPropertyInfo2 debugPropertyEnum;
@@ -81,7 +81,7 @@ namespace SearchLocals.Model.VSPropertyModel
                 dbgGuids.guidFilterLocals,
                 enum_DBG_ATTRIB_FLAGS.DBG_ATTRIB_ACCESS_ALL,
                 "",
-                IocContainer.Resolve<IConfiguration>().DefaultTimeoutForVSCalls,
+                ServiceLocator.Resolve<IConfiguration>().DefaultTimeoutForVSCalls,
                 out debugPropertyEnum).ThrowOnFailure();
 
             uint count;

@@ -12,8 +12,8 @@ namespace SearchLocals.Model
         IExpressionEvaluatorProvider _exparessionEvaluatorProvider;
         IPropertyVisitor _propertyVisitor;
         HashSet<string> _processedExpressions = new HashSet<string>();
-        ILog _logger = IocContainer.Resolve<ILog>();
-        ISearchStatus _searchStatus = IocContainer.Resolve<ISearchStatus>();
+        ILog _logger = ServiceLocator.Resolve<ILog>();
+        ISearchStatus _searchStatus = ServiceLocator.Resolve<ISearchStatus>();
 
         bool _isCanceling = false;
 
