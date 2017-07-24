@@ -26,6 +26,8 @@ namespace SearchLocals
         public int Event(IDebugEngine2 engine, IDebugProcess2 process, IDebugProgram2 program,
                          IDebugThread2 thread, IDebugEvent2 debugEvent, ref Guid riidEvent, uint attributes)
         {
+            // TODO: Consider swithch to Microsoft.VisualStudio.Shell.KnownUIContexts.DebuggingContext.UIContextChanged
+            
             System.Diagnostics.Debug.WriteLine(debugEvent.GetType());
         
             // TODO: Select appropriate event 

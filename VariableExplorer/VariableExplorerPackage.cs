@@ -36,12 +36,13 @@ namespace SearchLocals
     // This attribute registers a tool window exposed by this package.
     [ProvideToolWindow(typeof(SearchLocalsToolWindow))]
     [Guid(GuidList.guidVariableExplorerPkgString)]
-    [ProvideAutoLoad("{ADFC4E64-0397-11D1-9F4E-00A0C911004F}")]
+    [ProvideAutoLoad(UIContextGuids.Debugging)]
     public sealed class VariableExplorerPackage : Package
     {
 
         public static readonly VsCommandIdentifier CmdQuickWatch = new VsCommandIdentifier("{5EFC7975-14BC-11CF-9B2B-00AA00573819}", 254);
-        
+
+        public const string UIContextGuid = "{ADFC4E64-0397-11D1-9F4E-00A0C911004F}";
 
         /// <summary>
         /// Default constructor of the package.
@@ -99,41 +100,81 @@ namespace SearchLocals
             VisualStudioServices.Initialize(this);
                         
             IVsDebugger _debugger = VisualStudioServices.VsDebugger;
-            _dispatcher =  ExpressionEvaluatorDispatcher.Create(VisualStudioServices.VsDebugger);            
+            _dispatcher =  ExpressionEvaluatorDispatcher.Create(VisualStudioServices.VsDebugger);
 
+            //KnownUIContexts.DebuggingContext.UIContextChanged += DebuggingContext_UIContextChanged;
 
-            SomeMenuCode();
+            CreateMenuCommands();
+            AddMenuCommands();
         }
+
+        
+
+        //private void DebuggingContext_UIContextChanged(object sender, UIContextChangedEventArgs e)
+        //{
+        //    if (e.Activated)
+        //    {
+        //        AddMenuCommands();
+        //    }
+        //    else
+        //    {
+        //        RemoveMenuCommands();
+        //    }
+        //}
 
         protected override void Dispose(bool disposing)
         {
             _dispatcher.Dispose();
+            //KnownUIContexts.DebuggingContext.UIContextChanged -= DebuggingContext_UIContextChanged;
             base.Dispose(disposing);
         }
-                    
-        private void SomeMenuCode()
+
+        MenuCommand menuItem;
+        MenuCommand menuToolWin;
+
+
+
+
+        private void AddMenuCommands()
         {
             // Add our command handlers for menu (commands must exist in the .vsct file)
             OleMenuCommandService mcs = GetService(typeof(IMenuCommandService)) as OleMenuCommandService;
             if (null != mcs)
             {
+                
                 // Create the command for the menu item.
-                CommandID menuCommandID = new CommandID(GuidList.guidVariableExplorerCmdSet, (int)PkgCmdIDList.cmdidMyCommand);
-                MenuCommand menuItem = new MenuCommand(MenuItemCallback, menuCommandID);
+
                 mcs.AddCommand(menuItem);
 
                 // Create the command for the tool window
-                CommandID toolwndCommandID = new CommandID(GuidList.guidVariableExplorerCmdSet, (int)PkgCmdIDList.cmdidMyTool);
-                MenuCommand menuToolWin = new MenuCommand(ShowToolWindow, toolwndCommandID);
+
                 mcs.AddCommand(menuToolWin);
 
                 // Create the command for the context menu
                 //CommandID contextMenuCommandID = new CommandID(GuidList.guidVariableExplorerCmdSet, (int)PkgCmdIDList.cmdidBrowseVariable);
                 //MenuCommand contextMenuToolWin = new MenuCommand(ShowToolWindow, contextMenuCommandID);
                 //mcs.AddCommand(contextMenuToolWin);
-
-
             }
+        }
+
+        private void RemoveMenuCommands()
+        {
+            // Add our command handlers for menu (commands must exist in the .vsct file)
+            OleMenuCommandService mcs = GetService(typeof(IMenuCommandService)) as OleMenuCommandService;
+            if (null != mcs)
+            {
+                mcs.RemoveCommand(menuItem);
+                mcs.RemoveCommand(menuToolWin);
+            }
+        }
+
+        private void CreateMenuCommands()
+        {
+            CommandID menuCommandID = new CommandID(GuidList.guidVariableExplorerCmdSet, (int)PkgCmdIDList.cmdidMyCommand);
+            menuItem = new MenuCommand(MenuItemCallback, menuCommandID);
+
+            CommandID toolwndCommandID = new CommandID(GuidList.guidVariableExplorerCmdSet, (int)PkgCmdIDList.cmdidMyTool);
+            menuToolWin = new MenuCommand(ShowToolWindow, toolwndCommandID);
         }
         #endregion
 

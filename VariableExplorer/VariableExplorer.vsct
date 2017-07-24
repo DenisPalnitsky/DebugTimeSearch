@@ -21,6 +21,7 @@
   <Extern href="vsshlids.h"/>
 
 
+  
 
 
   <!--The Commands section is where we the commands, menus and menu groups are defined.
@@ -67,18 +68,26 @@
 
       <Button guid="guidVariableExplorerCmdSet" id="cmdidMyCommand" priority="0x0100" type="Button">
         <Parent guid="guidVariableExplorerCmdSet" id="MyMenuGroup" />
-        <Icon guid="guidImages" id="bmpPic1" />
+        
+        <CommandFlag>DefaultDisabled</CommandFlag>  
+        <CommandFlag>DefaultInvisible</CommandFlag>  
+        <CommandFlag>DynamicVisibility</CommandFlag>  
+        
+        <!-- <Icon guid="guidImages" id="bmpPic1" />-->
         <Strings>
-          <ButtonText>Search in object</ButtonText>
+          <ButtonText>Search in this object</ButtonText>
         </Strings>
+        
       </Button>
 
 
       <Button guid="guidVariableExplorerCmdSet" id="cmdidMyTool" priority="0x0100" type="Button">
         <Parent guid="guidSHLMainMenu" id="IDG_VS_WNDO_OTRWNDWS1"/>
         <Icon guid="guidImages" id="bmpPic2" />
+          
+        
         <Strings>
-          <ButtonText>My Tool Window</ButtonText>
+          <ButtonText>Search in Locals</ButtonText>
         </Strings>
       </Button>
             
@@ -94,10 +103,16 @@
       <Bitmap guid="guidImages" href="Resources\Images.png" usedList="bmpPic1, bmpPic2, bmpPicSearch, bmpPicX, bmpPicArrows"/>
       
     </Bitmaps>
- 
+    
+    
+    
+
   </Commands>
 
-
+  <VisibilityConstraints>  
+    <VisibilityItem guid="guidVariableExplorerCmdSet"  
+                    id="cmdidMyCommand" context="UICONTEXT_Debugging" />  
+  </VisibilityConstraints>  
 
 
 
