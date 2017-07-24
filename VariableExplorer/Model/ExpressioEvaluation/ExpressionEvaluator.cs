@@ -43,8 +43,11 @@ namespace SearchLocals.Model.ExpressioEvaluation
         public IVSDebugPropertyProxy GetLocals()
         {
             IDebugProperty2 d;
-            _stackFrame.GetDebugProperty(out d);
+            _stackFrame.GetDebugProperty(out d).ThrowOnFailure();
 
+            if (d == null)
+                throw new InvalidOperationException("Error receiving locals");
+                
             return VSDebugPropertyProxy.Create(d);
         }
 
