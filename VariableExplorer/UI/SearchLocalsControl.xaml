@@ -65,7 +65,7 @@
             <Style TargetType="StatusBar" >
                 <!--<Setter Property="Background" Value="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowBackgroundBrushKey}}" />-->
             </Style>
-
+          
             <common:BoolToVisibilityConverter FalseValue="Collapsed" x:Key="btvc" />
             <common:InverseBooleanConverter x:Key="InverseBooleanConverter" />
         </ResourceDictionary>
@@ -120,17 +120,19 @@
                           AutoGenerateColumns="False" SelectionMode="Single" SelectionUnit="CellOrRowHeader" 
                           Visibility="{Binding Path=IsErrorMessageVisible, Converter={common:BoolToVisibilityConverter TrueValue=Collapsed, FalseValue=Visible}}"
                           VerticalAlignment="Stretch" 
-                          IsReadOnly="True" ClipboardCopyMode="ExcludeHeader"  >
+                          IsReadOnly="True" ClipboardCopyMode="ExcludeHeader"  BorderBrush="LightGray" 
+                        GridLinesVisibility="All" HorizontalGridLinesBrush="LightGray" VerticalGridLinesBrush="LightGray" >
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Name" Binding="{Binding FullName, Mode=OneWay}" Width="2*">
+                <DataGridTextColumn Header="Name" Binding="{Binding FullName, Mode=OneWay}" Width="2*" >
                     <DataGridTextColumn.CellStyle>
                         <Style TargetType="DataGridCell">
                             <Setter Property="ToolTip" Value="{Binding Name}" />
                         </Style>
+                        
                     </DataGridTextColumn.CellStyle>
                 </DataGridTextColumn>
-                <DataGridTextColumn Header="Value" Binding="{Binding Value, Mode=OneWay}" Width="*" />
-                <DataGridTextColumn Header="Type" Binding="{Binding ValueType, Mode=OneWay}" Width="2*" />
+                <DataGridTextColumn Header="Value" Binding="{Binding Value, Mode=OneWay}" Width="2*"/>
+                <DataGridTextColumn Header="Type" Binding="{Binding ValueType, Mode=OneWay}" Width="*" />
             </DataGrid.Columns>
         </DataGrid>
 
