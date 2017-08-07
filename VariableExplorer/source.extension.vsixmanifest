@@ -3,7 +3,8 @@
   <Metadata>
     <Identity Id="fa7a665f-3de8-4ebc-bd5b-91f365fe6dc0" Version="1.0" Language="en-US" Publisher="Denis Palnitsky" />
     <DisplayName>SearchLocals</DisplayName>
-    <Description xml:space="preserve">Extension that allows to search thue all objects of application in debug mode</Description>
+    <Description xml:space="preserve">Extension that allows search thrue all objects of application in debug mode</Description>
+    <ReleaseNotes>Beta</ReleaseNotes>
     <Tags>Debugger Debug Locals Search Object Values</Tags>
   </Metadata>
   <Installation InstalledByMsi="false">
