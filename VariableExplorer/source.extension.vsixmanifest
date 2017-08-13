@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
   <Metadata>
-    <Identity Id="fa7a665f-3de8-4ebc-bd5b-91f365fe6dc0" Version="1.0" Language="en-US" Publisher="Denis Palnitsky" />
+    <Identity Id="fa7a665f-3de8-4ebc-bd5b-91f365fe6dc0" Version="0.1" Language="en-US" Publisher="Denis Palnitsky" />
     <DisplayName>SearchLocals</DisplayName>
     <Description xml:space="preserve">Extension that allows search thrue all objects of application in debug mode</Description>
     <ReleaseNotes>Beta</ReleaseNotes>
