@@ -119,7 +119,7 @@ namespace VariableExplorer_UnitTests
             // we setup here object with structure below
             //   -Parent 
             //   -- ExpandableProperty 
-            //      --- ValueProperty1
+            //   ---- ValueProperty1
 
             var expandablePropertyMock = new Mock<IExpandablePropertyInfo>();
             string expandablePropertyFullName = "ExpandableProperty";
@@ -171,14 +171,11 @@ namespace VariableExplorer_UnitTests
             
             var exparessionEvaluatorProviderMock = new Mock<IExpressionEvaluatorProvider>( MockBehavior.Strict);
             exparessionEvaluatorProviderMock.Setup(e => e.IsEvaluatorAvailable).Returns(true);
-            
-            
+                        
             var expressionEvaluatorMock = new Mock<IExpressionEvaluator>(MockBehavior.Strict);
             
-
             var debugPropertyMock = new Mock<IVSDebugPropertyProxy>();
             debugPropertyMock.Setup(d => d.PropertyInfo).Returns(parentValuePropertyInfo.Object).Verifiable();
-
 
 
             exparessionEvaluatorProviderMock.Setup(e => e.ExpressionEvaluator).Returns(expressionEvaluatorMock.Object);

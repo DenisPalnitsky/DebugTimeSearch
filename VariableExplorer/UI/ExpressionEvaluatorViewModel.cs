@@ -261,6 +261,7 @@ namespace SearchLocals.UI
                             else // Error 
                             {
                                 _logger.Error(t.Exception.ToString());
+                                StatusBarText = "Error during evaluation. " + t.ToString();                                
                                 throw t.Exception;
                             }
                         }

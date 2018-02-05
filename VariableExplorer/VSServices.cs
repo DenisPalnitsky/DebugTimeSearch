@@ -1,5 +1,4 @@
 ﻿using EnvDTE;
-using EnvDTE80;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Debugger.Interop;
 using Microsoft.VisualStudio.OLE.Interop;
@@ -39,11 +38,11 @@ namespace SearchLocals
     //  }
     //}
 
-    public static DTE2 Dte
+    public static DTE Dte
     {
       get
       {
-        return VisualStudioServices.GetService<SDTE, DTE2>();
+        return VisualStudioServices.GetService<SDTE, DTE>();
       }
     }
 

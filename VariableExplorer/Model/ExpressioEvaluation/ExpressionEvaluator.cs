@@ -24,7 +24,7 @@ namespace SearchLocals.Model.ExpressioEvaluation
             {
                 throw new ArgumentNullException("Expression is empty");
             }
-                        
+
             _log.Info("Evaluating expression {0}. CurrentTime {1:H:mm:ss.ffff}", expression, DateTime.Now);
             if (_cache.ContainsKey(expression))
             {
