@@ -10,8 +10,10 @@ namespace SearchLocals.Model.ExpressioEvaluation
     class ExpressionEvaluator : IExpressionEvaluator
     {       
         ILog _log = ServiceLocator.Resolve<ILog>();
-        ConcurrentDictionary<string, IVSDebugPropertyProxy> _cache = new ConcurrentDictionary<string, IVSDebugPropertyProxy>();
+        
         IDebugStackFrame2 _stackFrame;
+
+        IExpressionsCache _cache =  ServiceLocator.Resolve<IExpressionsCache>();
 
         public ExpressionEvaluator(IDebugStackFrame2 stackFrame )
         {
@@ -26,17 +28,19 @@ namespace SearchLocals.Model.ExpressioEvaluation
             }
 
             _log.Info("Evaluating expression {0}. CurrentTime {1:H:mm:ss.ffff}", expression, DateTime.Now);
-            if (_cache.ContainsKey(expression))
-            {
-                _log.Info("Expression '{0}' taken from cache", expression);                
-                return _cache[expression];
-            }
             
+            IVSDebugPropertyProxy resultDebugProperty = _cache.TryGetFromCache(expression);
+            if (resultDebugProperty != null)
+                return resultDebugProperty;
+
             IDebugProperty2 debugProperty = GetVsDebugProperty(expression);
-            _log.Info("Done evaluating expression {0}. CurrentTime {1:H:mm:ss.ffff}", expression, DateTime.Now);
+            _log.Info($"Done evaluating expression {expression} ", DateTime.Now);
+
+            resultDebugProperty = VSDebugPropertyProxy.Create(debugProperty);
+            _log.Info($"Property retreived { resultDebugProperty }");
+
+            _cache.Cache(expression, resultDebugProperty);
             
-            IVSDebugPropertyProxy resultDebugProperty = VSDebugPropertyProxy.Create(debugProperty);            
-            _cache[expression] = resultDebugProperty;
             return resultDebugProperty;
         }
 

@@ -196,6 +196,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EditorHelper\CodeUnderCursor.cs" />
+    <Compile Include="Model\ExpressioEvaluation\DisabledExpressionsCache.cs" />
+    <Compile Include="Model\ExpressioEvaluation\ExpressionsCache.cs" />
+    <Compile Include="Model\ExpressioEvaluation\IExpressionsCache.cs" />
     <Compile Include="Model\ExpressioEvaluation\ISearchStatus.cs" />
     <Compile Include="Model\VSEnvironmentEvents\IVSEnvironmentEvents.cs" />
     <Compile Include="Model\VSEnvironmentEvents\IVSEnvironmentEventsPublisher.cs" />

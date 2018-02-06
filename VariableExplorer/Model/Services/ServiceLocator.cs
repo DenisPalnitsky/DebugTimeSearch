@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using SearchLocals.Model.Services;
 using SearchLocals.UI;
+using SearchLocals.Model.ExpressioEvaluation;
 
 namespace SearchLocals.Model.Services
 {
@@ -39,7 +40,12 @@ namespace SearchLocals.Model.Services
             RegisterInstance<IExpressionEvaluatorViewModel>(new  ExpressionEvaluatorViewModel());
             RegisterInstance<ITaskSchedulerProvider>(new TaskSchedulerProvider());
 
-         
+#if DEBUG
+            _container.RegisterType<IExpressionsCache, DisabledExpressionsCache>();
+#else
+            _container.RegisterType<IExpressionsCache, ExpressionsCache>();
+#endif
+            
         }
 
 
