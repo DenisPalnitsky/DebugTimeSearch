@@ -53,6 +53,14 @@ namespace SearchLocals.Model.VSPropertyModel
             }
         }
 
+        public override string ToString()
+        {
+            if (PropertyInfo != null)
+                return $"{PropertyInfo?.ToString()};Childern count: {_children?.Length }";
+            else
+                return base.ToString();
+        }
+
         private static IPropertyInfo GetPropertyInfo(IDebugProperty2 debugProperty, PropertyInfoFactory propertyInfoFactory)
         {
             IDebugReference2[] reference = new IDebugReference2[1];

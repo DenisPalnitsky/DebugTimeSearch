@@ -7,8 +7,7 @@ namespace SearchLocals.Model.VSPropertyModel
         private Microsoft.VisualStudio.Debugger.Interop.DEBUG_PROPERTY_INFO propertyInfo;
 
         public ExpandablePropertyInfo(Microsoft.VisualStudio.Debugger.Interop.DEBUG_PROPERTY_INFO propertyInfo, IExpandablePropertyInfo parent)
-        {
-            // TODO: Complete member initialization
+        {        
             this.propertyInfo = propertyInfo;
             Parent = parent;
         }
@@ -31,6 +30,11 @@ namespace SearchLocals.Model.VSPropertyModel
         public string ValueType
         {
             get { return propertyInfo.bstrType; }
+        }
+
+        public override string ToString()
+        {
+            return $"Name:{Name};Type:{ValueType}";
         }
     }
 }

@@ -13,9 +13,6 @@ namespace SearchLocals.Model.VSPropertyModel
             Parent = parent;
         }
 
-
-
-
         public bool IsEvaluated
         {
             get { return false; }
@@ -48,6 +45,12 @@ namespace SearchLocals.Model.VSPropertyModel
         public IExpandablePropertyInfo Parent
         {
             get; private set;
+        }
+
+
+        public override string ToString()
+        {
+            return $"Name:{Name};Error:{Value}";
         }
     }
 }

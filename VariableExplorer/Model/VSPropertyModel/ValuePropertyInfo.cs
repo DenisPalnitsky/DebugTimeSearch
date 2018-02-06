@@ -69,5 +69,11 @@ namespace SearchLocals.Model.VSPropertyModel
         {
             get; private set;
         }
+
+
+        public override string ToString()
+        {
+            return $"Name:{Name};Value:{Value}";
+        }
     }
 }
