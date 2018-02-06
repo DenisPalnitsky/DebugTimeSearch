@@ -211,6 +211,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Model\Services\ILog.cs" />
+    <Compile Include="Model\VSPropertyModel\IUnevaluatedPropertyInfo.cs" />
     <Compile Include="Model\VSPropertyModel\PropertyInfoFactory.cs" />
     <Compile Include="Model\VSPropertyModel\ExpandablePropertyInfo.cs" />
     <Compile Include="Model\ExpressioEvaluation\ExpressionEvaluatorProvider.cs" />
@@ -223,6 +224,7 @@
     <Compile Include="Model\VSPropertyModel\IValuePropertyInfo.cs" />
     <Compile Include="Model\ExpressioEvaluation\IExpressionEvaluator.cs" />
     <Compile Include="Model\Services\Configuration.cs" />
+    <Compile Include="Model\VSPropertyModel\UnevaluatedPropertyInfo.cs" />
     <Compile Include="Model\VSPropertyModel\VSDebugPropertyProxy.cs" />
     <Compile Include="Model\Services\OutputWindowLogger.cs" />
     <Compile Include="Model\StringFilter.cs" />

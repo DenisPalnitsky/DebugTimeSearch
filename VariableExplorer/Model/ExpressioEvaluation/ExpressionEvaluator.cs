@@ -22,7 +22,7 @@ namespace SearchLocals.Model.ExpressioEvaluation
         
         public IVSDebugPropertyProxy EvaluateExpression(string expression)
         {
-            if (string.IsNullOrEmpty(expression))
+        if (string.IsNullOrEmpty(expression))
             {
                 throw new ArgumentNullException("Expression is empty");
             }

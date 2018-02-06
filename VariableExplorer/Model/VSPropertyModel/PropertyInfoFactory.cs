@@ -1,4 +1,5 @@
 ﻿using Microsoft.VisualStudio.Debugger.Interop;
+using System;
 using System.Collections.Generic;
 
 namespace SearchLocals.Model.VSPropertyModel
@@ -43,6 +44,14 @@ namespace SearchLocals.Model.VSPropertyModel
                 }
                 
             }
+        }
+
+        internal IUnevaluatedPropertyInfo CreateUnevaluated(DEBUG_PROPERTY_INFO propertyInfo, IExpandablePropertyInfo parent)
+        {            
+            return new UnevaluatedPropertyInfo(propertyInfo.bstrFullName,
+                                                propertyInfo.bstrName,
+                                                propertyInfo.bstrType,                                                
+                                                parent);
         }
     }
 }

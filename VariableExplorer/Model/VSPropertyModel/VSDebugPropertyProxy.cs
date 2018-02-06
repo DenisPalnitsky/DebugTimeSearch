@@ -83,11 +83,12 @@ namespace SearchLocals.Model.VSPropertyModel
 
             IEnumDebugPropertyInfo2 debugPropertyEnum;
 
+            // TODO: I don't think we really need all of them here. Play with enum_DBG_ATTRIB_FLAGS filter
             debugProperty.EnumChildren(
-                enum_DEBUGPROP_INFO_FLAGS.DEBUGPROP_INFO_ALL | enum_DEBUGPROP_INFO_FLAGS.DEBUGPROP_INFO_VALUE,
+                enum_DEBUGPROP_INFO_FLAGS.DEBUGPROP_INFO_STANDARD | enum_DEBUGPROP_INFO_FLAGS.DEBUGPROP_INFO_FULLNAME,
                 10,
                 dbgGuids.guidFilterLocals,
-                enum_DBG_ATTRIB_FLAGS.DBG_ATTRIB_ACCESS_ALL,
+                enum_DBG_ATTRIB_FLAGS.DBG_ATTRIB_ALL,
                 "",
                 ServiceLocator.Resolve<IConfiguration>().DefaultTimeoutForVSCalls,
                 out debugPropertyEnum).ThrowOnFailure();
@@ -97,7 +98,7 @@ namespace SearchLocals.Model.VSPropertyModel
             DEBUG_PROPERTY_INFO[] debugPropInfos = new DEBUG_PROPERTY_INFO[ITEMS_TO_FETCH];
             uint fetched;
 
-            logger.Info("Fetch children");
+            logger.Info($"Fetch children");
 
             List<IPropertyInfo> result = new List<IPropertyInfo>();
             do
@@ -106,10 +107,12 @@ namespace SearchLocals.Model.VSPropertyModel
                 debugPropertyEnum.Next(ITEMS_TO_FETCH, debugPropInfos, out fetched).ThrowOnFailure();
 
                 logger.Info("Received next {0} of children", ITEMS_TO_FETCH );
-                foreach (var p in debugPropInfos.Take((int)fetched).Select(d => _propertyInfoFactory.Create(d, parent)).Cast<IPropertyInfo>())
+                foreach (var p in debugPropInfos.Take((int)fetched))
                 {
-                    logger.Info("Returning property: '{0}'", p.Name);
-                    result.Add(p);
+                    // this properties are not evaluated
+                   var child = _propertyInfoFactory.Create(p, parent);
+                    logger.Info("Returning property: '{0}'", child.Name);
+                    result.Add(child);
                 }
             } while (fetched >= ITEMS_TO_FETCH );
 

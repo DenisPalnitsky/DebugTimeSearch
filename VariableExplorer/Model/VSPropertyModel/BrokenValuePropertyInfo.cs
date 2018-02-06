@@ -50,7 +50,7 @@ namespace SearchLocals.Model.VSPropertyModel
 
         public override string ToString()
         {
-            return $"Name:{Name};Error:{Value}";
+            return $"Name:{Name}; Error:{Value}";
         }
     }
 }

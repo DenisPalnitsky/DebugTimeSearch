@@ -75,25 +75,28 @@ namespace SearchLocals.Model
             RiseAppropriateAction(debugProperty.PropertyInfo, stringFilter);
 
             // travers all children
-            foreach (IPropertyInfo childProperty in debugProperty.Children)
+            foreach (IPropertyInfo unevalProperty in debugProperty.Children)
             {
                 ThrowIfCancelRequested();
 
-                var valueProperty = childProperty as IValuePropertyInfo;
+                IVSDebugPropertyProxy evaluated = EvaluateExpression(unevalProperty);
+
+                // null in case we can skip that property
+                if (evaluated == null)
+                    continue;
+
+                var valueProperty = evaluated.PropertyInfo as IValuePropertyInfo;                
+
                 if (valueProperty != null)
                 {
-                    RiseAppropriateAction(childProperty, stringFilter);
+                    RiseAppropriateAction(valueProperty, stringFilter);
                 }
-                else if (childProperty is IExpandablePropertyInfo)
-                {
-                    IVSDebugPropertyProxy evaluated = null;
-                    evaluated = EvaluateExpression(childProperty);
-
-                    if (evaluated != null)
-                        TraversPropertyTreeInternal(evaluated, stringFilter, depth);
+                else if (evaluated.PropertyInfo is IExpandablePropertyInfo)
+                {                                                       
+                    TraversPropertyTreeInternal(evaluated, stringFilter, depth);
                 }
                 else
-                    throw new NotSupportedException($"Property info type { childProperty.GetType().Name } is not supported. Contact developer.");
+                    throw new NotSupportedException($"Property info type { evaluated.PropertyInfo.GetType().Name } is not supported. Contact developer.");
             }
         }
 
