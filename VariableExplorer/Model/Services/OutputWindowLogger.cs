@@ -22,8 +22,15 @@ namespace SearchLocals.Model.Services
 
         public void Error(string message, params object[] parameters)
         {
-            var str = string.Format(DateTime.Now.ToString("hh:mm:ss.fff") + " " + message, parameters);
-            System.Diagnostics.Debug.WriteLine(str);            
+            try
+            {
+                var str = string.Format(DateTime.Now.ToString("hh:mm:ss.fff") + " " + message, parameters);
+                System.Diagnostics.Debug.WriteLine(str);
+            }
+            catch
+            {
+                System.Diagnostics.Debug.WriteLine($"Wrong number of parameters for log message: {message}, Params: {parameters }");
+            }
         }
 
         public void Dispose()

@@ -27,14 +27,14 @@ namespace SearchLocals.Model.ExpressioEvaluation
                 throw new ArgumentNullException("Expression is empty");
             }
 
-            _log.Info("Evaluating expression {0}. CurrentTime {1:H:mm:ss.ffff}", expression, DateTime.Now);
+            _log.Info("Evaluating expression {0}.", expression);
             
             IVSDebugPropertyProxy resultDebugProperty = _cache.TryGetFromCache(expression);
             if (resultDebugProperty != null)
                 return resultDebugProperty;
 
             IDebugProperty2 debugProperty = GetVsDebugProperty(expression);
-            _log.Info($"Done evaluating expression {expression} ", DateTime.Now);
+            _log.Info($"Done evaluating expression {expression} ");
 
             resultDebugProperty = VSDebugPropertyProxy.Create(debugProperty);
             _log.Info($"Property retreived { resultDebugProperty }");
