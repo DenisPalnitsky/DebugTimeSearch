@@ -36,7 +36,7 @@ namespace SearchLocals.Model.Services
             RegisterInstance<IVSEnvironmentEventsPublisher>(ev);
             RegisterInstance<IVsEnvironmentEvents>(ev);
 
-            RegisterInstance<ExpressioEvaluation.ISearchStatus>(new SearchStatusLister());
+            _container.RegisterInstance<ExpressioEvaluation.ISearchStatus>(new SearchStatusLister(_container.Resolve<ILog>()));            
             RegisterInstance<IExpressionEvaluatorViewModel>(new  ExpressionEvaluatorViewModel());
             RegisterInstance<ITaskSchedulerProvider>(new TaskSchedulerProvider());
 

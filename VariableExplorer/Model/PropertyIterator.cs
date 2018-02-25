@@ -62,9 +62,14 @@ namespace SearchLocals.Model
         {
             depth++;
             if (depth > MaxDepth)
-            {
-                _logger.Info("Skip traversing property {0}. MaxDepth reached", debugProperty.PropertyInfo.FullName);
+            {               
                 _searchStatus.StatusUpdated($"Skipping property: {debugProperty.PropertyInfo.FullName}. Max depth reached");
+                return;
+            }
+
+            if (SelfReferenceDetection.DoesItLookLikeSelfReference(debugProperty.PropertyInfo.Name))
+            {
+                _searchStatus.StatusUpdated($"Skip traversing property {debugProperty.PropertyInfo.FullName}. Property looks like referece to self object");
                 return;
             }
 

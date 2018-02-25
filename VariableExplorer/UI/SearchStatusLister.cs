@@ -1,4 +1,5 @@
 ﻿using SearchLocals.Model.ExpressioEvaluation;
+using SearchLocals.Model.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,9 +10,17 @@ namespace SearchLocals.UI
 {
     internal class SearchStatusLister : ISearchStatus
     {
+        ILog _logger;
+
+        public SearchStatusLister(ILog logger)
+        {
+            _logger = logger;    
+        }
+
         public void Report(string text)
         {
-            Task.Run( ()=> StatusUpdated(text) );
+            _logger.Info("Search status update. " + text);
+            Task.Run( () => StatusUpdated(text) );
         }
         
         public Action<string> StatusUpdated { get; set; }

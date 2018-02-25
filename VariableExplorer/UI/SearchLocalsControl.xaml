@@ -31,7 +31,8 @@
                 <!--<Setter Property="Foreground" Value="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowTextBrushKey}}"/>
                 <Setter Property="Background" Value="{DynamicResource {x:Static vs_shell:EnvironmentColors.SearchBoxBackgroundBrushKey}}" />-->
                 <Setter Property="Margin" Value="2" />
-                <Setter Property="Height" Value="22" />
+                <Setter Property="Height" Value="25" />
+                <Setter Property="Padding" Value="2" />
 
                 <Setter Property="Validation.ErrorTemplate">
                     <Setter.Value>

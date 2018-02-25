@@ -116,6 +116,7 @@
     <Compile Include="MyToolWindowTest\UIShellServiceMock.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="PropertyInfoEnumeratorTest.cs" />
+    <Compile Include="SelfReferenceDetectionTest.cs" />
     <Compile Include="StringFilterTest.cs" />
     <Compile Include="TestObservableObject.cs" />
     <!---->

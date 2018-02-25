@@ -37,7 +37,9 @@ namespace SearchLocals.UI
         {            
             _visibleProperties.CollectionChanged += visibleProperties_CollectionChanged;
             System.Windows.Data.BindingOperations.EnableCollectionSynchronization(_visibleProperties, _visiblePropertiesLock);
+
             _searchStatus.StatusUpdated = (s) => SearchingReportText = s;
+
             var vsEvents = ServiceLocator.Resolve<IVsEnvironmentEvents>();
             vsEvents.EvaluatorBecomeAvailable += (a, b) => { IsEnabled = true; };
             vsEvents.EvaluatorBecomeUnAvailable += VsEvents_EvaluatorBecomeUnAvailable;
@@ -261,7 +263,7 @@ namespace SearchLocals.UI
                             else // Error 
                             {
                                 _logger.Error(t.Exception.ToString());
-                                StatusBarText = "Error during evaluation. " + t.ToString();                                
+                                StatusBarText = "Error during evaluation. " + t.Exception.ToString();                                
                                 throw t.Exception;
                             }
                         }

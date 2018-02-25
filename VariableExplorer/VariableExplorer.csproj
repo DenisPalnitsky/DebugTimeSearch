@@ -224,6 +224,7 @@
     <Compile Include="Model\VSPropertyModel\IValuePropertyInfo.cs" />
     <Compile Include="Model\ExpressioEvaluation\IExpressionEvaluator.cs" />
     <Compile Include="Model\Services\Configuration.cs" />
+    <Compile Include="Model\VSPropertyModel\SelfReferenceDetection.cs" />
     <Compile Include="Model\VSPropertyModel\UnevaluatedPropertyInfo.cs" />
     <Compile Include="Model\VSPropertyModel\VSDebugPropertyProxy.cs" />
     <Compile Include="Model\Services\OutputWindowLogger.cs" />
