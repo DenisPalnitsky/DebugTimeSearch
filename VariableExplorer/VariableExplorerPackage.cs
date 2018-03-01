@@ -1,9 +1,5 @@
-﻿using Microsoft.VisualStudio.Editor;
-using Microsoft.VisualStudio.Shell;
+﻿using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
-using Microsoft.VisualStudio.Text.Editor;
-//using Microsoft.VisualStudio.ComponentModelHost;
-//using Microsoft.VisualStudio.Editor;
 using Microsoft.VisualStudio.TextManager.Interop;
 using SearchLocals.EditorHelper;
 using SearchLocals.Model.ExpressioEvaluation;
@@ -197,48 +193,8 @@ namespace SearchLocals
             string textUnderCursor =  CodeUnderCursor.GetExpression(vTextView);
             var expressionEvaluatorViewModel = SearchLocals.Model.Services.ServiceLocator.Resolve<SearchLocals.UI.IExpressionEvaluatorViewModel>();
             expressionEvaluatorViewModel.FilterText = textUnderCursor;
-            ShowToolWindow();
-
-                
-
-            //Microsoft.VisualStudio.ErrorHandler.ThrowOnFailure(uiShell.ShowMessageBox(
-            //           0,
-            //           ref clsid,
-            //           "VariableExplorer",
-            //           string.Format(CultureInfo.CurrentCulture, "Inside {0}.MenuItemCallback(). Text under cursor: '{1}'", this.ToString(), CodeUnderCursor.GetExpression(vTextView)),
-            //           //objectDump,
-            //           string.Empty,
-            //           0,
-            //           OLEMSGBUTTON.OLEMSGBUTTON_OK,
-            //           OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST,
-            //           OLEMSGICON.OLEMSGICON_INFO,
-            //           0,        // false
-            //           out result));
+            ShowToolWindow();               
         }
 
-
-        private IWpfTextView GetActiveTextView()
-        {
-            IWpfTextView view = null;
-            IVsTextView vTextView = null;
-
-            IVsTextManager txtMgr =
-                (IVsTextManager)GetService(typeof(SVsTextManager));
-            int mustHaveFocus = 1;
-            txtMgr.GetActiveView(mustHaveFocus, null, out vTextView);
-
-            IVsUserData userData = vTextView as IVsUserData;
-            if (null != userData)
-            {
-                IWpfTextViewHost viewHost;
-                object holder;
-                Guid guidViewHost = DefGuidList.guidIWpfTextViewHost;
-                userData.GetData(ref guidViewHost, out holder);
-                viewHost = (IWpfTextViewHost)holder;
-                view = viewHost.TextView;
-            }
-
-            return view;
-        }
     }
 }

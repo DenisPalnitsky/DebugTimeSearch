@@ -2,7 +2,6 @@
 using SearchLocals.Model.Services;
 using SearchLocals.Model.VSPropertyModel;
 using System;
-using System.Collections.Concurrent;
 using System.Text;
 
 namespace SearchLocals.Model.ExpressioEvaluation

@@ -1,12 +1,6 @@
 ﻿using Microsoft.Practices.Unity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using SearchLocals.Model.Services;
-using SearchLocals.UI;
 using SearchLocals.Model.ExpressioEvaluation;
+using SearchLocals.UI;
 
 namespace SearchLocals.Model.Services
 {
