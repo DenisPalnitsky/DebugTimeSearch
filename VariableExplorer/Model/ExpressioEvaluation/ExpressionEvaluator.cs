@@ -7,16 +7,16 @@ using System.Text;
 namespace SearchLocals.Model.ExpressioEvaluation
 {
     class ExpressionEvaluator : IExpressionEvaluator
-    {       
-        ILog _log = ServiceLocator.Resolve<ILog>();
-        
+    {
+        ILog _log = Logger.GetLogger();        
         IDebugStackFrame2 _stackFrame;
 
-        IExpressionsCache _cache =  ServiceLocator.Resolve<IExpressionsCache>();
+        IExpressionsCache _cache;
 
-        public ExpressionEvaluator(IDebugStackFrame2 stackFrame )
+        public ExpressionEvaluator(IDebugStackFrame2 stackFrame, IExpressionsCache cache)
         {
             _stackFrame = stackFrame;
+            _cache = cache;
         }
         
         public IVSDebugPropertyProxy EvaluateExpression(string expression)
@@ -79,7 +79,7 @@ namespace SearchLocals.Model.ExpressioEvaluation
                 enum_EVALFLAGS.EVAL_NOSIDEEFFECTS |
                 enum_EVALFLAGS.EVAL_ALLOW_IMPLICIT_VARS |
                 enum_EVALFLAGS.EVAL_ALLOWERRORREPORT,
-                    ServiceLocator.Resolve<IConfiguration>().DefaultTimeoutForVSCalls,
+                    Configuration.DefaultTimeoutForVSCalls,
                     null,
                     out debugProperty).ThrowOnFailure();
             return debugProperty;

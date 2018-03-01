@@ -21,11 +21,11 @@ namespace SearchLocals.UI
         string _filterText;
         DebugPropertyViewModelCollection _visibleProperties = new DebugPropertyViewModelCollection();
         object _visiblePropertiesLock = new object();
-
-        ILog _logger = ServiceLocator.Resolve<ILog>();
-        ISearchStatus _searchStatus = ServiceLocator.Resolve<ISearchStatus>();
+        ILog _logger = Logger.GetLogger();
+        ISearchStatus _searchStatus;
         MutableDelegateCommand _cancelSearch = new MutableDelegateCommand();
-
+        IExpressionEvaluatorProvider _expressionEvaluatorProvider;
+        ITaskSchedulerProvider _taskSchedulerProvider;
         private string _errorMessage;
         private string _statusBarText;
         private string _searchText;
@@ -33,14 +33,18 @@ namespace SearchLocals.UI
         private bool _isSearchInProgress = false;
         private bool _isEnabled;
 
-        public ExpressionEvaluatorViewModel()
+        public ExpressionEvaluatorViewModel(IVsEnvironmentEvents vsEvents, 
+            ISearchStatus searchStatus, 
+            IExpressionEvaluatorProvider expressionEvaluatorProvider,
+            ITaskSchedulerProvider taskSchedulerProvider)
         {            
             _visibleProperties.CollectionChanged += visibleProperties_CollectionChanged;
             System.Windows.Data.BindingOperations.EnableCollectionSynchronization(_visibleProperties, _visiblePropertiesLock);
-
+            _searchStatus = searchStatus;
             _searchStatus.StatusUpdated = (s) => SearchingReportText = s;
+            _expressionEvaluatorProvider = expressionEvaluatorProvider;
+            _taskSchedulerProvider = taskSchedulerProvider;
 
-            var vsEvents = ServiceLocator.Resolve<IVsEnvironmentEvents>();
             vsEvents.EvaluatorBecomeAvailable += (a, b) => { IsEnabled = true; };
             vsEvents.EvaluatorBecomeUnAvailable += VsEvents_EvaluatorBecomeUnAvailable;
         }
@@ -162,7 +166,7 @@ namespace SearchLocals.UI
                 switch (columnName)
                 {
                     case nameof(FilterText):
-                        var expressionEvaluatorProvider = ServiceLocator.Resolve<IExpressionEvaluatorProvider>();
+                        var expressionEvaluatorProvider = _expressionEvaluatorProvider;
                         if (string.IsNullOrEmpty(FilterText))
                             break;  
 
@@ -190,7 +194,7 @@ namespace SearchLocals.UI
 
         private void Search()
         {
-            var expressionEvaluatorProvider = ServiceLocator.Resolve<IExpressionEvaluatorProvider>();
+            var expressionEvaluatorProvider = _expressionEvaluatorProvider;
             if (expressionEvaluatorProvider.IsEvaluatorAvailable)
             {
                 if (String.IsNullOrEmpty(FilterText)) // search all locals
@@ -239,7 +243,8 @@ namespace SearchLocals.UI
 
                 PropertyIterator propertyIterator = new PropertyIterator(
                     expressionEvaluatorProvider,
-                    propertyVisitor);
+                    propertyVisitor,
+                    _searchStatus);
 
                 _cancelSearch.Action = propertyIterator.Cancel;
 
@@ -274,8 +279,8 @@ namespace SearchLocals.UI
                         }
 
                         _cancelSearch.Action = null;                        
-                    },   
-                    ServiceLocator.Resolve<ITaskSchedulerProvider>().GetCurrentScheduler());
+                    },
+                    _taskSchedulerProvider.GetCurrentScheduler());
             }
             else
             {

@@ -9,6 +9,7 @@ using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Shell;
 using SearchLocals.UI;
 using SearchLocals.Model.Services;
+using Microsoft.Practices.Unity;
 
 namespace SearchLocals
 {
@@ -24,6 +25,9 @@ namespace SearchLocals
     [Guid("569ac44f-8998-443a-ba4d-40c5f2ad9077")]
     public class SearchLocalsToolWindow : ToolWindowPane
     {
+
+        IExpressionEvaluatorViewModel _expressionEvaluatorViewModel;
+
         /// <summary>
         /// Standard constructor for the tool window.
         /// </summary>
@@ -45,8 +49,16 @@ namespace SearchLocals
             // the object returned by the Content property.
             var myControl = new UI.SearchLocalsControl();
             base.Content = myControl;
-            myControl.DataContext = ServiceLocator.Resolve<IExpressionEvaluatorViewModel>();
-            
+
+            _expressionEvaluatorViewModel = Container.Resolve<IExpressionEvaluatorViewModel>();
+            myControl.DataContext = _expressionEvaluatorViewModel;            
+        }
+
+        public IUnityContainer Container { get; internal set; }
+
+        public void SetFilterText(string filterText)
+        {
+            _expressionEvaluatorViewModel.FilterText = filterText;
         }
     }
 }

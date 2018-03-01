@@ -65,7 +65,7 @@ namespace VariableExplorer_UnitTests
                 System.Diagnostics.Debug.WriteLine("ValueProps released:" + v.Count()); 
             });
 
-            PropertyIterator propertyIterator = new PropertyIterator(evaluatorProvider.Object, eventSink);
+            PropertyIterator propertyIterator = new PropertyIterator(evaluatorProvider.Object, eventSink, Moq.Mock.Of<ISearchStatus>());
 
             propertyIterator.TraversPropertyTree(propInfo, String.Empty);
                         

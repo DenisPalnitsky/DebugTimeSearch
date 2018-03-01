@@ -5,7 +5,13 @@ namespace SearchLocals.Model.ExpressioEvaluation
 {
     class ExpressionEvaluatorProvider : IExpressionEvaluatorProvider, IExpressionEvaluatorContainer
     {
+        private readonly IVSEnvironmentEventsPublisher _expressionEvaluatorProvider;
         private IExpressionEvaluator _expressionEvaluator;
+
+        public ExpressionEvaluatorProvider (IVSEnvironmentEventsPublisher expressionEvaluatorProvider)
+        {
+            _expressionEvaluatorProvider = expressionEvaluatorProvider;
+        }
 
         public bool IsEvaluatorAvailable
         {
@@ -20,13 +26,13 @@ namespace SearchLocals.Model.ExpressioEvaluation
         public void Register(IExpressionEvaluator evaluator)
         {
             _expressionEvaluator = evaluator;
-            ServiceLocator.Resolve<IVSEnvironmentEventsPublisher>().ExpressionEvaluatorBecomeAvaialable();
+            _expressionEvaluatorProvider.ExpressionEvaluatorBecomeAvaialable();
         }
 
         public void UnRegister()
         {                        
             _expressionEvaluator = null;
-            ServiceLocator.Resolve<IVSEnvironmentEventsPublisher>().ExpressionEvaluatorBecomeUnAvaialable();
+            _expressionEvaluatorProvider.ExpressionEvaluatorBecomeUnAvaialable();
         }
     }
 }

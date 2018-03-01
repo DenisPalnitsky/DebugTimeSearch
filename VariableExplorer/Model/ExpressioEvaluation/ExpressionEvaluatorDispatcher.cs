@@ -1,42 +1,38 @@
 ﻿using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Debugger.Interop;
-using SearchLocals.Model.Services;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SearchLocals.Model.ExpressioEvaluation
 {
     class ExpressionEvaluatorDispatcher : IDisposable
     {        
-        DebuggerEvents debuggerEvents;
-        IExpressionEvaluatorContainer _container;
+        DebuggerEvents _debuggerEvents;
+        IExpressionEvaluatorContainer _expressionEvaluatorContainer;
+        IExpressionsCache _expressionCache;
 
-        private ExpressionEvaluatorDispatcher() 
-        {
-            var expressionEvaluatorProvider = new ExpressionEvaluatorProvider();
-            ServiceLocator.RegisterInstance<IExpressionEvaluatorContainer>(expressionEvaluatorProvider);
-            ServiceLocator.RegisterInstance<IExpressionEvaluatorProvider>(expressionEvaluatorProvider);
-            _container = expressionEvaluatorProvider;
+        private ExpressionEvaluatorDispatcher(IExpressionEvaluatorContainer expressionEvaluatorContainer, IExpressionsCache expressionCache)
+        {            
+            _expressionEvaluatorContainer = expressionEvaluatorContainer;
+            _expressionCache = expressionCache;
         }
 
-        internal static ExpressionEvaluatorDispatcher Create(Microsoft.VisualStudio.Shell.Interop.IVsDebugger vsDebugger)
+        internal static ExpressionEvaluatorDispatcher Create(Microsoft.VisualStudio.Shell.Interop.IVsDebugger vsDebugger,
+            IExpressionEvaluatorContainer container,
+            IExpressionsCache expressionCache)
         {
-            ExpressionEvaluatorDispatcher result = new ExpressionEvaluatorDispatcher();
+            ExpressionEvaluatorDispatcher result = new ExpressionEvaluatorDispatcher(container, expressionCache);
             uint debugEventsCookie = VSConstants.VSCOOKIE_NIL;
-            result.debuggerEvents = new DebuggerEvents(vsDebugger);
-            result.debuggerEvents.OnEnterBreakMode += result.OnEnterBreakMode;
-            result.debuggerEvents.OnEnterDesignMode += result.debuggerSink_OnEnterDesignMode;
-            vsDebugger.AdviseDebuggerEvents(result.debuggerEvents, out debugEventsCookie).ThrowOnFailure();
+            result._debuggerEvents = new DebuggerEvents(vsDebugger);
+            result._debuggerEvents.OnEnterBreakMode += result.OnEnterBreakMode;
+            result._debuggerEvents.OnEnterDesignMode += result.debuggerSink_OnEnterDesignMode;
+            vsDebugger.AdviseDebuggerEvents(result._debuggerEvents, out debugEventsCookie).ThrowOnFailure();
             return result;
         }
 
-        private  IExpressionEvaluator GetExpressionEvaluator(IDebugThread2 debugThread)
+        private  IExpressionEvaluator GetExpressionEvaluator(IDebugThread2 debugThread, IExpressionsCache expressionCache )
         {
             var stackFrame = GetCurrentStackFrame(debugThread);            
-            return new ExpressionEvaluator(stackFrame);
+            return new ExpressionEvaluator(stackFrame, expressionCache);
         }        
 
         private IDebugStackFrame2 GetCurrentStackFrame(IDebugThread2 thread)
@@ -62,23 +58,23 @@ namespace SearchLocals.Model.ExpressioEvaluation
 
             return stackFrame;
         }
-        
-        void debuggerSink_OnEnterDesignMode(object sender, EventArgs e)
+
+        private void debuggerSink_OnEnterDesignMode(object sender, EventArgs e)
         {
-            _container.UnRegister();
+            _expressionEvaluatorContainer.UnRegister();
         }
-      
-        void OnEnterBreakMode(object sender, IDebugThread2 debugThread)
+
+        private void OnEnterBreakMode(object sender, IDebugThread2 debugThread)
         {
-            _container.Register(GetExpressionEvaluator(debugThread));
+            _expressionEvaluatorContainer.Register(GetExpressionEvaluator(debugThread, _expressionCache));
         }
 
 
         public void Dispose()
         {
-            _container.UnRegister();
-            debuggerEvents.OnEnterBreakMode -= OnEnterBreakMode;
-            debuggerEvents.OnEnterDesignMode += debuggerSink_OnEnterDesignMode;
+            _expressionEvaluatorContainer.UnRegister();
+            _debuggerEvents.OnEnterBreakMode -= OnEnterBreakMode;
+            _debuggerEvents.OnEnterDesignMode += debuggerSink_OnEnterDesignMode;
         }
     }
 }

@@ -10,13 +10,8 @@ namespace SearchLocals.UI
 {
     internal class SearchStatusLister : ISearchStatus
     {
-        ILog _logger;
-
-        public SearchStatusLister(ILog logger)
-        {
-            _logger = logger;    
-        }
-
+        ILog _logger = Logger.GetLogger();
+        
         public void Report(string text)
         {
             _logger.Info("Search status update. " + text);

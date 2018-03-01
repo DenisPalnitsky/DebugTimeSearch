@@ -200,6 +200,7 @@
     <Compile Include="Model\ExpressioEvaluation\ExpressionsCache.cs" />
     <Compile Include="Model\ExpressioEvaluation\IExpressionsCache.cs" />
     <Compile Include="Model\ExpressioEvaluation\ISearchStatus.cs" />
+    <Compile Include="Model\Services\Logger.cs" />
     <Compile Include="Model\VSEnvironmentEvents\IVSEnvironmentEvents.cs" />
     <Compile Include="Model\VSEnvironmentEvents\IVSEnvironmentEventsPublisher.cs" />
     <Compile Include="Model\Services\ServiceLocator.cs" />
@@ -231,7 +232,6 @@
     <Compile Include="Model\StringFilter.cs" />
     <Compile Include="UI\ActionBasedPropertyVisitor.cs" />
     <Compile Include="Model\VSPropertyModel\ValuePropertyInfo.cs" />
-    <Compile Include="Model\Services\IConfiguration.cs" />
     <Compile Include="dbgGuids.cs" />
     <Compile Include="DebuggerEvents.cs" />
     <Compile Include="ErrorCheckForVsCalls.cs" />

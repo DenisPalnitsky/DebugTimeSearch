@@ -11,6 +11,8 @@ using SearchLocals.Model.VSPropertyModel;
 using SearchLocals.Model.ExpressioEvaluation;
 using System.Threading.Tasks;
 using System.Threading;
+using SearchLocals.UI;
+using System.Diagnostics;
 
 namespace VariableExplorer_UnitTests
 {
@@ -83,7 +85,8 @@ namespace VariableExplorer_UnitTests
 
             // Act            
             PropertyIterator propertIterator = new PropertyIterator(exparessionEvaluator,
-                propertyVisitorMock.Object);
+                propertyVisitorMock.Object,
+                new SearchStatusLister() { StatusUpdated = _ => Debug.WriteLine(_) });
 
             propertIterator.TraversPropertyTree(exparessionEvaluator.ExpressionEvaluator.EvaluateExpression("Parent"), String.Empty);
 
@@ -100,13 +103,16 @@ namespace VariableExplorer_UnitTests
 
             Mock<IPropertyVisitor> propertyVisitorMock = new Mock<IPropertyVisitor>(MockBehavior.Strict);
 
-            // no other calls except top level
+            // no other calls except top level 
             propertyVisitorMock.Setup(v => v.ParentPropertyAttended(It.Is<IExpandablePropertyInfo>(e => e.Name == "Parent"))).Verifiable();
             propertyVisitorMock.Setup(v => v.Dispose());
 
             // Act            
-            PropertyIterator propertIterator = new PropertyIterator(exparessionEvaluator,
-                propertyVisitorMock.Object, 1);
+            PropertyIterator propertIterator = new PropertyIterator(
+                exparessionEvaluator,
+                propertyVisitorMock.Object, 
+                1, 
+                new SearchStatusLister() { StatusUpdated = _ => Debug.WriteLine(_) });
 
             propertIterator.TraversPropertyTree(exparessionEvaluator.ExpressionEvaluator.EvaluateExpression("Parent"), String.Empty);
 
@@ -186,7 +192,8 @@ namespace VariableExplorer_UnitTests
                 exparessionEvaluatorProviderMock.Object, 
                 new PropertyVisitorMock(                
                  p=>results.Add(p), 
-                 v=>results.Add(v)));
+                 v=>results.Add(v)),
+                Moq.Mock.Of<ISearchStatus>());
 
             propertyIterator.TraversPropertyTree(debugPropertyMock.Object, String.Empty);            
 
@@ -211,16 +218,18 @@ namespace VariableExplorer_UnitTests
                 .Callback(() => mre.Set() );
 
             propertyVisitorMock.Setup(v => v.ValuePropertyAttended(It.IsAny<IValuePropertyInfo>()))
-             .Callback(() => mre.Set());
+                    .Callback(() => mre.Set());
+            SearchStatusLister searchStatusLister = new SearchStatusLister() { StatusUpdated = _ => Debug.WriteLine (_) }; 
 
             // Act            
-            PropertyIterator propertIterator = new PropertyIterator(exparessionEvaluator,
-                propertyVisitorMock.Object);
+            PropertyIterator propertIterator = new PropertyIterator(
+                exparessionEvaluator,
+                propertyVisitorMock.Object,
+                searchStatusLister);
           
             var task = Task.Run(() =>
                 {
-                    propertIterator.TraversPropertyTree(exparessionEvaluator.ExpressionEvaluator.EvaluateExpression("Parent"), String.Empty);
-                   
+                    propertIterator.TraversPropertyTree(exparessionEvaluator.ExpressionEvaluator.EvaluateExpression("Parent"), String.Empty);                   
                 });
 
             mre.WaitOne(); // wait till search process start            

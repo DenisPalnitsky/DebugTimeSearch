@@ -6,11 +6,10 @@ namespace SearchLocals.Model.ExpressioEvaluation
 {
     class ExpressionsCache : IExpressionsCache
     {
-        ILog _log = ServiceLocator.Resolve<ILog>();
+        ILog _log = Logger.GetLogger();
 
         ConcurrentDictionary<string, IVSDebugPropertyProxy> _cache = new ConcurrentDictionary<string, IVSDebugPropertyProxy>();
        
-
         public IVSDebugPropertyProxy TryGetFromCache(string expression)
         {
             if (_cache.ContainsKey(expression))

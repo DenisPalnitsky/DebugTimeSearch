@@ -1,16 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace SearchLocals.Model.Services 
+﻿namespace SearchLocals.Model.Services
 {
-    class Configuration : IConfiguration
+    class Configuration 
     {
-        public uint DefaultTimeoutForVSCalls
-        {
-            get { return uint.MaxValue; }
-        }
+        public const uint DefaultTimeoutForVSCalls = uint.MaxValue;
     }
 }

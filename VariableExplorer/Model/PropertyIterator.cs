@@ -12,8 +12,8 @@ namespace SearchLocals.Model
         IExpressionEvaluatorProvider _exparessionEvaluatorProvider;
         IPropertyVisitor _propertyVisitor;
         HashSet<string> _processedExpressions = new HashSet<string>();
-        ILog _logger = ServiceLocator.Resolve<ILog>();
-        ISearchStatus _searchStatus = ServiceLocator.Resolve<ISearchStatus>();
+        ILog _logger = Logger.GetLogger();
+        ISearchStatus _searchStatus;
 
         bool _isCanceling = false;
 
@@ -27,18 +27,21 @@ namespace SearchLocals.Model
 
         public PropertyIterator (
             IExpressionEvaluatorProvider exparessionEvaluatorProvider,
-            IPropertyVisitor propertyVisitor ):this(exparessionEvaluatorProvider, propertyVisitor, 50)
+            IPropertyVisitor propertyVisitor,
+            ISearchStatus searchStatus) :this(exparessionEvaluatorProvider, propertyVisitor, 50, searchStatus)
         {
-            this._exparessionEvaluatorProvider = exparessionEvaluatorProvider;               
+            this._exparessionEvaluatorProvider = exparessionEvaluatorProvider;
         }
 
         public PropertyIterator(
             IExpressionEvaluatorProvider exparessionEvaluatorProvider,
             IPropertyVisitor propertyVisitor,
-            int maxDepth)
+            int maxDepth,
+            ISearchStatus searchStatus)
         {
-            this._exparessionEvaluatorProvider = exparessionEvaluatorProvider;
+            _exparessionEvaluatorProvider = exparessionEvaluatorProvider;
             _propertyVisitor = propertyVisitor;
+            _searchStatus = searchStatus;
             MaxDepth = maxDepth;
         }
 
@@ -110,7 +113,7 @@ namespace SearchLocals.Model
             if (_isCanceling)
             {
                 _searchStatus.StatusUpdated("Search canceled");
-                _logger.Info("Canceling traversing");
+                _logger.Info("Search cacneled by user");
                 throw new System.Threading.Tasks.TaskCanceledException("Search canceled");
             }
         }

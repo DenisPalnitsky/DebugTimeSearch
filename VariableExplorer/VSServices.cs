@@ -17,7 +17,7 @@ namespace SearchLocals
     private static readonly Dictionary<Type, object> _serviceCache = new Dictionary<Type, object>();
     private static System.IServiceProvider _serviceProvider;
     //public static DummyWindow DummyInvokeWindow;
-    private static Version _vsVersion;
+    
     //private static IVsEditorAdaptersFactoryService _vsEditorAdaptersFactoryService;
 
     public static string VisualStudioDevEnvPath
