@@ -96,6 +96,7 @@ namespace VariableExplorer_UnitTests
         }
 
         [Test]
+        // TODO: Fix that test
         public void TraversPropertyTree_when_called_stops_on_defined_depth()
         {
             // Arrange
@@ -131,14 +132,15 @@ namespace VariableExplorer_UnitTests
             string expandablePropertyFullName = "ExpandableProperty";
             expandablePropertyMock.Setup(p => p.FullName).Returns(expandablePropertyFullName);
             expandablePropertyMock.Setup(p => p.Name).Returns(expandablePropertyFullName);
+            var valuePropertyName = "ValueProp";
 
             var parentPropertyMock = new Mock<IExpandablePropertyInfo>();
             parentPropertyMock.Setup(p => p.FullName).Returns("Parent");
             parentPropertyMock.Setup(p => p.Name).Returns("Parent");
 
             var valuePropertyInfoFromExpandable = new Moq.Mock<IValuePropertyInfo>();
-            valuePropertyInfoFromExpandable.Setup(p => p.Name).Returns("ValueProp");
-            valuePropertyInfoFromExpandable.Setup(p => p.FullName).Returns("ValueProp");
+            valuePropertyInfoFromExpandable.Setup(p => p.Name).Returns(valuePropertyName);
+            valuePropertyInfoFromExpandable.Setup(p => p.FullName).Returns(valuePropertyName);
 
             var exparessionEvaluatorProviderMock = new Mock<IExpressionEvaluatorProvider>();
             var expressionEvaluatorMock = new Mock<IExpressionEvaluator>();
@@ -157,8 +159,14 @@ namespace VariableExplorer_UnitTests
             });
             expandableDebugPropertyMock.Setup(d => d.PropertyInfo).Returns(expandablePropertyMock.Object);
 
+            var valueDebugPropertyMock = new Mock<IVSDebugPropertyProxy>();
+            valueDebugPropertyMock.Setup(d => d.Children).Returns(new List<IPropertyInfo> {});
+            valueDebugPropertyMock.Setup(d => d.PropertyInfo).Returns(valuePropertyInfoFromExpandable.Object);
+
+
             expressionEvaluatorMock.Setup(e => e.EvaluateExpression(expandablePropertyFullName)).Returns(expandableDebugPropertyMock.Object);
             expressionEvaluatorMock.Setup(e => e.EvaluateExpression("Parent")).Returns(parentDebugPropertyMock.Object);
+            expressionEvaluatorMock.Setup(e => e.EvaluateExpression(valuePropertyName)).Returns(valueDebugPropertyMock.Object);
 
 
             exparessionEvaluatorProviderMock.Setup(p => p.IsEvaluatorAvailable).Returns(true);
