@@ -1,4 +1,5 @@
 ﻿using Microsoft.Practices.Unity;
+using Microsoft.VisualStudio.Shell.Interop;
 using SearchLocals.Model.ExpressioEvaluation;
 using SearchLocals.UI;
 
@@ -7,8 +8,8 @@ namespace SearchLocals.Model.Services
     static class UnityContainerExtension
     {
             
-        public static void RegisteTypes (this IUnityContainer container)
-        {            
+        public static void RegisteDefaultTypes (this IUnityContainer container)
+        {     
             container.RegisterType<ILog, OutputWindowLogger>();
 
             var ev = new VSEnvironmentEvents.VSEnvironmentEventsPublisher();
@@ -18,14 +19,23 @@ namespace SearchLocals.Model.Services
             container.RegisterType<ExpressioEvaluation.ISearchStatus,SearchStatusLister>();                        
             container.RegisterInstance<ITaskSchedulerProvider>(new TaskSchedulerProvider());
 
-            container.RegisterType<IExpressionEvaluatorProvider, ExpressionEvaluatorProvider>();
-            container.RegisterType<IExpressionEvaluatorContainer, ExpressionEvaluatorProvider>();
+            var provider = new ExpressionEvaluatorProvider(ev);
+            container.RegisterInstance<IExpressionEvaluatorProvider>(provider);
+            container.RegisterInstance<IExpressionEvaluatorContainer>(provider);
 
 #if DEBUG
             container.RegisterType<IExpressionsCache, DisabledExpressionsCache>();
 #else
             container.RegisterType<IExpressionsCache, ExpressionsCache>();
 #endif
+
+            IVsDebugger _debugger = VisualStudioServices.VsDebugger;
+            ExpressionEvaluatorDispatcher _dispatcher;
+            _dispatcher = ExpressionEvaluatorDispatcher.Create(VisualStudioServices.VsDebugger,
+                container.Resolve<IExpressionEvaluatorContainer>(),
+                container.Resolve<IExpressionsCache>());
+            container.RegisterInstance<ExpressionEvaluatorDispatcher>(_dispatcher, new ContainerControlledLifetimeManager());
+
             container.RegisterType<IExpressionEvaluatorViewModel, ExpressionEvaluatorViewModel>();
 
         }

@@ -244,7 +244,7 @@ namespace SearchLocals
       {
         return window.ProjectItem;
       }
-      catch (InvalidCastException ex)
+      catch (InvalidCastException)
       {
         return (ProjectItem) null;
       }

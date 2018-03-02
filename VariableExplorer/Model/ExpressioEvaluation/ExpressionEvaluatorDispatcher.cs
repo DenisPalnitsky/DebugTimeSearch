@@ -72,6 +72,7 @@ namespace SearchLocals.Model.ExpressioEvaluation
 
         public void Dispose()
         {
+            System.Diagnostics.Debug.WriteLine("Disposing ExpressionEvaluatorDispatcher");
             _expressionEvaluatorContainer.UnRegister();
             _debuggerEvents.OnEnterBreakMode -= OnEnterBreakMode;
             _debuggerEvents.OnEnterDesignMode += debuggerSink_OnEnterDesignMode;

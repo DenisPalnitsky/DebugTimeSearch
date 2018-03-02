@@ -41,6 +41,8 @@ namespace VariableExplorer_UnitTests
                     m_taskQueue.Dequeue().RunSynchronously();
                 }
             }
-        }    
+        }
+       
+
     }
 }

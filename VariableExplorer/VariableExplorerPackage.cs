@@ -41,8 +41,7 @@ namespace SearchLocals
         MenuCommand _menuItem;
         MenuCommand _menuToolWin;
 
-        IUnityContainer _unityContainer = new UnityContainer();
-        ExpressionEvaluatorDispatcher _dispatcher;
+       
 
         /// <summary>
         /// Default constructor of the package.
@@ -70,15 +69,10 @@ namespace SearchLocals
         {
             Debug.WriteLine (string.Format(CultureInfo.CurrentCulture, "Entering Initialize() of: {0}", this.ToString()));
             base.Initialize();
-
-            _unityContainer.RegisteTypes();
-
+            
             VisualStudioServices.Initialize(this);
-                        
-            IVsDebugger _debugger = VisualStudioServices.VsDebugger;
-            _dispatcher =  ExpressionEvaluatorDispatcher.Create(VisualStudioServices.VsDebugger, 
-                _unityContainer.Resolve<IExpressionEvaluatorContainer>(),
-                _unityContainer.Resolve<IExpressionsCache>());
+
+    
 
             //KnownUIContexts.DebuggingContext.UIContextChanged += DebuggingContext_UIContextChanged;
 
@@ -88,7 +82,7 @@ namespace SearchLocals
         
         protected override void Dispose(bool disposing)
         {
-            _dispatcher.Dispose();
+         
             //KnownUIContexts.DebuggingContext.UIContextChanged -= DebuggingContext_UIContextChanged;
             base.Dispose(disposing);
         }
@@ -123,16 +117,16 @@ namespace SearchLocals
             // Get the instance number 0 of this tool window. This window is single instance so this instance
             // is actually the only one.
             // The last flag is set to true so that if the tool window does not exists it will be created.
-            SearchLocalsToolWindow window = (SearchLocalsToolWindow)this.FindToolWindow(typeof(SearchLocalsToolWindow), 0, true);
+            SearchLocalsToolWindow window = (SearchLocalsToolWindow)this.FindToolWindow(typeof(SearchLocalsToolWindow), 0, true);            
+
             if ((null == window) || (null == window.Frame))
             {
                 throw new NotSupportedException(Resources.CanNotCreateWindow);
             }
+
+            window.SetFilterText(textUnderCursor);           
+
             
-
-            window.SetFilterText(textUnderCursor);
-
-            window.Container = _unityContainer;
             IVsWindowFrame windowFrame = (IVsWindowFrame)window.Frame;
             windowFrame.Show().ThrowOnFailure();
         }

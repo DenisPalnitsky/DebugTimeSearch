@@ -119,6 +119,7 @@
     <Compile Include="SelfReferenceDetectionTest.cs" />
     <Compile Include="StringFilterTest.cs" />
     <Compile Include="TestObservableObject.cs" />
+    <Compile Include="UnityContainerRegistrationTest.cs" />
     <!---->
     <!---->
   </ItemGroup>

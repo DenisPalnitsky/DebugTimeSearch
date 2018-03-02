@@ -10,6 +10,7 @@ using Microsoft.VisualStudio.Shell;
 using SearchLocals.UI;
 using SearchLocals.Model.Services;
 using Microsoft.Practices.Unity;
+using SearchLocals.Model.ExpressioEvaluation;
 
 namespace SearchLocals
 {
@@ -27,6 +28,9 @@ namespace SearchLocals
     {
 
         IExpressionEvaluatorViewModel _expressionEvaluatorViewModel;
+        UI.SearchLocalsControl _searchLocalsControl;
+        IUnityContainer _unityContainer = new UnityContainer();
+       
 
         /// <summary>
         /// Standard constructor for the tool window.
@@ -44,21 +48,29 @@ namespace SearchLocals
             this.BitmapResourceID = 301;
             this.BitmapIndex = 1;
 
+            _unityContainer.RegisteDefaultTypes();
+               
+
             // This is the user control hosted by the tool window; Note that, even if this class implements IDisposable,
             // we are not calling Dispose on this object. This is because ToolWindowPane calls Dispose on 
             // the object returned by the Content property.
-            var myControl = new UI.SearchLocalsControl();
-            base.Content = myControl;
+            _searchLocalsControl = new UI.SearchLocalsControl();
 
-            _expressionEvaluatorViewModel = Container.Resolve<IExpressionEvaluatorViewModel>();
-            myControl.DataContext = _expressionEvaluatorViewModel;            
+            _expressionEvaluatorViewModel = _unityContainer.Resolve<IExpressionEvaluatorViewModel>();
+            _searchLocalsControl.DataContext = _expressionEvaluatorViewModel;
+
+            base.Content = _searchLocalsControl; 
+        }             
+        
+        internal void SetFilterText(string filterText)
+        {            
+            _expressionEvaluatorViewModel.FilterText = filterText;            
         }
 
-        public IUnityContainer Container { get; internal set; }
-
-        public void SetFilterText(string filterText)
+        protected override void Dispose(bool disposing)
         {
-            _expressionEvaluatorViewModel.FilterText = filterText;
+            _unityContainer.Dispose();
+            base.Dispose(disposing);
         }
     }
 }
