@@ -6,10 +6,8 @@ using System.Text;
 
 namespace SearchLocals.UI
 {
-    // TODO: Disable when debugger inactive
     class DebugPropertyViewModel
-    {
-        
+    {        
         public string Name { get; private set; }
         public string Value { get; private set; }
         public string FullName { get; private set; }

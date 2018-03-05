@@ -96,7 +96,6 @@ namespace VariableExplorer_UnitTests
         }
 
         [Test]
-        // TODO: Fix that test
         public void TraversPropertyTree_when_called_stops_on_defined_depth()
         {
             // Arrange

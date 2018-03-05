@@ -82,7 +82,6 @@ namespace SearchLocals.Model.VSPropertyModel
 
             IEnumDebugPropertyInfo2 debugPropertyEnum;
 
-            // TODO: I don't think we really need all of them here. Play with enum_DBG_ATTRIB_FLAGS filter
             debugProperty.EnumChildren(
                 enum_DEBUGPROP_INFO_FLAGS.DEBUGPROP_INFO_STANDARD | enum_DEBUGPROP_INFO_FLAGS.DEBUGPROP_INFO_FULLNAME,
                 10,

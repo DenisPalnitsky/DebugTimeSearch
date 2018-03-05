@@ -6,7 +6,6 @@ namespace SearchLocals.Model.VSPropertyModel
     {        
         public BrokenValuePropertyInfo(string fullName, string name, string errorMessage, IExpandablePropertyInfo parent)
         {
-            // TODO: Complete member initialization
             FullName = fullName;
             Name = name;
             Value = errorMessage;

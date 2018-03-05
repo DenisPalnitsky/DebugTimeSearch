@@ -23,11 +23,10 @@ namespace SearchLocals.Model.Services
             container.RegisterInstance<IExpressionEvaluatorProvider>(provider);
             container.RegisterInstance<IExpressionEvaluatorContainer>(provider);
 
-#if DEBUG
-            container.RegisterType<IExpressionsCache, DisabledExpressionsCache>();
-#else
+            // Use this to disable cache while debugging
+            //container.RegisterType<IExpressionsCache, DisabledExpressionsCache>();
             container.RegisterType<IExpressionsCache, ExpressionsCache>();
-#endif
+
 
             IVsDebugger _debugger = VisualStudioServices.VsDebugger;
             ExpressionEvaluatorDispatcher _dispatcher;

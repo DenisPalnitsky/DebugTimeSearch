@@ -83,7 +83,6 @@ namespace SearchLocals.UI
             }
         }
         
-
         public string ErrorMessage
         {
             get { return _errorMessage; }
