@@ -6,5 +6,6 @@ namespace SearchLocals.Model.ExpressioEvaluation
     {
         void Cache(string expression, IVSDebugPropertyProxy resultDebugProperty);
         IVSDebugPropertyProxy TryGetFromCache(string expression);
+        void Clear();
     }
 }

@@ -9,6 +9,11 @@ namespace SearchLocals.Model.ExpressioEvaluation
             // do nothing           
         }
 
+        public void Clear()
+        {
+            // do nothing            
+        }
+
         public IVSDebugPropertyProxy TryGetFromCache(string expression)
         {
             return null;

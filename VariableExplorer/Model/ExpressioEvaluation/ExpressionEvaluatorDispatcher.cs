@@ -62,6 +62,7 @@ namespace SearchLocals.Model.ExpressioEvaluation
         private void debuggerSink_OnEnterDesignMode(object sender, EventArgs e)
         {
             _expressionEvaluatorContainer.UnRegister();
+            _expressionCache.Clear();
         }
 
         private void OnEnterBreakMode(object sender, IDebugThread2 debugThread)

@@ -52,7 +52,9 @@ namespace SearchLocals.UI
         private void VsEvents_EvaluatorBecomeUnAvailable(object sender, EventArgs e)
         {
             IsEnabled = false;
+            _searchStatus.StatusUpdated(string.Empty);
             _visibleProperties.Clear();
+            OnPropertyChanged(() => Properties);
         }
 
         public IEnumerable<DebugPropertyViewModel> Properties
@@ -146,8 +148,11 @@ namespace SearchLocals.UI
             get { return _isEnabled; }
             private set
             {
-                _isEnabled = value;
-                OnPropertyChanged(nameof(IsEnabled));
+                if (_isEnabled != value)
+                {
+                    _isEnabled = value;
+                    OnPropertyChanged(nameof(IsEnabled));
+                }                
             }
         }
         

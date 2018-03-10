@@ -25,5 +25,11 @@ namespace SearchLocals.Model.ExpressioEvaluation
         {            
             _cache.TryAdd(expression, resultDebugProperty);
         }
+
+        public void Clear()
+        {
+            _log.Info("Clearing cache");
+            _cache.Clear();
+        }
     }
 }

@@ -13,25 +13,12 @@
     <UserControl.Resources>
 
         <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                >
-
-            <!--<Style TargetType="Label">
-                <Setter Property="Foreground" Value="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowTextBrushKey}}"/>
-            </Style>
-           
-            <Style TargetType="TextBlock" x:Key="TextBlockStyle" >
-                <Setter Property="Foreground" Value="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowTextBrushKey}}"/>
-                <Setter Property="Background" Value="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowBackgroundBrushKey}}"/>
-            </Style>-->
-
-            <!--<Style BasedOn="{StaticResource TextBlockStyle}" TargetType="TextBlock" />-->
+                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"  >
 
             <Style TargetType="TextBox" >
-                <!--<Setter Property="Foreground" Value="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowTextBrushKey}}"/>
-                <Setter Property="Background" Value="{DynamicResource {x:Static vs_shell:EnvironmentColors.SearchBoxBackgroundBrushKey}}" />-->
+                
                 <Setter Property="Margin" Value="2" />
-                <Setter Property="Height" Value="25" />
+                <Setter Property="Height" Value="22" />
                 <Setter Property="Padding" Value="2" />
 
                 <Setter Property="Validation.ErrorTemplate">
