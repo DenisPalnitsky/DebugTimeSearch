@@ -71,8 +71,7 @@ namespace SearchLocals
             base.Initialize();
             
             VisualStudioServices.Initialize(this);
-
-    
+            this.CreateToolWindow(typeof(SearchLocalsToolWindow), 0);
 
             //KnownUIContexts.DebuggingContext.UIContextChanged += DebuggingContext_UIContextChanged;
 
@@ -117,7 +116,7 @@ namespace SearchLocals
             // Get the instance number 0 of this tool window. This window is single instance so this instance
             // is actually the only one.
             // The last flag is set to true so that if the tool window does not exists it will be created.
-            SearchLocalsToolWindow window = (SearchLocalsToolWindow)this.FindToolWindow(typeof(SearchLocalsToolWindow), 0, true);            
+            var window = (SearchLocalsToolWindow)this.FindToolWindow(typeof(SearchLocalsToolWindow), 0, true);                        
 
             if ((null == window) || (null == window.Frame))
             {
@@ -127,7 +126,7 @@ namespace SearchLocals
             window.SetFilterText(textUnderCursor);           
 
             
-            IVsWindowFrame windowFrame = (IVsWindowFrame)window.Frame;
+            var windowFrame = (IVsWindowFrame)window.Frame;
             windowFrame.Show().ThrowOnFailure();
         }
 
